@@ -48,7 +48,7 @@ public class Path {
 
 	private List<Segment> segments;
 	private Translation2D lastPoint;
-	private Rotation2DendAngle = null;
+	private Rotation2D endAngle = null;
 	private double totalDist;
 	private double finishedDist;
 	private ArrayList<AutoRoutineTrigger> commands = new ArrayList<>();
@@ -97,7 +97,7 @@ public class Path {
 	 * @param angle
 	 *            Angle for the robot to end in.
 	 */
-	public void setAngle(Rotation2Dangle) {
+	public void setAngle(Rotation2D angle) {
 		endAngle = angle;
 	}
 

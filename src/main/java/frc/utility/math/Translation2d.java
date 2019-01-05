@@ -8,7 +8,7 @@ package frc.utility.math;
  */
 public class Translation2D implements Interpolable<Translation2D> {
 
-	public static Translation2D fromAngleDistance(double distance, Rotation2Dangle) {
+	public static Translation2D fromAngleDistance(double distance, Rotation2D angle) {
 		return new Translation2D(angle.sin() * distance, angle.cos() * distance);
 	}
 
@@ -50,7 +50,7 @@ public class Translation2D implements Interpolable<Translation2D> {
 	 *            Point that becomes the origin for the other point
 	 * @return Angle from the offset to this point
 	 */
-	public Rotation2DgetAngleFromOffset(Translation2D offset) {
+	public Rotation2D getAngleFromOffset(Translation2D offset) {
 		return offset.getAngle(this);
 	}
 
