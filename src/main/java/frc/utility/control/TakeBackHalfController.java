@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.control;
 
 import edu.wpi.first.wpilibj.PIDOutput;

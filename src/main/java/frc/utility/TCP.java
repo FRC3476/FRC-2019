@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility;
 
 import java.io.IOException;
@@ -17,8 +19,9 @@ import org.json.simple.JSONValue;
 import frc.utility.control.motion.BezierCurve;
 
 public class TCP extends Threaded {
-	private class ConnectionHandler extends Threaded {
 
+	private class ConnectionHandler extends Threaded {
+		
 		Socket clientSocket;
 		InputStream inStream;
 
@@ -126,5 +129,4 @@ public class TCP extends Threaded {
 			e.printStackTrace();
 		}
 	}
-
 }

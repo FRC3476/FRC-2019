@@ -1,4 +1,6 @@
-package org.usfirst.frc.team3476.utility;
+// Copyright 2019 FRC Team 3476 Code Orange
+
+package frc.utility;
 
 import java.time.Duration;
 
@@ -9,7 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
  * class
  */
 public abstract class Threaded implements Runnable {
-
+	
 	private boolean isUpdated = true;
 	private boolean isPaused = false;
 	private double lastRuntime = 0;

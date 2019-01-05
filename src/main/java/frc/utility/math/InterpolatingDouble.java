@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.math;
 
 /**
@@ -20,5 +22,4 @@ public class InterpolatingDouble implements Interpolable<InterpolatingDouble> {
 		double diff = other.getValue() - value;
 		return new InterpolatingDouble(value + (diff * percentage));
 	}
-
 }

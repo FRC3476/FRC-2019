@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -5,10 +7,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 /**
  * Sends only new commands to the Talon to reduce CAN usage.
- *
  */
 public class LazyTalonSRX extends TalonSRX {
-
+	
 	private double prevValue = 0;
 	private ControlMode prevControlMode = ControlMode.Disabled;
 
@@ -29,5 +30,4 @@ public class LazyTalonSRX extends TalonSRX {
 	public double getSetpoint() {
 		return prevValue;
 	}
-
 }

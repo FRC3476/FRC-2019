@@ -1,10 +1,11 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.control;
 
 /**
  * Controller that adds a specific amount of extra load for rising edges that
  * decays linearly to 0.
  */
-
 public class LoadController {
 
 	private double loadAccum;

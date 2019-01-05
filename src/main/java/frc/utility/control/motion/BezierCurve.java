@@ -1,19 +1,21 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.control.motion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.json.simple.JSONObject;
-import frc.utility.math.Translation2d;
+import frc.utility.math.Translation2D;
 
 public class BezierCurve {
 
 	public static class BezierPoint {
 
-		private Translation2d start, prevTangent, nextTangent;
+		private Translation2D start, prevTangent, nextTangent;
 		private double speed;
 
-		public BezierPoint(Translation2d prevTangent, Translation2d start, Translation2d nextTangent, double speed) {
+		public BezierPoint(Translation2D prevTangent, Translation2D start, Translation2D nextTangent, double speed) {
 			this.start = start;
 			this.prevTangent = start.translateBy(prevTangent);
 			this.nextTangent = start.translateBy(nextTangent);
@@ -53,15 +55,15 @@ public class BezierCurve {
 				Segment secondSeg = new Segment(firstPoint.nextTangent, secondPoint.prevTangent, 0);
 				Segment thirdSeg = new Segment(secondPoint.prevTangent, secondPoint.start, 0);
 				for (double j = step; j <= 1.0; j += step) {
-					Translation2d A = firstSeg.getPointByPercentage(j);
-					Translation2d B = secondSeg.getPointByPercentage(j);
-					Translation2d C = thirdSeg.getPointByPercentage(j);
+					Translation2D A = firstSeg.getPointByPercentage(j);
+					Translation2D B = secondSeg.getPointByPercentage(j);
+					Translation2D C = thirdSeg.getPointByPercentage(j);
 					Segment AB = new Segment(A, B, 0);
 					Segment BC = new Segment(B, C, 0);
-					Translation2d D = AB.getPointByPercentage(j);
-					Translation2d E = BC.getPointByPercentage(j);
+					Translation2D D = AB.getPointByPercentage(j);
+					Translation2D E = BC.getPointByPercentage(j);
 					Segment DE = new Segment(D, E, 0);
-					Translation2d F = DE.getPointByPercentage(j);
+					Translation2D F = DE.getPointByPercentage(j);
 					generatedPath.addPoint(F, (diffSpeed * j) + startSpeed);
 				}
 			}
@@ -73,7 +75,6 @@ public class BezierCurve {
 	}
 
 	public static BezierCurve parseJson(JSONObject json) {
-
 		return new BezierCurve(null);
 	}
 }

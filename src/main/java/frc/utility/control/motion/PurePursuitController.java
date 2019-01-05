@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.control.motion;
 
 import org.json.simple.JSONArray;
@@ -12,7 +14,7 @@ import frc.utility.control.RateLimiter;
 import frc.utility.control.SynchronousPid;
 import frc.utility.control.motion.Path.DrivingData;
 import frc.utility.math.RigidTransform;
-import frc.utility.math.Translation2d;
+import frc.utility.math.Translation2D;
 
 public class PurePursuitController {
 	/*
@@ -29,9 +31,7 @@ public class PurePursuitController {
 		this.isReversed = isReversed;
 		speedProfiler = new RateLimiter(100, 1000);
 		if (robotPath.isEmpty()) {
-
 		}
-
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class PurePursuitController {
 	 *
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized AutoDriveSignal calculate(RigidTransform robotPose) {
+	public synchronized AutoDriveSignal calculate(RigidTransform2D robotPose) {
 		if (isReversed) {
 			robotPose = new RigidTransform(robotPose.translationMat, robotPose.rotationMat.flip());
 		}
@@ -59,7 +59,7 @@ public class PurePursuitController {
 		if (robotSpeed < 20) {
 			robotSpeed = 20;
 		}
-		Translation2d robotToLookAhead = getRobotToLookAheadPoint(robotPose, data.lookAheadPoint);
+		Translation2D robotToLookAhead = getRobotToLookAheadPoint(robotPose, data.lookAheadPoint);
 		double radius;
 		radius = getRadius(robotToLookAhead);
 		double delta = (robotSpeed / radius);
@@ -93,18 +93,17 @@ public class PurePursuitController {
 		return new AutoDriveSignal(new DriveSignal(robotSpeed + deltaSpeed, robotSpeed - deltaSpeed), false);
 	}
 
-	private double getRadius(Translation2d robotToLookAheadPoint) {
+	private double getRadius(Translation2D robotToLookAheadPoint) {
 		// Hypotenuse^2 / (2 * X)
 		double radius = Math.pow(Math.hypot(robotToLookAheadPoint.getX(), robotToLookAheadPoint.getY()), 2)
 				/ (2 * robotToLookAheadPoint.getY());
 		return radius;
 	}
 
-	private Translation2d getRobotToLookAheadPoint(RigidTransform robotPose, Translation2d lookAheadPoint) {
-		Translation2d lookAheadPointToRobot = robotPose.translationMat.inverse().translateBy(lookAheadPoint);
+	private Translation2D getRobotToLookAheadPoint(RigidTransform2D robotPose, Translation2D lookAheadPoint) {
+		Translation2D lookAheadPointToRobot = robotPose.translationMat.inverse().translateBy(lookAheadPoint);
 		lookAheadPointToRobot = lookAheadPointToRobot.rotateBy(robotPose.rotationMat.inverse());
 		return lookAheadPointToRobot;
-
 	}
 
 	/**

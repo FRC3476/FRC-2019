@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -163,5 +165,4 @@ public class Controller extends Joystick {
 	public boolean getButtonState(int button, int state) {
 		return ((0x1 << (button - 1)) & state) != 0;
 	}
-
 }

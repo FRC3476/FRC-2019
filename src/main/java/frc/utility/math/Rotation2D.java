@@ -1,47 +1,49 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.math;
 
 /**
  * Stores a cos and sin that is used like a rotation matrix
  */
-public class Rotation implements Interpolable<Rotation> {
+public class Rotation2D implements Interpolable<Rotation> {
 
 	/**
-	 * Gets a Rotation from a specified degree
+	 * Gets a Rotation2D from a specified degree
 	 *
 	 * @param angle
 	 *            Angle to turn into a rotation matrix
-	 * @return Rotation from specified angle in argument
+	 * @return Rotation2D from specified angle in argument
 	 */
-	public static Rotation fromDegrees(double angle) {
-		return Rotation.fromRadians(Math.toRadians(angle));
+	public static Rotation2D fromDegrees(double angle) {
+		return Rotation2D.fromRadians(Math.toRadians(angle));
 	}
 
 	/**
-	 * Gets a Rotation matrix from a specified radian
+	 * Gets a Rotation2Dmatrix from a specified radian
 	 *
 	 * @param radians
 	 *            Radian to turn into a rotation matrix
-	 * @return Rotation from specified radian in argument
+	 * @return Rotation2D from specified radian in argument
 	 */
-	public static Rotation fromRadians(double radians) {
-		return new Rotation(Math.cos(radians), Math.sin(radians));
+	public static Rotation2D fromRadians(double radians) {
+		return new Rotation2D(Math.cos(radians), Math.sin(radians));
 	}
 
 	private double cos;
 
 	private double sin;
 
-	public Rotation() {
+	public Rotation2D() {
 		cos = 1;
 		sin = 0;
 	}
 
-	public Rotation(double cos, double sin) {
+	public Rotation2D(double cos, double sin) {
 		this.cos = cos;
 		this.sin = sin;
 	}
 
-	public Rotation(double cos, double sin, boolean normalize) {
+	public Rotation2D(double cos, double sin, boolean normalize) {
 		this.cos = cos;
 		this.sin = sin;
 		if (normalize) {
@@ -75,26 +77,26 @@ public class Rotation implements Interpolable<Rotation> {
 
 	// TODO: make it work
 	@Override
-	public Rotation interpolate(Rotation other, double percentage) {
-		Rotation diff = inverse().rotateBy(other);
+	public Rotation2D interpolate(Rotation2D other, double percentage) {
+		Rotation2D diff = inverse().rotateBy(other);
 		return rotateBy(Rotation.fromRadians(diff.getRadians() * percentage));
 	}
 
 	/**
 	 *
-	 * @return The Rotation that when rotated with this Rotation moves the cos
+	 * @return The Rotation2D that when rotated with this Rotation2Dmoves the cos
 	 *         to 1 and the sin to 0
 	 */
-	public Rotation inverse() {
-		return new Rotation(cos, -sin);
+	public Rotation2D inverse() {
+		return new Rotation2D(cos, -sin);
 	}
 
 	/**
 	 *
-	 * @return The Rotation that is flipped about the x and y axis
+	 * @return The Rotation2D that is flipped about the x and y axis
 	 */
-	public Rotation flip() {
-		return new Rotation(-cos, -sin);
+	public Rotation2D flip() {
+		return new Rotation2D(-cos, -sin);
 	}
 
 	/**
@@ -114,11 +116,11 @@ public class Rotation implements Interpolable<Rotation> {
 	/**
 	 *
 	 * @param rotationMat
-	 *            Multiply this Rotation by this specified Rotation
+	 *            Multiply this Rotation2D by this specified Rotation
 	 * @return The multiplied Rotation
 	 */
-	public Rotation rotateBy(Rotation rotationMat) {
-		return new Rotation(cos * rotationMat.cos() - sin * rotationMat.sin(),
+	public Rotation2D rotateBy(Rotation2D rotationMat) {
+		return new Rotation2D(cos * rotationMat.cos() - sin * rotationMat.sin(),
 				sin * rotationMat.cos() + cos * rotationMat.sin(), true);
 	}
 

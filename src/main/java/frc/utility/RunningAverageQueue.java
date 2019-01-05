@@ -1,6 +1,9 @@
-package org.usfirst.frc.team3476.utility;
+// Copyright 2019 FRC Team 3476 Code Orange
+
+package frc.utility;
 
 public class RunningAverageQueue {
+	
 	private int end;
 	private final int size;
 	private double[] data;

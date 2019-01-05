@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility;
 
 import java.util.Arrays;
@@ -14,7 +16,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class OrangeUtility {
-
+	
 	public static boolean checkMotors(double output, double expectedCurrent, double expectedRPM,
 			double expectedPosition, LazyTalonSRX sensorTalon, LazyTalonSRX... talons) {
 		boolean success = true;

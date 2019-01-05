@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility.math;
 
 /**
@@ -6,7 +8,6 @@ package frc.utility.math;
  * @param <T>
  *            Class that implements this interface
  */
-
 public interface Interpolable<T> {
 
 	/**

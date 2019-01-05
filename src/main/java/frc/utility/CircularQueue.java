@@ -1,14 +1,16 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.utility;
 
 import frc.utility.math.Interpolable;
 import frc.utility.math.InterpolablePair;
 
+/**
+ * NOT thread safe. This class assumes the data added is sorted! It has
+ * O(1)insertion (only able to insert at end) and O(n log n) search
+ */
 public class CircularQueue<T extends Interpolable<T>> {
-	/**
-	 * NOT thread safe. This class assumes the data added is sorted! It has
-	 * O(1)insertion (only able to insert at end) and O(n log n) search
-	 */
-
+	
 	private InterpolablePair<T>[] queue;
 	private long back;
 	public final int size;
