@@ -113,13 +113,13 @@ public class Path {
 	public void processPoints() {
 		if (endAngle != null) {
 			Segment lastSegment = segments.get(segments.size() - 1);
-			Rotation2DangleOfPath = lastSegment.getStart().getAngle(lastSegment.getEnd());
-			Rotation2DrotatedEndAngle = angleOfPath.inverse().rotateBy(endAngle);
+			Rotation2D angleOfPath = lastSegment.getStart().getAngle(lastSegment.getEnd());
+			Rotation2D rotatedEndAngle = angleOfPath.inverse().rotateBy(endAngle);
 			boolean rotateLeft = rotatedEndAngle.sin() > 0;
 
-			Translation2D finalSegmentStart = new Translation2D(Constants.MinimumTurningRadius, 0)
+			Translation2D finalSegmentStart = new Translation2D(Constants.MinTurningRadius, 0)
 					.rotateBy(endAngle.flip());
-			Translation2D secondSegmentStart = finalSegmentStart.rotateBy(Rotation.fromDegrees(rotateLeft ? 90 : -90));
+			Translation2D secondSegmentStart = finalSegmentStart.rotateBy(Rotation2D.fromDegrees(rotateLeft ? 90 : -90));
 			// The two points we potentially add
 			finalSegmentStart = finalSegmentStart.translateBy(lastSegment.getEnd());
 			secondSegmentStart = secondSegmentStart.translateBy(finalSegmentStart);

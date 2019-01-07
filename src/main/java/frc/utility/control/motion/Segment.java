@@ -91,7 +91,7 @@ public class Segment {
 
 	/**
 	 *
-	 * @return Maximum speed for the path segment.
+	 * @return Max speed for the path segment.
 	 */
 	public double getMaxSpeed() {
 		return maxSpeed;

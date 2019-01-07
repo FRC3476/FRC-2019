@@ -79,7 +79,7 @@ public class Rotation2D implements Interpolable<Rotation> {
 	@Override
 	public Rotation2D interpolate(Rotation2D other, double percentage) {
 		Rotation2D diff = inverse().rotateBy(other);
-		return rotateBy(Rotation.fromRadians(diff.getRadians() * percentage));
+		return rotateBy(Rotation2D.fromRadians(diff.getRadians() * percentage));
 	}
 
 	/**

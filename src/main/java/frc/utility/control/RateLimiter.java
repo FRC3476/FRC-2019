@@ -22,10 +22,10 @@ public class RateLimiter {
 	/**
 	 *
 	 * @param accel
-	 *            Maximum acceleration in units with an arbitrary time unit. The
+	 *            Max acceleration in units with an arbitrary time unit. The
 	 *            units match whatever you send in update()
 	 * @param jerk
-	 *            Maximum jerk in units with an arbitrary time unit. The units
+	 *            Max jerk in units with an arbitrary time unit. The units
 	 *            match whatever you send in update()
 	 */
 	public RateLimiter(double accel, double jerk) {
