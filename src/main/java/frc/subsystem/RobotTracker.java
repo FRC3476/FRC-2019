@@ -1,13 +1,13 @@
 // Copyright 2019 FRC Team 3476 Code Orange
 
-package org.usfirst.frc.team3476.subsystem;
+package frc.subsystem;
 
-import org.usfirst.frc.team3476.utility.CircularQueue;
-import org.usfirst.frc.team3476.utility.Threaded;
-import org.usfirst.frc.team3476.utility.math.InterpolablePair;
-import org.usfirst.frc.team3476.utility.math.RigidTransform;
-import org.usfirst.frc.team3476.utility.math.Rotation;
-import org.usfirst.frc.team3476.utility.math.Translation2d;
+import frc.utility.CircularQueue;
+import frc.utility.Threaded;
+import frc.utility.math.InterpolablePair;
+import frc.utility.math.RigidTransform2D;
+import frc.utility.math.Rotation2D;
+import frc.utility.math.Translation2D;
 
 public class RobotTracker extends Threaded {
 

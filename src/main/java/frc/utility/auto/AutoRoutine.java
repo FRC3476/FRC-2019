@@ -1,4 +1,6 @@
-package org.usfirst.frc.team3476.utility.auto;
+// Copyright 2019 FRC Team 3476 Code Orange
+
+package frc.utility.auto;
 
 import java.util.ArrayList;
 import java.util.Arrays;

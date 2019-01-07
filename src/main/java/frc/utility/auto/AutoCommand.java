@@ -1,4 +1,6 @@
-package org.usfirst.frc.team3476.utility.auto;
+// Copyright 2019 FRC Team 3476 Code Orange
+
+package frc.utility.auto;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
@@ -25,5 +27,4 @@ public abstract class AutoCommand {
 	public void setBlocking(boolean isBlocking) {
 		this.isBlocking = isBlocking;
 	}
-
 }

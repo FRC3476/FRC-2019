@@ -1,16 +1,16 @@
 // Copyright 2019 FRC Team 3476 Code Orange
 
-package org.usfirst.frc.team3476.subsystem;
+package frc.subsystem;
 
-import org.usfirst.frc.team3476.robot.Constants;
-import org.usfirst.frc.team3476.utility.LazyTalonSRX;
-import org.usfirst.frc.team3476.utility.OrangeUtility;
-import org.usfirst.frc.team3476.utility.Threaded;
-import org.usfirst.frc.team3476.utility.control.RateLimiter;
-import org.usfirst.frc.team3476.utility.control.SynchronousPid;
-import org.usfirst.frc.team3476.utility.control.motion.Path;
-import org.usfirst.frc.team3476.utility.control.motion.PurePursuitController;
-import org.usfirst.frc.team3476.utility.math.Rotation;
+import frc.robot.Constants;
+import frc.utility.LazyTalonSRX;
+import frc.utility.OrangeUtility;
+import frc.utility.Threaded;
+import frc.utility.control.RateLimiter;
+import frc.utility.control.SynchronousPid;
+import frc.utility.control.motion.Path;
+import frc.utility.control.motion.PurePursuitController;
+import frc.utility.math.Rotation2D;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;

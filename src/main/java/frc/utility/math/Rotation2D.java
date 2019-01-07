@@ -5,7 +5,7 @@ package frc.utility.math;
 /**
  * Stores a cos and sin that is used like a rotation matrix
  */
-public class Rotation2D implements Interpolable<Rotation> {
+public class Rotation2D implements Interpolable<Rotation2D> {
 
 	/**
 	 * Gets a Rotation2D from a specified degree
