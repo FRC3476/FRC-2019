@@ -313,33 +313,33 @@ public class Drive extends Threaded {
 	}
 
 	public double getLeftDistance() {
-		return leftTalon.getSelectedSensorPosition(0) / Constants.SensorTicksPerMotorRotation * Constants.WheelDiameter
+		return leftTalon.getSelectedSensorPosition(0) / Constants.EncoderTicksPerRotation * Constants.WheelDiameter
 				* Math.PI * 22d / 62d / 3d;
 	}
 
 	public double getRightDistance() {
-		return rightTalon.getSelectedSensorPosition(0) / Constants.SensorTicksPerMotorRotation * Constants.WheelDiameter
+		return rightTalon.getSelectedSensorPosition(0) / Constants.EncoderTicksPerRotation * Constants.WheelDiameter
 				* Math.PI * 22d / 62d / 3d;
 	}
 
 	public double getSpeed() {
 		return ((leftTalon.getSelectedSensorVelocity(0) + rightTalon.getSelectedSensorVelocity(0))
-				/ Constants.SensorTicksPerMotorRotation) / 10 / 2 * Constants.WheelDiameter * Math.PI;
+				/ Constants.EncoderTicksPerRotation) / 10 / 2 * Constants.WheelDiameter * Math.PI;
 	}
 
 	public double getLeftSpeed() {
-		return leftTalon.getSelectedSensorVelocity(0) / Constants.SensorTicksPerMotorRotation * 10
+		return leftTalon.getSelectedSensorVelocity(0) / Constants.EncoderTicksPerRotation * 10
 				* Constants.WheelDiameter * Math.PI * 22d / 62d / 3d;
 	}
 
 	public double getRightSpeed() {
-		return rightTalon.getSelectedSensorVelocity(0) / Constants.SensorTicksPerMotorRotation * 10
+		return rightTalon.getSelectedSensorVelocity(0) / Constants.EncoderTicksPerRotation * 10
 				* Constants.WheelDiameter * Math.PI * 22d / 62d / 3d;
 	}
 
 	public double scaleJoystickValues(double rawValue) {
-		return Math.copySign(OrangeUtility.coercedNormalize(Math.abs(rawValue), Constants.MinimumControllerInput,
-				Constants.MaximumControllerInput, Constants.MinimumControllerOutput, Constants.MaximumControllerOutput),
+		return Math.copySign(OrangeUtility.coercedNormalize(Math.abs(rawValue), Constants.MinControllerInput,
+				Constants.MaxControllerInput, Constants.MinControllerOutput, Constants.MaxControllerOutput),
 				rawValue);
 	}
 

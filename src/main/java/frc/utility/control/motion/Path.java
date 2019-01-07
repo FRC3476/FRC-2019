@@ -10,7 +10,7 @@ import java.util.List;
 import frc.robot.Constants;
 import frc.utility.auto.AutoCommand;
 import frc.utility.auto.AutoRoutine;
-import frc.utility.math.Rotation;
+import frc.utility.math.Rotation2D;
 import frc.utility.math.Translation2D;
 
 /**

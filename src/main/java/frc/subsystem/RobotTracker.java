@@ -17,19 +17,19 @@ public class RobotTracker extends Threaded {
 		return RobotTracker.trackingInstance;
 	}
 
-	private OrangeDrive driveBase;
-	private RigidTransform currentOdometry;
-	private CircularQueue<RigidTransform> vehicleHistory;
-	private CircularQueue<Rotation> gyroHistory;
+	private Drive driveBase;
+	private RigidTransform2D currentOdometry;
+	private CircularQueue<RigidTransform2D> vehicleHistory;
+	private CircularQueue<Rotation2D> gyroHistory;
 
 	private double currentDistance, oldDistance, deltaDistance;
-	private Rotation rotationOffset;
-	private Translation2d translationOffset;
+	private Rotation2D rotationOffset;
+	private Translation2D translationOffset;
 
 	private RobotTracker() {
 		vehicleHistory = new CircularQueue<>(100);
 		gyroHistory = new CircularQueue<>(200);
-		driveBase = OrangeDrive.getInstance();
+		driveBase = Drive.getInstance();
 		currentOdometry = new RigidTransform2D(new Translation2D(), driveBase.getGyroAngle());
 		rotationOffset = Rotation2D.fromDegrees(0);
 		translationOffset = new Translation2D();
@@ -72,7 +72,7 @@ public class RobotTracker extends Threaded {
 		Rotation2D deltaRotation = driveBase.getGyroAngle().inverse().rotateBy(rotationOffset);
 		synchronized (this) {
 			deltaRotation = currentOdometry.rotationMat.inverse().rotateBy(deltaRotation);
-			Rotation2D halfRotation = Rotation.fromRadians(deltaRotation.getRadians() / 2.0);
+			Rotation2D halfRotation = Rotation2D.fromRadians(deltaRotation.getRadians() / 2.0);
 			currentOdometry = currentOdometry
 					.transform(new RigidTransform2D(deltaPosition.rotateBy(halfRotation), deltaRotation));
 			vehicleHistory.add(new InterpolablePair<>(System.nanoTime(), currentOdometry));

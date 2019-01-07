@@ -10,7 +10,7 @@ import frc.utility.OrangeUtility;
 import frc.utility.control.RateLimiter;
 import frc.utility.control.SynchronousPid;
 import frc.utility.control.motion.Path.DrivingData;
-import frc.utility.math.RigidTransform;
+import frc.utility.math.RigidTransform2D;
 import frc.utility.math.Translation2D;
 
 public class PurePursuitController {
@@ -43,7 +43,7 @@ public class PurePursuitController {
 	@SuppressWarnings("unchecked")
 	public synchronized AutoDriveSignal calculate(RigidTransform2D robotPose) {
 		if (isReversed) {
-			robotPose = new RigidTransform(robotPose.translationMat, robotPose.rotationMat.flip());
+			robotPose = new RigidTransform2D(robotPose.translationMat, robotPose.rotationMat.flip());
 		}
 		double lookAheadDist = OrangeUtility.coercedNormalize(speedProfiler.getLatestValue(), Constants.MinPathSpeed,
 				Constants.MaxPathSpeed, Constants.MinLookAheadDistance, Constants.MaxLookAheadDistance);
