@@ -35,7 +35,9 @@ public final class Constants {
 	public static final double EncoderTicksPerRotation = 4096;
 	public static final double ExpectedCurrentTolerance = 0;
 	public static final double ExpectedRPMTolerance = 0;
-  public static final double ExpectedPositionTolerance = 0;
+	public static final double ExpectedPositionTolerance = 0;
+	public static final int xAxisJoystick = 4;
+	public static final int yAxisJoystick = 1;
 
 	// Autonomous Driving
 	public static final double TrackRadius = 12;
@@ -84,6 +86,21 @@ public final class Constants {
 	public static final double ExpectedDriveCurrent = 1.5;
 	public static final double ExpectedDriveRPM = 0;
 	public static final double ExpectedDrivePosition = 0;
+
+	//Elevator
+	public static final double HighElevatorHomeSpeed = 100;
+	public static final double MidElevatorHomeSpeed = 50;
+	public static final double LowElevatorHomeSpeed = 10;
+	public static final double ElevatorInchesPerMotorRotation = 8;
+	public static final double ElevatorTicksPerInch = 512;
+
+	public static final double LowElevatorAmps = 0;
+	public static final double MaxElevatorAmps = 25;
+
+	public static final int ELevatorIntegralZone = 1000;
+	public static final double kElevatorP = 0.125;
+	public static final double kElevatorI = 0.0;
+	public static final double kElevatorD = 0.0;
 
 	private Constants() {
 	}
