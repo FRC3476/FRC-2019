@@ -16,6 +16,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import com.revrobotics.*;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
@@ -78,7 +82,29 @@ public class Drive extends Threaded {
 	private Rotation2D wantedHeading;
 	private volatile double driveMultiplier;
 
+	private CANSparkMax leftSpark, rightSpark, leftSparkSlave, rightSparkSlave, leftSparkSlave2, rightSparkSlave2;
+  	private CANPIDController leftSparkPID, rightSparkPID;
+  	private CANEncoder leftSparkEncoder, rightSparkEncoder;
+
 	private Drive() {
+		leftSpark = new CANSparkMax(0, MotorType.kBrushless);
+		leftSparkSlave = new CANSparkMax(0, MotorType.kBrushless);
+		rightSparkSlave = new CANSparkMax(0, MotorType.kBrushless);
+		leftSparkSlave = new CANSparkMax(0, MotorType.kBrushless);
+		rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
+		leftSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
+
+		leftSparkPID = leftSpark.getPIDController();
+		rightSparkPID = rightSpark.getPIDController();
+		leftSparkEncoder = leftSpark.getEncoder();
+		rightSparkEncoder = rightSpark.getEncoder();
+		
+		rightSparkSlave.follow(rightSpark);
+		leftSparkSlave.follow(leftSpark);
+		leftSparkSlave2.follow(leftSpark);
+		rightSparkSlave2.follow(rightSpark);
+
+
 		shifter = new Solenoid(Constants.DriveShifterId);
 		leftTalon = new LazyTalonSRX(Constants.LeftMasterDriveId);
 		rightTalon = new LazyTalonSRX(Constants.RightMasterDriveId);
@@ -106,6 +132,7 @@ public class Drive extends Threaded {
 	}
 
 	private void configAuto() {
+		/*
 		rightTalon.config_kP(0, Constants.kRightAutoP, 10);
 		rightTalon.config_kD(0, Constants.kRightAutoD, 10);
 		rightTalon.config_kF(0, Constants.kRightAutoF, 10);
@@ -115,8 +142,18 @@ public class Drive extends Threaded {
 		driveMultiplier = Constants.HighDriveSpeed;
 		rightTalon.configClosedloopRamp(12d / 200d, 10);
 		leftTalon.configClosedloopRamp(12d / 200d, 10);
-		
+		*/
 		//System.out.println(rightTalon.)
+		rightSparkPID.setP(Constants.kRightAutoP, 0);
+		rightSparkPID.setD(Constants.kRightAutoD, 0);
+		rightSparkPID.setFF(Constants.kRightAutoF);
+
+		leftSparkPID.setP(Constants.kLeftAutoP, 0);
+		leftSparkPID.setD(Constants.kLeftAutoD, 0);
+		leftSparkPID.setFF(Constants.kLeftAutoF);
+		
+
+		
 	}
 
 	private void configHigh() {
@@ -270,6 +307,14 @@ public class Drive extends Threaded {
 	}
 
 	private void configMotors() {
+		leftSparkSlave.follow(leftSpark);
+		rightSparkSlave.follow(rightSpark);
+
+		leftSpark.setIdleMode(IdleMode.kBrake);
+		rightSpark.setIdleMode(IdleMode.kBrake);
+		leftSparkSlave.setIdleMode(IdleMode.kBrake);
+		rightSparkSlave.setIdleMode(IdleMode.kBrake);
+		/*
 		leftSlaveTalon.set(ControlMode.Follower, Constants.LeftMasterDriveId);
 		leftSlave2Talon.set(ControlMode.Follower, Constants.LeftMasterDriveId);
 		rightSlaveTalon.set(ControlMode.Follower, Constants.RightMasterDriveId);
@@ -293,6 +338,8 @@ public class Drive extends Threaded {
 		leftSlaveTalon.setNeutralMode(NeutralMode.Brake);
 		rightSlave2Talon.setNeutralMode(NeutralMode.Brake);
 		leftSlave2Talon.setNeutralMode(NeutralMode.Brake);
+		*/
+		
 	}
 
 	public void resetMotionProfile() {
@@ -385,8 +432,11 @@ public class Drive extends Threaded {
 				* (62d / 22d) * 3d;
 		double rightSetpoint = (setVelocity.leftVelocity) * 4096 / (Constants.WheelDiameter * Math.PI * 10) * (62 / 22d)
 				* 3d;
-		leftTalon.set(ControlMode.Velocity, leftSetpoint);
-		rightTalon.set(ControlMode.Velocity, rightSetpoint);
+		//leftTalon.set(ControlMode.Velocity, leftSetpoint);
+		//rightTalon.set(ControlMode.Velocity, rightSetpoint);
+		leftSparkPID.setReference(leftSetpoint, ControlType.kPosition);
+		rightSparkPID.setReference(rightSetpoint, ControlType.kPosition);
+
 	}
 
 	public synchronized void setSimpleDrive(boolean setting) {
