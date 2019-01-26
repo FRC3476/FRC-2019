@@ -59,9 +59,8 @@ public class Elevator extends Threaded {
 		while(getPulledCurrent()<Constants.MaxElevatorAmps){
 		elevMaster.set(ControlMode.Velocity, Constants.HighElevatorHomeSpeed*Constants.ElevatorTicksPerInch);
 		}
-
-		setHeight(10);
-		OrangeUtility.sleep(200);
+		elevMaster.set(ControlMode.PercentOutput, 0);
+		OrangeUtility.sleep(50);
 
 		/*while(getPulledCurrent()<Constants.MaxElevatorAmps){
 			elevMaster.set(ControlMode.Velocity, Constants.MidElevatorHomeSpeed*Constants.ElevatorTicksPerInch);
