@@ -87,7 +87,10 @@ public final class Constants {
 	public static final double ExpectedDriveRPM = 0;
 	public static final double ExpectedDrivePosition = 0;
 
-	//Elevator
+	//Intake
+	public static final int IntakeSolenoidId = 10;//Random number for now
+
+	//Elevator										
 	public static final double HighElevatorHomeSpeed = 100;
 	public static final double MidElevatorHomeSpeed = 50;
 	public static final double LowElevatorHomeSpeed = 10;

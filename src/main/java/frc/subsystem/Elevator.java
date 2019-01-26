@@ -63,7 +63,7 @@ public class Elevator extends Threaded {
 		setHeight(10);
 		OrangeUtility.sleep(200);
 
-		while(getPulledCurrent()<Constants.MaxElevatorAmps){
+		/*while(getPulledCurrent()<Constants.MaxElevatorAmps){
 			elevMaster.set(ControlMode.Velocity, Constants.MidElevatorHomeSpeed*Constants.ElevatorTicksPerInch);
 		}
 
@@ -72,7 +72,7 @@ public class Elevator extends Threaded {
 
 		while(getPulledCurrent()<Constants.MaxElevatorAmps){
 			elevMaster.set(ControlMode.Velocity, Constants.LowElevatorHomeSpeed*Constants.ElevatorTicksPerInch);
-		}
+		}*/
 		
 		elevMaster.setSelectedSensorPosition(0,0,10);//Zero out the encoder
 	}
