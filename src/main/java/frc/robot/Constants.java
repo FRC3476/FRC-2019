@@ -16,6 +16,8 @@ public final class Constants {
 	public static final boolean OldIntake = false;
 	public static final int Intake1Id = 22;
 	public static final int Intake2Id = 23;
+	public static final int IntakeSolenoid30PsiId = 4;
+	public static final int IntakeSolenoid60PsiId = 1;
 
 	public static final int ElevatorMotorId = 24;
 	public static final int ElevatorSlaveMotorId = 25;
@@ -49,7 +51,7 @@ public final class Constants {
 	public static final double MinPathSpeed = 20;
 	public static final double MaxPathSpeed = 120;
 	public static final double MinLookAheadDistance = 14;
-  public static final double MaxLookAheadDistance = 30;
+ 	public static final double MaxLookAheadDistance = 30;
   
   // Subsystems
 
