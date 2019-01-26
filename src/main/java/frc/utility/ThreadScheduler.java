@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -35,7 +36,11 @@ public class ThreadScheduler implements Runnable {
 			if (!paused) {
 				synchronized (this) {
 					for (Schedule schedule : schedules) {
-						schedule.executeIfReady();
+						/*if (schedule.removeNextFrame) {
+							safeRemove(schedule);
+						} else {*/
+							schedule.executeIfReady();
+						//}
 					}
 				}
 			}
@@ -59,9 +64,18 @@ public class ThreadScheduler implements Runnable {
 		isRunning = false;
 	}
 
+	/*public void remove(Schedule schedule) {
+		schedule.removeNextFrame = true;
+	}
+
+	private void safeRemove(Schedule schedule) {
+		schedules.remove(schedule);
+	}*/
+
 	private static class Schedule {
 		Threaded task;
 		public long taskTime;
+		//boolean removeNextFrame;
 		ExecutorService thread;
 
 		private Schedule(Threaded task, ExecutorService thread) {
