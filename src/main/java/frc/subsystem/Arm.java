@@ -4,11 +4,9 @@ package frc.subsystem;
 
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
-import frc.utility.OrangeUtility;
 import frc.utility.Threaded;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class Arm extends Threaded {
 
@@ -23,30 +21,12 @@ public class Arm extends Threaded {
 
 	private Arm() {
 		armTalon = new LazyTalonSRX(Constants.ArmId);
-		armTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
-			Constants.ArmFeedbackSensorPidIdx, Constants.ArmTimeoutMs);
-		setEncoderFromPWM(); 
-		armTalon.config_kP(Constants.ArmFeedbackSensorPidIdx, Constants.ArmConfigKP,
-			Constants.ArmTimeoutMs);
-		armTalon.config_kI(Constants.ArmFeedbackSensorPidIdx, Constants.ArmConfigKI, 
-			Constants.ArmTimeoutMs);
-		armTalon.config_kD(Constants.ArmFeedbackSensorPidIdx, Constants.ArmConfigKD, 
-			Constants.ArmTimeoutMs);
 		armTalon.setSensorPhase(false);
 		armTalon.setInverted(false);
   }
 
 	public void setPercentOutput(double output) {
 		armTalon.set(ControlMode.PercentOutput, output);
-	}
-
-	protected void setEncoderPosition(int position) {
-		armTalon.setSelectedSensorPosition(position, Constants.ArmFeedbackSensorPidIdx, 
-			Constants.ArmTimeoutMs);
-	}
-
-	public int getEncoderPosition() {
-		return armTalon.getSelectedSensorPosition(Constants.ArmFeedbackSensorPidIdx);
 	}
 
 	protected void setAngle(double angle) {
@@ -78,28 +58,8 @@ public class Arm extends Threaded {
 		return armTalon.getOutputCurrent();
 	}
 
-	public boolean checkSubsytem() {
-		return OrangeUtility.checkMotors(0.05, Constants.ExpectedArmCurrent, Constants.ExpectedArmRPM,
-			Constants.ExpectedArmPosition, armTalon, armTalon);
-	}
+	@Override 
+	public void update () {
 
-	public void setEncoderFromPWM() {
-		// Value becomes negative when we set it for some reason
-		armTalon.getSensorCollection().setQuadraturePosition(
-			(getPWMPosition() + (int) (Constants.ArmDownDegrees * (1d / 360) * 
-			Constants.SensorTicksPerMotorRotation)), Constants.ArmTimeoutMs);
-	}
-
-	public int getPWMPosition() {
-		int pwmValue = armTalon.getSensorCollection().getPulseWidthPosition();
-		pwmValue -= Constants.PracticeBotArmTicksOffset;
-		pwmValue %= Constants.SensorTicksPerMotorRotation;
-		pwmValue += (pwmValue < 0 ? Constants.SensorTicksPerMotorRotation : 0);
-		return pwmValue;
-	}
-
-	@Override
-	public void update() {
-	  
 	}
 }
