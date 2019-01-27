@@ -89,6 +89,8 @@ public final class Constants {
 
 	//Intake
 	public static final int IntakeSolenoidId = 10;//Random number for now
+	public static final double IntakeMediumRPM = 700;//Random number for now
+	public static final double IntakeFastRPM = 700;//Random number for now
 
 	//Elevator										
 	public static final double HighElevatorHomeSpeed = 100;
