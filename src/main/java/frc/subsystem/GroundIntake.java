@@ -20,7 +20,7 @@ public class GroundIntake extends Threaded {
 		intakeState = IntakeState.NEUTRAL;
 	}
 	
-	private static final GroundIntake getInstance() {
+	public static final GroundIntake getInstance() {
 		return instance;
 	}
 
