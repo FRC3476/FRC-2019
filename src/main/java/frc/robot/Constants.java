@@ -60,6 +60,9 @@ public final class Constants {
 	public static final double ExpectedArmPosition = 0;
 	public static final double ArmDownDegrees = -38;
 	public static final int PracticeBotArmTicksOffset = 4007;//4000;
+	public static final double LowArmAmps = 0;
+	public static final double HighArmAmps = 25;
+	public static final double ArmHomingSpeed = 0.5;
 
   // Drive
 	public static final double HighDriveSpeed = 185;
@@ -105,9 +108,6 @@ public final class Constants {
 	public static final int IntakeSolenoidId = 10;//Random number for now
 	public static final double IntakeMediumRPM = 700;//Random number for now
 	public static final double IntakeFastRPM = 700;//Random number for now
-
-	//Turret
-	public static final int TurretMotorId = 3;
 
 	//Intake
 	public static final int Intake1Id = 22;

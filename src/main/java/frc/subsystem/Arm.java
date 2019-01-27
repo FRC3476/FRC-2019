@@ -58,6 +58,12 @@ public class Arm extends Threaded {
 		return armTalon.getOutputCurrent();
 	}
 
+	public void armHome(){
+		while(getOutputCurrent()<Constants.HighArmAmps){
+			armTalon.set(ControlMode.PercentOutput, Constants.ArmHomingSpeed);
+		}
+	}
+
 	@Override 
 	public void update () {}
 }
