@@ -2,18 +2,14 @@ package frc.subsystem;
 
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
-import frc.utility.OrangeUtility;
-import frc.utility.Threaded;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Intake{
     private static LazyTalonSRX leftTalon;
     private static LazyTalonSRX rightTalon;
-    private static Solenoid intakeSolenoid60Psi;
+    private static Solenoid intakeSolenoid;
 
     //Stop wheels from spinning
     public static void stop(){
@@ -25,8 +21,7 @@ public class Intake{
         if(dir == OuttakeDirection.LEFT){
             rightTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed);
             leftTalon.set(ControlMode.PercentOutput, Constants.LowIntakeSpeed);
-        }
-        else if(dir == OuttakeDirection.RIGHT){
+        } else if (dir == OuttakeDirection.RIGHT){
             rightTalon.set(ControlMode.PercentOutput, Constants.LowIntakeSpeed);
             leftTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed);
         }
@@ -34,40 +29,37 @@ public class Intake{
 
     //Outtake the ball or hatch straight
     public static void setStraightOuttake(IntakeState hatchBall){
-        if(hatchBall==IntakeState.HATCH){
+        if (hatchBall == IntakeState.HATCH_OUTTAKE){
             leftTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed);
-            rightTalon.set(ControlMode.PercentOutput, -1*Constants.NormalIntakeSpeed);
-        }
-        else if(hatchBall==IntakeState.BALL){
-            leftTalon.set(ControlMode.PercentOutput, -1*Constants.NormalIntakeSpeed);
+            rightTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalIntakeSpeed);
+        } else if(hatchBall == IntakeState.BALL_OUTTAKE){
+            leftTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalIntakeSpeed);
             rightTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed);          
         }
     }
 
-    //Intakes Hatch or Ball depending on the inputed enum
+    // Intakes Hatch or Ball depending on the inputed enum
     public static void setIntake(IntakeState hatchBall){
 
-        //Close intake and spin wheels inward 
-        if(hatchBall==IntakeState.HATCH){
-            intakeSolenoid60Psi.set(false);
-            leftTalon.set(ControlMode.PercentOutput, -1*Constants.NormalIntakeSpeed);
+        // Close intake and spin wheels inward 
+        if (hatchBall == IntakeState.HATCH_INTAKE){
+            intakeSolenoid.set(false);
+            leftTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalIntakeSpeed);
             rightTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed); 
-        } 
-
-        //Open intake and spin wheels outward
-        else if(hatchBall==IntakeState.BALL){
-            intakeSolenoid60Psi.set(true);
+        } // Open intake and spin wheels outward
+        else if (hatchBall == IntakeState.BALL_INTAKE) { 
+            intakeSolenoid.set(true);
             leftTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed);
-            rightTalon.set(ControlMode.PercentOutput, -1*Constants.NormalIntakeSpeed);
+            rightTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalIntakeSpeed);
         }
     }
 
     public enum IntakeState{
-        HATCH,BALL,INTAKE,OUTTAKE
+        HATCH_INTAKE, BALL_INTAKE, HATCH_OUTTAKE, BALL_OUTTAKE
     }
 
     public enum OuttakeDirection{
-        LEFT,RIGHT
+        LEFT, RIGHT
     }
 
 
@@ -75,6 +67,6 @@ public class Intake{
         //Initialize variables
         leftTalon = new LazyTalonSRX(Constants.Intake1Id);
         rightTalon = new LazyTalonSRX(Constants.Intake2Id);
-        intakeSolenoid60Psi = new Solenoid(Constants.IntakeSolenoidId);
+        intakeSolenoid = new Solenoid(Constants.IntakeSolenoidId);
     }
 }
