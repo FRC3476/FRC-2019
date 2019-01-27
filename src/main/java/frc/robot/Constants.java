@@ -112,6 +112,7 @@ public final class Constants {
 	public static final int Intake2Id = 23;
 	public static final int IntakeSolenoid30PsiId = 4;
 	public static final int IntakeSolenoid60PsiId = 1;
+	public static final double IntakeSpeed = 0.75; 
 
 	//Elevator										
 	public static final double HighElevatorHomeSpeed = 100;
