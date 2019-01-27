@@ -65,15 +65,22 @@ public class Elevator extends Threaded {
 			Constants.TimeoutMs);
 	}
 
-	public void setHeightState (int level) {
-		if (level == 0) {
-			elevHome ();
-		} else if (level == 1 || level == 2) {
-			setHeight (level == 1 ? Constants.ElevatorPositionMiddle 
-								  : Constants.ElevatorPositionHigh);
-		} else {
-			System.out.println ("Error: tried to set elevator height state to a nonexistent level.");
+	public void setHeightState (ElevatorHeight level) {
+		switch (level) {
+			case Base:
+				elevHome ();
+				break;
+			case Middle:
+				setHeight (Constants.ElevatorPositionMiddle);
+				break;
+			case Top:
+				setHeight (Constants.ElevatorPositionHigh);
+				break;
 		}
+	}
+
+	public enum ElevatorHeight {
+		Base, Middle, Top
 	}
 
 	@Override
