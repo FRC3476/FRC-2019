@@ -2,6 +2,9 @@ package frc.robot;
 
 public final class Constants {
 
+	// Other
+	public static final int SensorTicksPerMotorRotation = 4096;
+
 	// CAN IDs
 	public static final int LeftMasterDriveId = 16;
 	public static final int LeftSlaveDriveId = 15;
@@ -13,13 +16,15 @@ public final class Constants {
 	public static final boolean OldIntake = false;
 	public static final int Intake1Id = 22;
 	public static final int Intake2Id = 23;
+	public static final int IntakeSolenoid30PsiId = 4;
+	public static final int IntakeSolenoid60PsiId = 1;
 
 	public static final int ElevatorMotorId = 24;
 	public static final int ElevatorSlaveMotorId = 25;
 	public static final int ArmId = 30;
 
 	public static final int Climber1TalonId = 21;
-  public static final int Climber2TalonId = 26;
+  	public static final int Climber2TalonId = 26;
   
   // PCM IDs
   public static final int DriveShifterId = 0;
@@ -46,12 +51,25 @@ public final class Constants {
 	public static final double MinPathSpeed = 20;
 	public static final double MaxPathSpeed = 120;
 	public static final double MinLookAheadDistance = 14;
-  public static final double MaxLookAheadDistance = 30;
+ 	public static final double MaxLookAheadDistance = 30;
   
   // Subsystems
+
+  // Arm
+	public static final int ArmFeedbackSensorPidIdx = 0;
+	public static final int ArmTimeoutMs = 10;
+	public static final double ArmConfigKP = 6;
+	public static final double ArmConfigKI = 0.0;
+	public static final double ArmConfigKD = 2;
+	public static final double ExpectedArmCurrent = 0;
+	public static final double ExpectedArmRPM = 0;
+	public static final double ExpectedArmPosition = 0;
+	public static final double ArmDownDegrees = -38;
+	public static final int PracticeBotArmTicksOffset = 4007;//4000;
+
   // Drive
 	public static final double HighDriveSpeed = 185;
-  public static final double LowDriveSpeed = 95;
+  	public static final double LowDriveSpeed = 95;
   
 	public static final double kRightHighP = 0.02;
 	public static final double kRightHighD = 0;
@@ -88,6 +106,7 @@ public final class Constants {
 	public static final double ExpectedDrivePosition = 0;
 
 	//Intake
+
 	public static final int IntakeSolenoidId = 10;//Random number for now
 	public static final double IntakeMediumRPM = 700;//Random number for now
 	public static final double IntakeFastRPM = 700;//Random number for now
