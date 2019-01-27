@@ -55,7 +55,7 @@ public class Elevator extends Threaded {
 	}
 
 	public void elevHome () {
-		while (getPulledCurrent () < Constants.MaxElevatorAmps){
+		while (getPulledCurrent () < Constants.MaxElevatorAmps) {
 			elevMaster.set (ControlMode.Velocity, Constants.HighElevatorHomeSpeed 
 				* Constants.ElevatorTicksPerInch);
 		}
@@ -63,6 +63,17 @@ public class Elevator extends Threaded {
 		OrangeUtility.sleep (50);
 		elevMaster.setSelectedSensorPosition (0, Constants.ElevatorSensorPidIdx, 
 			Constants.TimeoutMs);
+	}
+
+	public void setHeightState (int level) {
+		if (level == 0) {
+			elevHome ();
+		} else if (level == 1 || level == 2) {
+			setHeight (level == 1 ? Constants.ElevatorPositionMiddle 
+								  : Constants.ElevatorPositionHigh);
+		} else {
+			System.out.println ("Error: tried to set elevator height state to a nonexistent level.");
+		}
 	}
 
 	@Override
