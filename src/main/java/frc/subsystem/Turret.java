@@ -9,8 +9,6 @@ import frc.utility.Threaded;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Turret extends Threaded {
-	private LazyTalonSRX turrentTalon = new LazyTalonSRX(Constants.TurretMotorId);
-	
 
 	private LazyTalonSRX turretTalon;
 
@@ -31,28 +29,23 @@ public class Turret extends Threaded {
 	}
 
 	protected void setAngle(double angle) {
-		turretTalon.set(ControlMode.Position, angle * (1d / 360) *
-			Constants.SensorTicksPerMotorRotation);
+		turretTalon.set(ControlMode.Position, angle * Constants.TurretConversionValue2);
 	}
 
 	public void setSpeed(double speed) {
-		turretTalon.set(ControlMode.Velocity, speed * (1d / 360) *
-			Constants.SensorTicksPerMotorRotation);
+		turretTalon.set(ControlMode.Velocity, speed * Constants.TurretConversionValue2);
 	}
 
 	public double getSpeed() {
-		return turretTalon.getSelectedSensorVelocity(0) * 360 * 
-			(1d / Constants.SensorTicksPerMotorRotation);
+		return turretTalon.getSelectedSensorVelocity(0) * Constants.TurretConversionValue;
 	}
 
 	public double getAngle() {
-		return turretTalon.getSelectedSensorPosition(0) * 360 * 
-			(1d / Constants.SensorTicksPerMotorRotation);
+		return turretTalon.getSelectedSensorPosition(0) * Constants.TurretConversionValue;
 	}
 
 	public double getTargetAngle() {
-		return turretTalon.getSetpoint() * 360 * 
-			(1d / Constants.SensorTicksPerMotorRotation);
+		return turretTalon.getSetpoint() * Constants.TurretConversionValue;
 	}
 
 	public double getOutputCurrent() {

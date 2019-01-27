@@ -139,6 +139,10 @@ public final class Constants {
 
 // Turret
 	public static final int TurretMotorId = 2; // Replace with port ID
+	public static final double TurretConversionValue = 
+		360 * (1d / SensorTicksPerMotorRotation);
+	public static final double TurretConversionValue2 = 
+		(1d / 360) * SensorTicksPerMotorRotation; // Figure out the difference between the two!
 	private Constants() {
 	}
 }
