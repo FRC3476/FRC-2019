@@ -12,47 +12,46 @@ public class Turret extends Threaded {
 
 	private LazyTalonSRX turretTalon;
 
-	private static final Turret instance = new Turret();
+	private static final Turret instance = new Turret ();
 
-	public static Turret getInstance() {
+	public static Turret getInstance () {
 		return instance;
 	}
 
-	private Turret() {
-		turretTalon = new LazyTalonSRX(Constants.TurretMotorId);
-		turretTalon.setSensorPhase(false);
-		turretTalon.setInverted(false);
+	private Turret () {
+		turretTalon = new LazyTalonSRX (Constants.TurretMotorId);
+		turretTalon.setSensorPhase (false);
+		turretTalon.setInverted (false);
   }
 
-	public void setPercentOutput(double output) {
-		turretTalon.set(ControlMode.PercentOutput, output);
+	public void setPercentOutput (double output) {
+		turretTalon.set (ControlMode.PercentOutput, output);
 	}
 
-	protected void setAngle(double angle) {
-		turretTalon.set(ControlMode.Position, angle * Constants.TurretConversionValue2);
+	protected void setAngle (double angle) {
+		turretTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
 	}
 
-	public void setSpeed(double speed) {
-		turretTalon.set(ControlMode.Velocity, speed * Constants.TurretConversionValue2);
+	public void setSpeed (double speed) {
+		turretTalon.set (ControlMode.Velocity, speed * Constants.AngleConversionRate2);
 	}
 
-	public double getSpeed() {
-		return turretTalon.getSelectedSensorVelocity(0) * Constants.TurretConversionValue;
+	public double getSpeed () {
+		return turretTalon.getSelectedSensorVelocity (Constants.TurretMotorId) * Constants.AngleConversionRate;
 	}
 
-	public double getAngle() {
-		return turretTalon.getSelectedSensorPosition(0) * Constants.TurretConversionValue;
+	public double getAngle () {
+		return turretTalon.getSelectedSensorPosition (Constants.TurretMotorId) * Constants.AngleConversionRate;
 	}
 
-	public double getTargetAngle() {
-		return turretTalon.getSetpoint() * Constants.TurretConversionValue;
+	public double getTargetAngle () {
+		return turretTalon.getSetpoint () * Constants.AngleConversionRate;
 	}
 
-	public double getOutputCurrent() {
-		return turretTalon.getOutputCurrent();
+	public double getOutputCurrent () {
+		return turretTalon.getOutputCurrent ();
 	}
-
 
 	@Override
-	public void update() {}
+	public void update () {}
 }

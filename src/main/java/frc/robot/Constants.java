@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.robot;
 
 public final class Constants {
@@ -105,14 +107,13 @@ public final class Constants {
 	// Ground Intake	
 	public static final double IntakeMotorPercentOutputIntake = -1;
 	public static final double IntakeMotorPercentOutputOuttake = 0.275;
-	public static final int IntakeSolenoidId = 10;//Random number for now
 	public static final double IntakeMediumRPM = 700;//Random number for now
 	public static final double IntakeFastRPM = 700;//Random number for now
 
 	//Intake
 	public static final int Intake1Id = 22;
 	public static final int Intake2Id = 23;
-	public static final int IntakeSolenoid30PsiId = 4;
+	public static final int IntakeSolenoidId = 4;
 	public static final double NormalIntakeSpeed = 0.75;//75% 
 	public static final double LowIntakeSpeed = 0.50;//50%
 
@@ -139,9 +140,9 @@ public final class Constants {
 
 // Turret
 	public static final int TurretMotorId = 2; // Replace with port ID
-	public static final double TurretConversionValue = 
+	public static final double AngleConversionRate = 
 		360 * (1d / SensorTicksPerMotorRotation);
-	public static final double TurretConversionValue2 = 
+	public static final double AngleConversionRate2 = 
 		(1d / 360) * SensorTicksPerMotorRotation; // Figure out the difference between the two!
 	private Constants() {
 	}

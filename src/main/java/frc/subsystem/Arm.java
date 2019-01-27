@@ -13,53 +13,48 @@ public class Arm extends Threaded {
 	private LazyTalonSRX armTalon;
 	protected long homeStartTime;
 
-	private static final Arm instance = new Arm();
+	private static final Arm instance = new Arm ();
 
-	public static Arm getInstance() {
+	public static Arm getInstance () {
 		return instance;
 	}
 
-	private Arm() {
-		armTalon = new LazyTalonSRX(Constants.ArmId);
-		armTalon.setSensorPhase(false);
-		armTalon.setInverted(false);
+	private Arm () {
+		armTalon = new LazyTalonSRX (Constants.ArmId);
+		armTalon.setSensorPhase (false);
+		armTalon.setInverted (false);
   	}
 
-	public void setPercentOutput(double output) {
-		armTalon.set(ControlMode.PercentOutput, output);
+	public void setPercentOutput (double output) {
+		armTalon.set (ControlMode.PercentOutput, output);
 	}
 
-	protected void setAngle(double angle) {
-		armTalon.set(ControlMode.Position, angle * (1d / 360) *
-			Constants.SensorTicksPerMotorRotation);
+	protected void setAngle (double angle) {
+		armTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
 	}
 
-	public void setSpeed(double speed) {
-		armTalon.set(ControlMode.Velocity, speed * (1d / 360) *
-			Constants.SensorTicksPerMotorRotation);
+	public void setSpeed (double speed) {
+		armTalon.set (ControlMode.Velocity, speed * Constants.AngleConversionRate2);
 	}
 
-	public double getSpeed() {
-		return armTalon.getSelectedSensorVelocity(0) * 360 * 
-			(1d / Constants.SensorTicksPerMotorRotation);
+	public double getSpeed () {
+		return armTalon.getSelectedSensorVelocity (0) * Constants.AngleConversionRate;
 	}
 
-	public double getAngle() {
-		return armTalon.getSelectedSensorPosition(0) * 360 * 
-			(1d / Constants.SensorTicksPerMotorRotation);
+	public double getAngle () {
+		return armTalon.getSelectedSensorPosition (0) * Constants.AngleConversionRate;
 	}
 
-	public double getTargetAngle() {
-		return armTalon.getSetpoint() * 360 * 
-			(1d / Constants.SensorTicksPerMotorRotation);
+	public double getTargetAngle () {
+		return armTalon.getSetpoint () * Constants.AngleConversionRate;
 	}
 
-	public double getOutputCurrent() {
-		return armTalon.getOutputCurrent();
+	public double getOutputCurrent () {
+		return armTalon.getOutputCurrent ();
 	}
 
-	public void armHome(){
-		while(getOutputCurrent()<Constants.HighArmAmps){
+	public void armHome () {
+		while (getOutputCurrent () < Constants.HighArmAmps) {
 			armTalon.set(ControlMode.PercentOutput, Constants.ArmHomingSpeed);
 		}
 	}
