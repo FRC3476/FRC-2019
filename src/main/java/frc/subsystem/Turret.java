@@ -12,6 +12,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Turret extends Threaded {
+	private LazyTalonSRX turrentTalon = new LazyTalonSRX(Constants.TurretMotorId);
+	
 
 	private static final Turret instance = new Turret();
 

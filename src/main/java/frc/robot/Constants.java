@@ -106,12 +106,15 @@ public final class Constants {
 	public static final double IntakeMediumRPM = 700;//Random number for now
 	public static final double IntakeFastRPM = 700;//Random number for now
 
+	//Turret
+	public static final int TurretMotorId = 3;
+
 	//Intake
 	public static final int Intake1Id = 22;
 	public static final int Intake2Id = 23;
 	public static final int IntakeSolenoid30PsiId = 4;
-	public static final int IntakeSolenoid60PsiId = 1;
-	public static final double IntakeSpeed = 0.75; 
+	public static final double NormalIntakeSpeed = 0.75;//75% 
+	public static final double LowIntakeSpeed = 0.50;//50%
 
 	//Elevator										
 	public static final double HighElevatorHomeSpeed = 100;
