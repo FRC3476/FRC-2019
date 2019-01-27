@@ -13,8 +13,6 @@ public final class Constants {
 	public static final int RightSlaveDriveId = 12;
 	public static final int RightSlave2DriveId = 13;
 
-	public static final boolean OldIntake = false;
-
 	public static final int ElevatorMotorId = 24;
 	public static final int ElevatorSlaveMotorId = 25;
 	public static final int ArmId = 30;
@@ -101,8 +99,9 @@ public final class Constants {
 	public static final double ExpectedDriveRPM = 0;
 	public static final double ExpectedDrivePosition = 0;
 
-	
-
+	// Ground Intake	
+	public static final double IntakeMotorPercentOutputIntake = -1;
+	public static final double IntakeMotorPercentOutputOuttake = 0.275;
 	public static final int IntakeSolenoidId = 10;//Random number for now
 	public static final double IntakeMediumRPM = 700;//Random number for now
 	public static final double IntakeFastRPM = 700;//Random number for now
