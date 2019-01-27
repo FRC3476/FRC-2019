@@ -48,10 +48,10 @@ public final class Constants {
  	public static final double MaxLookAheadDistance = 30;
   
   // Subsystems
+  public static final int TimeoutMs = 10;
 
   // Arm
 	public static final int ArmFeedbackSensorPidIdx = 0;
-	public static final int ArmTimeoutMs = 10;
 	public static final double ArmConfigKP = 6;
 	public static final double ArmConfigKI = 0.0;
 	public static final double ArmConfigKD = 2;
@@ -122,6 +122,7 @@ public final class Constants {
 	public static final double LowElevatorHomeSpeed = 10;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 512;
+	public static final int ElevatorSensorPidIdx = 0;
 
 	public static final double LowElevatorAmps = 0;
 	public static final double MaxElevatorAmps = 25;
@@ -131,6 +132,13 @@ public final class Constants {
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.0;
 
+	public static final double HatchPanelHeight = 2 + (1 / 6); // The height of each hatch panel
+	public static final double ElevatorPositionDefault = 1 + (7 / 12);
+	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
+	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
+
+// Turret
+	public static final int TurretMotorId = 2; // Replace with port ID
 	private Constants() {
 	}
 }

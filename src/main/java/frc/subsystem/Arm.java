@@ -23,7 +23,7 @@ public class Arm extends Threaded {
 		armTalon = new LazyTalonSRX(Constants.ArmId);
 		armTalon.setSensorPhase(false);
 		armTalon.setInverted(false);
-  }
+  	}
 
 	public void setPercentOutput(double output) {
 		armTalon.set(ControlMode.PercentOutput, output);
@@ -59,7 +59,5 @@ public class Arm extends Threaded {
 	}
 
 	@Override 
-	public void update () {
-
-	}
+	public void update () {}
 }
