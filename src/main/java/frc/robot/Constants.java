@@ -14,10 +14,6 @@ public final class Constants {
 	public static final int RightSlave2DriveId = 13;
 
 	public static final boolean OldIntake = false;
-	public static final int Intake1Id = 22;
-	public static final int Intake2Id = 23;
-	public static final int IntakeSolenoid30PsiId = 4;
-	public static final int IntakeSolenoid60PsiId = 1;
 
 	public static final int ElevatorMotorId = 24;
 	public static final int ElevatorSlaveMotorId = 25;
@@ -105,11 +101,17 @@ public final class Constants {
 	public static final double ExpectedDriveRPM = 0;
 	public static final double ExpectedDrivePosition = 0;
 
-	//Intake
+	
 
 	public static final int IntakeSolenoidId = 10;//Random number for now
 	public static final double IntakeMediumRPM = 700;//Random number for now
 	public static final double IntakeFastRPM = 700;//Random number for now
+
+	//Intake
+	public static final int Intake1Id = 22;
+	public static final int Intake2Id = 23;
+	public static final int IntakeSolenoid30PsiId = 4;
+	public static final int IntakeSolenoid60PsiId = 1;
 
 	//Elevator										
 	public static final double HighElevatorHomeSpeed = 100;
