@@ -20,9 +20,9 @@ public class Turret extends Threaded {
 	}
 
 	private Turret() {
+		
   }
 
 	@Override
-	public void update() {
-  }
+	public void update() {}
 }

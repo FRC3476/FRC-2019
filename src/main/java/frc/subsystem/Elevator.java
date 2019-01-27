@@ -9,7 +9,6 @@ import frc.utility.Threaded;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Elevator extends Threaded {
 
@@ -24,15 +23,16 @@ public class Elevator extends Threaded {
 
 	//Set PID constants
 	private void configMotors(){
-		elevMaster.config_kP(0, Constants.kElevatorP, 10);
-		elevMaster.config_kI(0, Constants.kElevatorI, 10);
-		elevMaster.config_kD(0, Constants.kElevatorD, 10);
-    	elevMaster.config_IntegralZone(0, Constants.ELevatorIntegralZone, 10);
+		elevMaster.config_kP(0, Constants.kElevatorP, Constants.TimeoutMs);
+		elevMaster.config_kI(0, Constants.kElevatorI, Constants.TimeoutMs);
+		elevMaster.config_kD(0, Constants.kElevatorD, Constants.TimeoutMs);
+    	elevMaster.config_IntegralZone(0, Constants.ELevatorIntegralZone, Constants.TimeoutMs);
 	}
 
 	//Elevator constructor to setup the elevator (zero it in the future with current measurement)
 	private Elevator() {
-		elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
+		elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
+			Constants.ElevatorSensorPidIdx, Constants.TimeoutMs);
 		elevMaster.setInverted(true);
 		elevMaster.setSensorPhase(true);
 		elevHome();
@@ -41,7 +41,8 @@ public class Elevator extends Threaded {
 	
 	//Gets current position of the elevator
 	public double getHeight(){
-		return elevMaster.getSelectedSensorPosition(0) * Constants.ElevatorTicksPerInch;
+		return elevMaster.getSelectedSensorPosition(Constants.ElevatorSensorPidIdx) 
+			* Constants.ElevatorTicksPerInch;
 	}
 
 	//Sets the height of the elevator
@@ -57,7 +58,8 @@ public class Elevator extends Threaded {
 	public void elevHome(){
 
 		while(getPulledCurrent()<Constants.MaxElevatorAmps){
-		elevMaster.set(ControlMode.Velocity, Constants.HighElevatorHomeSpeed*Constants.ElevatorTicksPerInch);
+		elevMaster.set(ControlMode.Velocity, Constants.HighElevatorHomeSpeed 
+			* Constants.ElevatorTicksPerInch);
 		}
 		elevMaster.set(ControlMode.PercentOutput, 0);
 		OrangeUtility.sleep(50);
@@ -73,7 +75,8 @@ public class Elevator extends Threaded {
 			elevMaster.set(ControlMode.Velocity, Constants.LowElevatorHomeSpeed*Constants.ElevatorTicksPerInch);
 		}*/
 		
-		elevMaster.setSelectedSensorPosition(0,0,10);//Zero out the encoder
+		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
+			Constants.TimeoutMs);//Zero out the encoder
 	}
 
 	@Override
