@@ -134,6 +134,8 @@ public final class Constants {
 	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
 	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
 
+// Turret
+	public static final int TurretMotorId = 2; // Replace with port ID
 	private Constants() {
 	}
 }
