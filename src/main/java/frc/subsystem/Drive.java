@@ -72,7 +72,7 @@ public class Drive extends Threaded {
 
 	private boolean drivePercentVbus;
 
-	private ADXRS450_Gyro gyroSensor = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+	private ADXRS450_Gyro gyroSensor;// = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 	private LazyTalonSRX leftTalon, rightTalon, leftSlaveTalon, leftSlave2Talon, rightSlaveTalon, rightSlave2Talon;
 	private PurePursuitController autonomousDriver;
 	private SynchronousPid turnPID;
@@ -87,22 +87,30 @@ public class Drive extends Threaded {
   	private CANEncoder leftSparkEncoder, rightSparkEncoder;
 
 	private Drive() {
-		leftSpark = new CANSparkMax(0, MotorType.kBrushless);
-		leftSparkSlave = new CANSparkMax(0, MotorType.kBrushless);
-		rightSparkSlave = new CANSparkMax(0, MotorType.kBrushless);
-		leftSparkSlave = new CANSparkMax(0, MotorType.kBrushless);
-		rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
-		leftSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
+
+		gyroSensor = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+
+		leftSpark = new CANSparkMax(7, MotorType.kBrushless);
+		leftSparkSlave = new CANSparkMax(8, MotorType.kBrushless);
+		rightSpark = new CANSparkMax(5, MotorType.kBrushless);
+		rightSparkSlave = new CANSparkMax(6, MotorType.kBrushless);
+		//rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
+		//leftSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
+	//	leftSpark.setInverted(true);
+
 
 		leftSparkPID = leftSpark.getPIDController();
 		rightSparkPID = rightSpark.getPIDController();
 		leftSparkEncoder = leftSpark.getEncoder();
 		rightSparkEncoder = rightSpark.getEncoder();
+
+	
+		//leftSparkPID.
 		
-		rightSparkSlave.follow(rightSpark);
-		leftSparkSlave.follow(leftSpark);
-		leftSparkSlave2.follow(leftSpark);
-		rightSparkSlave2.follow(rightSpark);
+		//rightSparkSlave.follow(rightSpark);
+		//leftSparkSlave.follow(leftSpark);
+		//leftSparkSlave2.follow(leftSpark);
+		//rightSparkSlave2.follow(rightSpark);
 
 
 		shifter = new Solenoid(Constants.DriveShifterId);
@@ -131,6 +139,12 @@ public class Drive extends Threaded {
 		configHigh();
 	}
 
+	public void debug() {
+		System.out.println("L enc: " + getLeftDistance()); 
+		System.out.println("R enc: " + getRightDistance()); 
+		System.out.println("Gyro: " + gyroSensor.getAngle()/*getGyroAngle().getDegrees()*/);
+	}
+
 	private void configAuto() {
 		/*
 		rightTalon.config_kP(0, Constants.kRightAutoP, 10);
@@ -147,10 +161,13 @@ public class Drive extends Threaded {
 		rightSparkPID.setP(Constants.kRightAutoP, 0);
 		rightSparkPID.setD(Constants.kRightAutoD, 0);
 		rightSparkPID.setFF(Constants.kRightAutoF);
+		rightSparkPID.setOutputRange(-1, 1);
+
 
 		leftSparkPID.setP(Constants.kLeftAutoP, 0);
 		leftSparkPID.setD(Constants.kLeftAutoD, 0);
 		leftSparkPID.setFF(Constants.kLeftAutoF);
+		leftSparkPID.setOutputRange(-1, 1);
 		
 
 		
@@ -309,11 +326,11 @@ public class Drive extends Threaded {
 	private void configMotors() {
 		leftSparkSlave.follow(leftSpark);
 		rightSparkSlave.follow(rightSpark);
-
+		
 		leftSpark.setIdleMode(IdleMode.kBrake);
 		rightSpark.setIdleMode(IdleMode.kBrake);
 		leftSparkSlave.setIdleMode(IdleMode.kBrake);
-		rightSparkSlave.setIdleMode(IdleMode.kBrake);
+		rightSparkSlave.setIdleMode(IdleMode.kBrake); 
 		/*
 		leftSlaveTalon.set(ControlMode.Follower, Constants.LeftMasterDriveId);
 		leftSlave2Talon.set(ControlMode.Follower, Constants.LeftMasterDriveId);
@@ -347,7 +364,7 @@ public class Drive extends Threaded {
 	}
 
 	public double getAngle() {
-		return gyroSensor.getAngle();
+		return -gyroSensor.getAngle();
 	}
 
 	public double getDistance() {
@@ -356,31 +373,37 @@ public class Drive extends Threaded {
 
 	public Rotation2D getGyroAngle() {
 		// -180 through 180
-		return Rotation2D.fromDegrees(gyroSensor.getAngle());
+		return Rotation2D.fromDegrees(-gyroSensor.getAngle());
 	}
 
-	public double getLeftDistance() {
+	public double getLeftDistance() { 
+		/*
 		return leftTalon.getSelectedSensorPosition(0) / Constants.EncoderTicksPerRotation * Constants.WheelDiameter
 				* Math.PI * 22d / 62d / 3d;
+		*/
+		return -leftSparkEncoder.getPosition() * Constants.WheelDiameter
+		* Math.PI * 22d / 62d / 3d;
 	}
 
 	public double getRightDistance() {
-		return rightTalon.getSelectedSensorPosition(0) / Constants.EncoderTicksPerRotation * Constants.WheelDiameter
-				* Math.PI * 22d / 62d / 3d;
+		//return rightTalon.getSelectedSensorPosition(0) / Constants.EncoderTicksPerRotation * Constants.WheelDiameter
+		//		* Math.PI * 22d / 62d / 3d;
+		return rightSparkEncoder.getPosition() * Constants.WheelDiameter
+		* Math.PI * 22d / 62d / 3d;
 	}
 
 	public double getSpeed() {
-		return ((leftTalon.getSelectedSensorVelocity(0) + rightTalon.getSelectedSensorVelocity(0))
+		return ((-leftSparkEncoder.getVelocity() + rightSparkEncoder.getVelocity())
 				/ Constants.EncoderTicksPerRotation) / 10 / 2 * Constants.WheelDiameter * Math.PI;
 	}
 
 	public double getLeftSpeed() {
-		return leftTalon.getSelectedSensorVelocity(0) / Constants.EncoderTicksPerRotation * 10
+		return -leftSparkEncoder.getVelocity() / Constants.EncoderTicksPerRotation * 10
 				* Constants.WheelDiameter * Math.PI * 22d / 62d / 3d;
 	}
 
 	public double getRightSpeed() {
-		return rightTalon.getSelectedSensorVelocity(0) / Constants.EncoderTicksPerRotation * 10
+		return rightSparkEncoder.getVelocity() / Constants.EncoderTicksPerRotation * 10
 				* Constants.WheelDiameter * Math.PI * 22d / 62d / 3d;
 	}
 
@@ -434,8 +457,9 @@ public class Drive extends Threaded {
 				* 3d;
 		//leftTalon.set(ControlMode.Velocity, leftSetpoint);
 		//rightTalon.set(ControlMode.Velocity, rightSetpoint);
-		leftSparkPID.setReference(leftSetpoint, ControlType.kPosition);
-		rightSparkPID.setReference(rightSetpoint, ControlType.kPosition);
+		leftSparkPID.setReference(-leftSetpoint, ControlType.kVelocity);
+		rightSparkPID.setReference(rightSetpoint, ControlType.kVelocity);
+		System.out.println(leftSetpoint);
 
 	}
 
