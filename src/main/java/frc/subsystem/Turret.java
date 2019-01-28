@@ -9,11 +9,7 @@ import frc.utility.Threaded;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Turret extends Threaded {
-	private LazyTalonSRX turrentTalon = new LazyTalonSRX(Constants.TurretMotorId);
-	
-
 	private LazyTalonSRX turretTalon;
-
 	private static final Turret instance = new Turret();
 
 	public static Turret getInstance() {

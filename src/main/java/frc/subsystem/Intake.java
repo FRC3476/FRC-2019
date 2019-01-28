@@ -1,19 +1,20 @@
 package frc.subsystem;
 
-import frc.robot.Constants;
-import frc.utility.LazyTalonSRX;
-import frc.utility.OrangeUtility;
-import frc.utility.Threaded;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.Solenoid;
+import frc.utility.LazyTalonSRX;
+import frc.robot.Constants;
 
 public class Intake{
+    //Talons objects
     private static LazyTalonSRX leftTalon;
     private static LazyTalonSRX rightTalon;
     private static Solenoid intakeSolenoid60Psi;
+	private static final Intake instance = new Intake();
+
+    public static Intake getInstance(){
+        return instance;
+    }
 
     //Stop wheels from spinning
     public static void stop(){
@@ -21,6 +22,7 @@ public class Intake{
         rightTalon.set(ControlMode.PercentOutput, 0);
     }
 
+    //Outtake to the left or to the right
     public static void setSideOuttake(OuttakeDirection dir){
         if(dir == OuttakeDirection.LEFT){
             rightTalon.set(ControlMode.PercentOutput, Constants.NormalIntakeSpeed);
@@ -71,7 +73,7 @@ public class Intake{
     }
 
 
-    public Intake(){
+    private Intake(){
         //Initialize variables
         leftTalon = new LazyTalonSRX(Constants.Intake1Id);
         rightTalon = new LazyTalonSRX(Constants.Intake2Id);

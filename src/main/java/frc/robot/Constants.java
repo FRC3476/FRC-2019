@@ -51,6 +51,7 @@ public final class Constants {
   public static final int TimeoutMs = 10;
 
   // Arm
+	public static final double ArmLength = 1.5;//ft Just a random number for now
 	public static final int ArmFeedbackSensorPidIdx = 0;
 	public static final double ArmConfigKP = 6;
 	public static final double ArmConfigKI = 0.0;
@@ -58,11 +59,13 @@ public final class Constants {
 	public static final double ExpectedArmCurrent = 0;
 	public static final double ExpectedArmRPM = 0;
 	public static final double ExpectedArmPosition = 0;
-	public static final double ArmDownDegrees = -38;
-	public static final int PracticeBotArmTicksOffset = 4007;//4000;
+	public static final double ArmDownDegreeLimit = -38;
+	public static final double ArmUpperDegreeLimit = 100;
 	public static final double LowArmAmps = 0;
 	public static final double HighArmAmps = 25;
 	public static final double ArmHomingSpeed = 0.5;
+	public static final double ArmLowerAngleLimit = -38;
+	public static final double ArmRotationsPerMotorRotation = 1 / 1.5;
 
   // Drive
 	public static final double HighDriveSpeed = 185;

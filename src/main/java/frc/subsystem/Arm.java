@@ -2,16 +2,16 @@
 
 package frc.subsystem;
 
-import frc.robot.Constants;
+import frc.utility.OrangeUtility;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+import frc.robot.Constants;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Arm extends Threaded {
 
 	private LazyTalonSRX armTalon;
-	protected long homeStartTime;
 
 	private static final Arm instance = new Arm();
 
@@ -19,19 +19,18 @@ public class Arm extends Threaded {
 		return instance;
 	}
 
-	private Arm() {
-		armTalon = new LazyTalonSRX(Constants.ArmId);
-		armTalon.setSensorPhase(false);
-		armTalon.setInverted(false);
-  	}
-
 	public void setPercentOutput(double output) {
 		armTalon.set(ControlMode.PercentOutput, output);
 	}
 
+	//Set angle of arm
 	protected void setAngle(double angle) {
+
+		if(angle>Constants.ArmUpperDegreeLimit || angle<Constants.ArmDownDegreeLimit){}
+
 		armTalon.set(ControlMode.Position, angle * (1d / 360) *
 			Constants.SensorTicksPerMotorRotation);
+		
 	}
 
 	public void setSpeed(double speed) {
@@ -39,11 +38,13 @@ public class Arm extends Threaded {
 			Constants.SensorTicksPerMotorRotation);
 	}
 
+
 	public double getSpeed() {
 		return armTalon.getSelectedSensorVelocity(0) * 360 * 
 			(1d / Constants.SensorTicksPerMotorRotation);
 	}
 
+	//Gets the current angle of the arm
 	public double getAngle() {
 		return armTalon.getSelectedSensorPosition(0) * 360 * 
 			(1d / Constants.SensorTicksPerMotorRotation);
@@ -58,11 +59,22 @@ public class Arm extends Threaded {
 		return armTalon.getOutputCurrent();
 	}
 
+	//Set zero position of the arm
 	public void armHome(){
 		while(getOutputCurrent()<Constants.HighArmAmps){
 			armTalon.set(ControlMode.PercentOutput, Constants.ArmHomingSpeed);
 		}
+
+		armTalon.set(ControlMode.PercentOutput, 0);//Stop arm
+		OrangeUtility.sleep(50);//Sleep for 50 ms
+		armTalon.setSelectedSensorPosition(0,0,10);//Zero encoder
 	}
+
+	private Arm() {
+		armTalon = new LazyTalonSRX(Constants.ArmId);
+		armTalon.setSensorPhase(false);
+		armTalon.setInverted(false);
+  	}
 
 	@Override 
 	public void update () {}
