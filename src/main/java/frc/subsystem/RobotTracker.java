@@ -58,6 +58,8 @@ public class RobotTracker extends Threaded {
 	public void update() {
 		double leftDist = driveBase.getLeftDistance();
 		double rightDist = driveBase.getRightDistance();
+		//System.out.println(leftDist);
+
 		/*
 		 * Solve problem where Talon returns 0 for distance due to an error This
 		 * causes an abnormal deltaPosition
