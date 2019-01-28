@@ -141,7 +141,12 @@ public final class Constants {
 	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
 	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
 
-// Turret
+
+	//Climber
+	public static final int ClimberSpark1 = 3;//Replace with ID
+	public static final int ClimberSpark2 = 5;//Replace with ID
+
+	// Turret
 	public static final int TurretMotorId = 2; // Replace with port ID
 	public static final double AngleConversionRate = 
 		360 * (1d / SensorTicksPerMotorRotation);
