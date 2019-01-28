@@ -121,9 +121,7 @@ public final class Constants {
 	public static final double LowIntakeSpeed = 0.50;//50%
 
 	//Elevator										
-	public static final double HighElevatorHomeSpeed = 100;
-	public static final double MidElevatorHomeSpeed = 50;
-	public static final double LowElevatorHomeSpeed = 10;
+	public static final double ElevatorHomeSpeed = -0.2;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 512;
 	public static final int ElevatorSensorPidIdx = 0;
