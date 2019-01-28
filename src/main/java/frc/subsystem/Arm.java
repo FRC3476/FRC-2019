@@ -50,6 +50,11 @@ public class Arm extends Threaded {
 		return armTalon.getOutputCurrent ();
 	}
 
+	public double getHeight(){
+		double height = Math.cos(getAngle())*Constants.ArmLength;
+		return height;
+	}
+
 	public void armHome () {
 		while (getOutputCurrent () < Constants.HighArmAmps) {
 			armTalon.set(ControlMode.PercentOutput, Constants.ArmHomingSpeed);

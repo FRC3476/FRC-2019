@@ -145,6 +145,7 @@ public final class Constants {
 	//Climber
 	public static final int ClimberSpark1 = 3;//Replace with ID
 	public static final int ClimberSpark2 = 5;//Replace with ID
+	public static final double MaxClimbingTicks = 4000;//Just a random number for now
 
 	// Turret
 	public static final int TurretMotorId = 2; // Replace with port ID
