@@ -24,7 +24,10 @@ public class Arm extends Threaded {
 	}
 
 	protected void setAngle (double angle) {
-		armTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
+		if(angle>Constants.ArmUpperDegreeLimit!=true || angle<Constants.ArmDownDegreeLimit!=true){
+
+			armTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
+		}
 	}
 
 	public void setSpeed (double speed) {
