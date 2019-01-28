@@ -1,6 +1,11 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.robot;
 
 public final class Constants {
+
+	// Other
+	public static final int SensorTicksPerMotorRotation = 4096;
 
 	// CAN IDs
 	public static final int LeftMasterDriveId = 16;
@@ -10,16 +15,12 @@ public final class Constants {
 	public static final int RightSlaveDriveId = 12;
 	public static final int RightSlave2DriveId = 13;
 
-	public static final boolean OldIntake = false;
-	public static final int Intake1Id = 22;
-	public static final int Intake2Id = 23;
-
 	public static final int ElevatorMotorId = 24;
 	public static final int ElevatorSlaveMotorId = 25;
 	public static final int ArmId = 30;
 
 	public static final int Climber1TalonId = 21;
-  public static final int Climber2TalonId = 26;
+  	public static final int Climber2TalonId = 26;
   
   // PCM IDs
   public static final int DriveShifterId = 0;
@@ -46,12 +47,28 @@ public final class Constants {
 	public static final double MinPathSpeed = 20;
 	public static final double MaxPathSpeed = 120;
 	public static final double MinLookAheadDistance = 14;
-  public static final double MaxLookAheadDistance = 30;
+ 	public static final double MaxLookAheadDistance = 30;
   
   // Subsystems
+  public static final int TimeoutMs = 10;
+
+  // Arm
+	public static final int ArmFeedbackSensorPidIdx = 0;
+	public static final double ArmConfigKP = 6;
+	public static final double ArmConfigKI = 0.0;
+	public static final double ArmConfigKD = 2;
+	public static final double ExpectedArmCurrent = 0;
+	public static final double ExpectedArmRPM = 0;
+	public static final double ExpectedArmPosition = 0;
+	public static final double ArmDownDegrees = -38;
+	public static final int PracticeBotArmTicksOffset = 4007;//4000;
+	public static final double LowArmAmps = 0;
+	public static final double HighArmAmps = 25;
+	public static final double ArmHomingSpeed = 0.5;
+
   // Drive
 	public static final double HighDriveSpeed = 185;
-  public static final double LowDriveSpeed = 95;
+  	public static final double LowDriveSpeed = 95;
   
 	public static final double kRightHighP = 0.02;
 	public static final double kRightHighD = 0;
@@ -87,12 +104,26 @@ public final class Constants {
 	public static final double ExpectedDriveRPM = 0;
 	public static final double ExpectedDrivePosition = 0;
 
-	//Elevator
+	// Ground Intake	
+	public static final double IntakeMotorPercentOutputIntake = -1;
+	public static final double IntakeMotorPercentOutputOuttake = 0.275;
+	public static final double IntakeMediumRPM = 700;//Random number for now
+	public static final double IntakeFastRPM = 700;//Random number for now
+
+	//Intake
+	public static final int Intake1Id = 22;
+	public static final int Intake2Id = 23;
+	public static final int IntakeSolenoidId = 4;
+	public static final double NormalIntakeSpeed = 0.75;//75% 
+	public static final double LowIntakeSpeed = 0.50;//50%
+
+	//Elevator										
 	public static final double HighElevatorHomeSpeed = 100;
 	public static final double MidElevatorHomeSpeed = 50;
 	public static final double LowElevatorHomeSpeed = 10;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 512;
+	public static final int ElevatorSensorPidIdx = 0;
 
 	public static final double LowElevatorAmps = 0;
 	public static final double MaxElevatorAmps = 25;
@@ -102,6 +133,17 @@ public final class Constants {
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.0;
 
+	public static final double HatchPanelHeight = 2 + (1 / 6); // The height of each hatch panel
+	public static final double ElevatorPositionDefault = 1 + (7 / 12);
+	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
+	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
+
+// Turret
+	public static final int TurretMotorId = 2; // Replace with port ID
+	public static final double AngleConversionRate = 
+		360 * (1d / SensorTicksPerMotorRotation);
+	public static final double AngleConversionRate2 = 
+		(1d / 360) * SensorTicksPerMotorRotation; // Figure out the difference between the two!
 	private Constants() {
 	}
 }

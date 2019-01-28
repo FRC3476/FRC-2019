@@ -4,25 +4,61 @@ package frc.subsystem;
 
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
-import frc.utility.OrangeUtility;
 import frc.utility.Threaded;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class Arm extends Threaded {
 
-	private static final Arm instance = new Arm();
+	private LazyTalonSRX armTalon;
+	protected long homeStartTime;
 
-	public static Arm getInstance() {
+	private static final Arm instance = new Arm ();
+
+	public static Arm getInstance () {
 		return instance;
 	}
 
-	private Arm() {
-  }
+	private Arm () {
+		armTalon = new LazyTalonSRX (Constants.ArmId);
+		armTalon.setSensorPhase (false);
+		armTalon.setInverted (false);
+  	}
 
-	@Override
-	public void update() {
-  }
+	public void setPercentOutput (double output) {
+		armTalon.set (ControlMode.PercentOutput, output);
+	}
+
+	protected void setAngle (double angle) {
+		armTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
+	}
+
+	public void setSpeed (double speed) {
+		armTalon.set (ControlMode.Velocity, speed * Constants.AngleConversionRate2);
+	}
+
+	public double getSpeed () {
+		return armTalon.getSelectedSensorVelocity (0) * Constants.AngleConversionRate;
+	}
+
+	public double getAngle () {
+		return armTalon.getSelectedSensorPosition (0) * Constants.AngleConversionRate;
+	}
+
+	public double getTargetAngle () {
+		return armTalon.getSetpoint () * Constants.AngleConversionRate;
+	}
+
+	public double getOutputCurrent () {
+		return armTalon.getOutputCurrent ();
+	}
+
+	public void armHome () {
+		while (getOutputCurrent () < Constants.HighArmAmps) {
+			armTalon.set(ControlMode.PercentOutput, Constants.ArmHomingSpeed);
+		}
+	}
+
+	@Override 
+	public void update () {}
 }
