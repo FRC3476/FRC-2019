@@ -151,6 +151,10 @@ public final class Constants {
 	public static final int ClimberSpark2 = 5;//Replace with ID
 	public static final double MaxClimbingTicks = 4000;//Just a random number for now
 
+	//Ball Intake
+	public static final int BallIntakeTalonId = 6;//Random number for now.
+	public static final double BallIntakePercentSpeed = 0.75;//Change when testing or if better idea
+
 	// Turret
 	public static final int TurretMotorId = 2; // Replace with port ID
 	public static final double AngleConversionRate = 
