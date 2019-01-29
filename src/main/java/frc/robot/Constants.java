@@ -53,7 +53,7 @@ public final class Constants {
   public static final int TimeoutMs = 10;
 
   // Arm
-	public static final double ArmLength = 1.5;//ft Just a random number for now
+	public static final double ArmLength = 18;//in Just a random number for now
 	public static final int ArmFeedbackSensorPidIdx = 0;
 	public static final double ArmConfigKP = 6;
 	public static final double ArmConfigKI = 0.0;

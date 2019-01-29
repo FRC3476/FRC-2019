@@ -50,8 +50,15 @@ public class Arm extends Threaded {
 		return armTalon.getOutputCurrent ();
 	}
 
+	//Sets the angle which makes it go at a certain height
+	public void setHeight(double height){
+		double angle = Math.toDegrees(Math.acos(height/Constants.ArmLength));
+		setAngle(angle);
+	}
+
+	//Gets height according to the angle and the length of the arm
 	public double getHeight(){
-		double height = Math.cos(getAngle())*Constants.ArmLength;
+		double height = Math.cos(Math.toRadians(getAngle()))*Constants.ArmLength;
 		return height;
 	}
 
