@@ -23,14 +23,14 @@ public final class Constants {
   	public static final int Climber2TalonId = 26;
   
   // PCM IDs
-  public static final int DriveShifterId = 0;
+ 	 public static final int DriveShifterId = 0;
 
   // Controller
 	public static final double MinControllerInput = 0.15;
 	public static final double MaxControllerInput = 1;
 	public static final double MinControllerOutput = 0;
 	public static final double MaxControllerOutput = 1;
-  public static final double MaxAcceleration = 1000;
+ 	public static final double MaxAcceleration = 1000;
   
   // General
 	public static final double EncoderTicksPerRotation = 4096;
@@ -39,6 +39,10 @@ public final class Constants {
 	public static final double ExpectedPositionTolerance = 0;
 	public static final int xAxisJoystick = 4;
 	public static final int yAxisJoystick = 1;
+	public static final double RocketBaseHeight = 27.5;
+	public static final double RocketMiddleHeight = 55.5;
+	public static final double RocketTopHeight = 83.5;
+
 
 	// Autonomous Driving
 	public static final double TrackRadius = 12;
@@ -61,13 +65,13 @@ public final class Constants {
 	public static final double ExpectedArmCurrent = 0;
 	public static final double ExpectedArmRPM = 0;
 	public static final double ExpectedArmPosition = 0;
-	public static final double ArmDownDegreeLimit = -38;
-	public static final double ArmUpperDegreeLimit = 100;
+	public static final double ArmAngleLimit = 180;
 	public static final double LowArmAmps = 0;
 	public static final double HighArmAmps = 25;
 	public static final double ArmHomingSpeed = 0.5;
-	public static final double ArmLowerAngleLimit = -38;
 	public static final double ArmRotationsPerMotorRotation = 1 / 1.5;
+	public static final double ArmIntakingAngle = 45;//For now	
+	public static final double ExpectedArmAngle = 180;
 
   // Drive
 	public static final double HighDriveSpeed = 185;
@@ -139,6 +143,8 @@ public final class Constants {
 	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
 	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
 
+	public static final double MaxElevatorHeight = 70;//in number for now
+	public static final double ElevatorIntakeHeight = 10;//For now
 
 	//Climber
 	public static final int ClimberSpark1 = 3;//Replace with ID

@@ -24,7 +24,7 @@ public class Arm extends Threaded {
 	}
 
 	protected void setAngle (double angle) {
-		if(angle>Constants.ArmUpperDegreeLimit!=true || angle<Constants.ArmDownDegreeLimit!=true){
+		if(angle<=Constants.ArmAngleLimit){
 
 			armTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
 		}
@@ -52,13 +52,23 @@ public class Arm extends Threaded {
 
 	//Sets the angle which makes it go at a certain height
 	public void setHeight(double height){
-		double angle = Math.toDegrees(Math.acos(height/Constants.ArmLength));
+		double angle = Math.toDegrees(Math.acos(height/-Constants.ArmLength));
 		setAngle(angle);
 	}
 
 	//Gets height according to the angle and the length of the arm
 	public double getHeight(){
-		double height = Math.cos(Math.toRadians(getAngle()))*Constants.ArmLength;
+		double height = Math.cos(Math.toRadians(getAngle()))*-Constants.ArmLength;
+		return height;
+	}
+
+	public double getHeightSetPoint(){
+		double angle = armTalon.getSetpoint()*Constants.AngleConversionRate;
+		return getHeightFromAngle(angle);
+	}
+
+	public double getHeightFromAngle(double angle){
+		double height = Math.cos(Math.toRadians(angle))*-Constants.ArmLength;
 		return height;
 	}
 

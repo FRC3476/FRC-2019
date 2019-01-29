@@ -24,16 +24,14 @@ public class GroundIntake extends Threaded {
 		return instance;
 	}
 
-	public enum IntakeState {
-		INTAKE, OUTTAKE, NEUTRAL
-	}
-
+	//Set the state of the intake
 	public void setIntake (IntakeState intakeState) {
 		synchronized (this) {
 			this.intakeState = intakeState;
 		}
 	}
 
+	//Gets the pulled current
 	public double getCurrent () {
 		return intakeMotor.getOutputCurrent ();
 	}
@@ -41,6 +39,11 @@ public class GroundIntake extends Threaded {
 	public boolean isFinished () {
 		return true;
 	}
+
+	public enum IntakeState {
+		INTAKE, OUTTAKE, NEUTRAL
+	}
+
 
 	@Override
 	public void update () {
