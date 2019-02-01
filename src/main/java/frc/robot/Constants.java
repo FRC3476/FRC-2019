@@ -3,31 +3,30 @@
 package frc.robot;
 
 public final class Constants {
-	
-	// Other
-	public static final int SensorTicksPerMotorRotation = 4096;
-	
+
 	// CAN IDs
-	public static final int LeftMasterDriveId = 16;
-	public static final int LeftSlaveDriveId = 15;
-	public static final int LeftSlave2DriveId = 14;
-	public static final int RightMasterDriveId = 11;
-	public static final int RightSlaveDriveId = 12;
-	public static final int RightSlave2DriveId = 13;
+	public static final int DriveLeftMasterId = 16;
+	public static final int DriveLeftSlave1Id = 15;
+	public static final int DriveLeftSlave2Id = 14;
+	public static final int DriveRightMasterId = 11;
+	public static final int DriveRightSlave1Id = 12;
+	public static final int DriveRightSlave2Id = 13;
+
+	public static final int TurretMotorId = 2;
 	
-	public static final int ElevatorMotorId = 24;
-	public static final int ElevatorSlaveMotorId = 25;
-	public static final int ArmId = 30;
+	public static final int ElevatorMasterId = 24;
+	public static final int ElevatorSlaveId = 25;
 
 	public static final int ManipulatorMotor1Id = 22;
 	public static final int ManipulatorMotor2Id = 23;
+
+	public static final int BallIntakeMasterId = 20;
 	
-	public static final int Climber1TalonId = 21;
-	public static final int Climber2TalonId = 26;
+	public static final int ClimberMasterId = 21;
+	public static final int ClimberSlaveId = 26;
 	
 	// PCM IDs
-	public static final int DriveShifterId = 0;
-
+	public static final int DriveShifterSolenoidId = 0;
 	public static final int ManipulatorSolenoidId = 4;
 	
 	// Controller
@@ -39,14 +38,19 @@ public final class Constants {
 	
 	// General
 	public static final double EncoderTicksPerRotation = 4096;
+	public static final double DegreesPerEncoderTick = 360 * (1d / EncoderTicksPerRotation);
+	public static final double EncoderTicksPerDegree = (1d / 360) * EncoderTicksPerRotation;
+
 	public static final double ExpectedCurrentTolerance = 0;
 	public static final double ExpectedRPMTolerance = 0;
 	public static final double ExpectedPositionTolerance = 0;
-	public static final int xAxisJoystick = 4;
-	public static final int yAxisJoystick = 1;
+
+	// Game
 	public static final double RocketBaseHeight = 27.5;
 	public static final double RocketMiddleHeight = 55.5;
 	public static final double RocketTopHeight = 83.5;
+
+	public static final double HatchPanelHeight = 2 + (1 / 6); // The height of each hatch panel
 	
 	// Autonomous Driving
 	public static final double TrackRadius = 12;
@@ -60,108 +64,82 @@ public final class Constants {
 	// Subsystems
 	public static final int TimeoutMs = 10;
 	
-	// Arm
-	public static final double ArmLength = 18;//in Just a random number for now
-	public static final int ArmFeedbackSensorPidIdx = 0;
-	public static final double ArmConfigKP = 6;
-	public static final double ArmConfigKI = 0.0;
-	public static final double ArmConfigKD = 2;
-	public static final double ExpectedArmCurrent = 0;
-	public static final double ExpectedArmRPM = 0;
-	public static final double ExpectedArmPosition = 0;
-	public static final double ArmAngleLimit = 180;
-	public static final double LowArmAmps = 0;
-	public static final double HighArmAmps = 25;
-	public static final double ArmHomingSpeed = 0.5;
-	public static final double ArmRotationsPerMotorRotation = 1 / 1.5;
-	public static final double ArmIntakingAngle = 45;//For now	
-	public static final double ExpectedArmAngle = 180;
-	
 	// Drive
-	public static final double HighDriveSpeed = 185;
-	public static final double LowDriveSpeed = 95;
+	public static final double DriveHighSpeed = 185;
+	public static final double DriveLowSpeed = 95;
 	
-	public static final double kRightHighP = 0.02;
-	public static final double kRightHighD = 0;
-	public static final double kRightHighF = 0.035;
-	public static final double kRightHighFIntercept = 0;
-	public static final double kRightHighA = 0;
-	public static final double kRightLowP = 0.1;
-	public static final double kRightLowD = 0.1;
-	public static final double kRightLowF = 0.05763730970902943999708309631717;
-	public static final double kRightLowFIntercept = 0;
-	public static final double kRightLowA = 0;
+	public static final double kDriveRightHighP = 0.02;
+	public static final double kDriveRightHighD = 0;
+	public static final double kDriveRightHighF = 0.035;
+	public static final double kDriveRightHighFIntercept = 0;
+	public static final double kDriveRightHighA = 0;
+	public static final double kDriveRightLowP = 0.1;
+	public static final double kDriveRightLowD = 0.1;
+	public static final double kDriveRightLowF = 0.05763730970902943999708309631717;
+	public static final double kDriveRightLowFIntercept = 0;
+	public static final double kDriveRightLowA = 0;
 	
-	public static final double kLeftHighP = 0.0;
-	public static final double kLeftHighD = 0;
-	public static final double kLeftHighF = 0.035;
-	public static final double kLeftHighFIntercept = 0;
-	public static final double kLeftHighA = 0;
-	public static final double kLeftLowP = 0.1;
-	public static final double kLeftLowD = 0;
-	public static final double kLeftLowF = 0.05763730970902943999708309631717;
-	public static final double kLeftLowFIntercept = 0;
-	public static final double kLeftLowA = 0;
+	public static final double kDriveLeftHighP = 0.0;
+	public static final double kDriveLeftHighD = 0;
+	public static final double kDriveLeftHighF = 0.035;
+	public static final double kDriveLeftHighFIntercept = 0;
+	public static final double kDriveLeftHighA = 0;
+	public static final double kDriveLeftLowP = 0.1;
+	public static final double kDriveLeftLowD = 0;
+	public static final double kDriveLeftLowF = 0.05763730970902943999708309631717;
+	public static final double kDriveLeftLowFIntercept = 0;
+	public static final double kDriveLeftLowA = 0;
 	
-	public static final double kRightAutoP = 0.12;
-	public static final double kRightAutoD = 0.7;
-	public static final double kRightAutoF = 0.035;
-	public static final double kLeftAutoP = 0.12;
-	public static final double kLeftAutoD = 0.7;
-	public static final double kLeftAutoF = 0.035;
-	public static final double TeleopAccLimit = 120;
-	public static final double TeleopJerkLimit = 2000;
-	public static final double ExpectedDriveCurrent = 1.5;
-	public static final double ExpectedDriveRPM = 0;
-	public static final double ExpectedDrivePosition = 0;
+	public static final double kDriveRightAutoP = 0.12;
+	public static final double kDriveRightAutoD = 0.7;
+	public static final double kDriveRightAutoF = 0.035;
+	public static final double kDriveLeftAutoP = 0.12;
+	public static final double kDriveLeftAutoD = 0.7;
+	public static final double kDriveLeftAutoF = 0.035;
+	public static final double DriveTeleopAccLimit = 120;
+	public static final double DriveTeleopJerkLimit = 2000;
+	public static final double DriveExpectedCurrent = 1.5;
+	public static final double DriveExpectedRPM = 0;
+	public static final double DriveExpectedPosition = 0;
+
+	// Superstructure
+
+	// Turret
 	
-	// Ground Intake	
-	public static final double IntakeMotorPercentOutputIntake = -1;
-	public static final double IntakeMotorPercentOutputOuttake = 0.275;
-	public static final double IntakeMediumRPM = 700;//Random number for now
-	public static final double IntakeFastRPM = 700;//Random number for now
-	
-	// Manipulator
-	public static final double NormalManipulatorSpeed = 0.75;
-	public static final double LowManipulatorSpeed = 0.50;
-	
-	//Elevator										
+	// Elevator
 	public static final double ElevatorHomeSpeed = -0.2;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 512;
 	public static final int ElevatorSensorPidIdx = 0;
 	
-	public static final double LowElevatorAmps = 0;
-	public static final double MaxElevatorAmps = 25;
+	public static final double ElevatorLowAmps = 0;
+	public static final double ElevatorHighAmps = 25;
 	
 	public static final int ELevatorIntegralZone = 1000;
 	public static final double kElevatorP = 0.125;
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.0;
 	
-	public static final double HatchPanelHeight = 2 + (1 / 6); // The height of each hatch panel
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);
 	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
 	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
 	
-	public static final double MaxElevatorHeight = 70;//in number for now
+	public static final double ElevatorMaxHeight = 70;//in number for now
 	public static final double ElevatorIntakeHeight = 10;//For now
+
+	// Manipulator
+	public static final double ManipulatorNormalSpeed = 0.75;
+	public static final double ManipulatorLowSpeed = 0.50;
+
+	// Ground Ball Intake	
+	public static final double IntakeMotorPercentOutputIntake = -1;
+	public static final double IntakeMotorPercentOutputEject = 0.275;
+	public static final double IntakeMediumRPM = 700; // Random number for now
+	public static final double IntakeFastRPM = 700; // Random number for now
 	
-	//Climber
-	public static final int ClimberSpark1 = 3;//Replace with ID
-	public static final int ClimberSpark2 = 5;//Replace with ID
-	public static final double MaxClimbingTicks = 4000;//Just a random number for now
+	// Climber
+	public static final double ClimberMaxAngle = 90;//Just a random number for now
 	
-	//Ball Intake
-	public static final int BallIntakeTalonId = 6;//Random number for now.
-	public static final double BallIntakePercentSpeed = 0.75;//Change when testing or if better idea
-	
-	// Turret
-	public static final int TurretMotorId = 2; // Replace with port ID
-	public static final double AngleConversionRate = 
-	360 * (1d / SensorTicksPerMotorRotation);
-	public static final double AngleConversionRate2 = 
-	(1d / 360) * SensorTicksPerMotorRotation; // Figure out the difference between the two!
 	private Constants() {
 	}
 }

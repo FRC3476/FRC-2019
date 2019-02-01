@@ -45,23 +45,23 @@ public class Manipulator {
 	// Eject to the left or to the right
 	public static void setSideEject(EjectDirection dir) {
 		if(dir == EjectDirection.LEFT){
-			rightTalon.set(ControlMode.PercentOutput, Constants.NormalManipulatorSpeed);
-			leftTalon.set(ControlMode.PercentOutput, Constants.LowManipulatorSpeed);
+			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
+			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorLowSpeed);
 		}
 		else if(dir == EjectDirection.RIGHT){
-			rightTalon.set(ControlMode.PercentOutput, Constants.LowManipulatorSpeed);
-			leftTalon.set(ControlMode.PercentOutput, Constants.NormalManipulatorSpeed);
+			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorLowSpeed);
+			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
 		}
 	}
 	
 	// Eject the ball or hatch straight
 	public static void setStraightEject(ManipulatorState hatchBall) {
 		if (hatchBall == ManipulatorState.HATCH_EJECT) {
-			leftTalon.set(ControlMode.PercentOutput, Constants.NormalManipulatorSpeed);
-			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalManipulatorSpeed);
+			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
+			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
 		} else if (hatchBall == ManipulatorState.BALL_EJECT) {
-			leftTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalManipulatorSpeed);
-			rightTalon.set(ControlMode.PercentOutput, Constants.NormalManipulatorSpeed);          
+			leftTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
+			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);          
 		}
 	}
 	
@@ -70,13 +70,13 @@ public class Manipulator {
 		if (hatchBall == ManipulatorState.HATCH_INTAKE) {
 			// Close manipulator and spin wheels inward 
 			manipulatorSolenoid.set(false);
-			leftTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalManipulatorSpeed);
-			rightTalon.set(ControlMode.PercentOutput, Constants.NormalManipulatorSpeed); 
+			leftTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
+			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed); 
 		} else if (hatchBall == ManipulatorState.BALL_INTAKE) { 
 			// Open manipulator and spin wheels outward
 			manipulatorSolenoid.set(true);
-			leftTalon.set(ControlMode.PercentOutput, Constants.NormalManipulatorSpeed);
-			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.NormalManipulatorSpeed);
+			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
+			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
 		}
 	}
 }

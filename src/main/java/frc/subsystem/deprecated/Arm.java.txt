@@ -26,24 +26,24 @@ public class Arm extends Threaded {
 	protected void setAngle (double angle) {
 		if(angle<=Constants.ArmAngleLimit){
 
-			armTalon.set (ControlMode.Position, angle * Constants.AngleConversionRate2);
+			armTalon.set (ControlMode.Position, angle * Constants.EncoderTicksPerDegree);
 		}
 	}
 
 	public void setSpeed (double speed) {
-		armTalon.set (ControlMode.Velocity, speed * Constants.AngleConversionRate2);
+		armTalon.set (ControlMode.Velocity, speed * Constants.EncoderTicksPerDegree);
 	}
 
 	public double getSpeed () {
-		return armTalon.getSelectedSensorVelocity (0) * Constants.AngleConversionRate;
+		return armTalon.getSelectedSensorVelocity (0) * Constants.DegreesPerEncoderTick;
 	}
 
 	public double getAngle () {
-		return armTalon.getSelectedSensorPosition (0) * Constants.AngleConversionRate;
+		return armTalon.getSelectedSensorPosition (0) * Constants.DegreesPerEncoderTick;
 	}
 
 	public double getTargetAngle () {
-		return armTalon.getSetpoint () * Constants.AngleConversionRate;
+		return armTalon.getSetpoint () * Constants.DegreesPerEncoderTick;
 	}
 
 	public double getOutputCurrent () {
@@ -63,7 +63,7 @@ public class Arm extends Threaded {
 	}
 
 	public double getHeightSetPoint(){
-		double angle = armTalon.getSetpoint()*Constants.AngleConversionRate;
+		double angle = armTalon.getSetpoint()*Constants.DegreesPerEncoderTick;
 		return getHeightFromAngle(angle);
 	}
 

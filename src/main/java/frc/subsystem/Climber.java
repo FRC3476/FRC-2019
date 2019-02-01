@@ -1,3 +1,5 @@
+// Copyright 2019 FRC Team 3476 Code Orange
+
 package frc.subsystem;
 
 import frc.robot.Constants;
@@ -9,31 +11,31 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.robot.Constants;
 
-public class Climber{
-    private static Climber instance = new Climber();
-    private static CANSparkMax climberMaster;
-    private static CANSparkMax climberSlave;
-    private static CANPIDController climberPID;
-    private static CANEncoder climberEncoder;
+public class Climber {
 
-    //Get instance of the Climber
-    public static Climber getInstance(){
-        return instance;
-    }
+	private static Climber instance = new Climber();
 
-    public static void climb(double value){
-        climberPID.setReference(value, ControlType.kPosition);
-    }
+	public static Climber getInstance() {
+		return instance;
+	}
 
-    public static void configMotors(){
-        climberSlave.follow(climberMaster,true);
-    }
-
-    private Climber(){
-        climberMaster = new CANSparkMax(Constants.ClimberSpark1, MotorType.kBrushless);
-        climberSlave = new CANSparkMax(Constants.ClimberSpark2, MotorType.kBrushless);
-        climberPID = climberMaster.getPIDController();
-        climberEncoder = climberMaster.getEncoder();
-    }
-
+	private static CANSparkMax climberMaster;
+	private static CANSparkMax climberSlave;
+	private static CANPIDController climberPID;
+	private static CANEncoder climberEncoder;
+	
+	private Climber() {
+		climberMaster = new CANSparkMax(Constants.ClimberMasterId, MotorType.kBrushless);
+		climberSlave = new CANSparkMax(Constants.ClimberSlaveId, MotorType.kBrushless);
+		climberPID = climberMaster.getPIDController();
+		climberEncoder = climberMaster.getEncoder();
+	}
+	
+	public static void climb(double value) {
+		climberPID.setReference(value, ControlType.kPosition);
+	}
+	
+	public static void configMotors() {
+		climberSlave.follow(climberMaster, true);
+	}
 }

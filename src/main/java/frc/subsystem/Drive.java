@@ -113,27 +113,27 @@ public class Drive extends Threaded {
 		//rightSparkSlave2.follow(rightSpark);
 
 
-		shifter = new Solenoid(Constants.DriveShifterId);
-		leftTalon = new LazyTalonSRX(Constants.LeftMasterDriveId);
-		rightTalon = new LazyTalonSRX(Constants.RightMasterDriveId);
+		shifter = new Solenoid(Constants.DriveShifterSolenoidId);
+		leftTalon = new LazyTalonSRX(Constants.DriveLeftMasterId);
+		rightTalon = new LazyTalonSRX(Constants.DriveRightMasterId);
 
 		leftTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 		rightTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 10);
 
-		leftSlaveTalon = new LazyTalonSRX(Constants.LeftSlaveDriveId);
-		leftSlave2Talon = new LazyTalonSRX(Constants.LeftSlave2DriveId);
-		rightSlaveTalon = new LazyTalonSRX(Constants.RightSlaveDriveId);
-		rightSlave2Talon = new LazyTalonSRX(Constants.RightSlave2DriveId);
+		leftSlaveTalon = new LazyTalonSRX(Constants.DriveLeftSlave1Id);
+		leftSlave2Talon = new LazyTalonSRX(Constants.DriveLeftSlave2Id);
+		rightSlaveTalon = new LazyTalonSRX(Constants.DriveRightSlave1Id);
+		rightSlave2Talon = new LazyTalonSRX(Constants.DriveRightSlave2Id);
 		configMotors();
 
 		drivePercentVbus = true;
 		driveState = DriveState.TELEOP;
 
 		turnPID = new SynchronousPid(1.0, 0, 1.2, 0); //P=1.0 OR 0.8
-		turnPID.setOutputRange(Constants.HighDriveSpeed, -Constants.HighDriveSpeed);
+		turnPID.setOutputRange(Constants.DriveHighSpeed, -Constants.DriveHighSpeed);
 		turnPID.setSetpoint(0);
 
-		moveProfiler = new RateLimiter(Constants.TeleopAccLimit);
+		moveProfiler = new RateLimiter(Constants.DriveTeleopAccLimit);
 		turnProfiler = new RateLimiter(100);
 
 		configHigh();
@@ -147,26 +147,26 @@ public class Drive extends Threaded {
 
 	private void configAuto() {
 		/*
-		rightTalon.config_kP(0, Constants.kRightAutoP, 10);
-		rightTalon.config_kD(0, Constants.kRightAutoD, 10);
-		rightTalon.config_kF(0, Constants.kRightAutoF, 10);
-		leftTalon.config_kP(0, Constants.kLeftAutoP, 10);
-		leftTalon.config_kD(0, Constants.kRightAutoD, 10);
-		leftTalon.config_kF(0, Constants.kLeftAutoF, 10);
-		driveMultiplier = Constants.HighDriveSpeed;
+		rightTalon.config_kP(0, Constants.kDriveRightAutoP, 10);
+		rightTalon.config_kD(0, Constants.kDriveRightAutoD, 10);
+		rightTalon.config_kF(0, Constants.kDriveRightAutoF, 10);
+		leftTalon.config_kP(0, Constants.kDriveLeftAutoP, 10);
+		leftTalon.config_kD(0, Constants.kDriveRightAutoD, 10);
+		leftTalon.config_kF(0, Constants.kDriveLeftAutoF, 10);
+		driveMultiplier = Constants.DriveHighSpeed;
 		rightTalon.configClosedloopRamp(12d / 200d, 10);
 		leftTalon.configClosedloopRamp(12d / 200d, 10);
 		*/
 		//System.out.println(rightTalon.)
-		rightSparkPID.setP(Constants.kRightAutoP, 0);
-		rightSparkPID.setD(Constants.kRightAutoD, 0);
-		rightSparkPID.setFF(Constants.kRightAutoF);
+		rightSparkPID.setP(Constants.kDriveRightAutoP, 0);
+		rightSparkPID.setD(Constants.kDriveRightAutoD, 0);
+		rightSparkPID.setFF(Constants.kDriveRightAutoF);
 		rightSparkPID.setOutputRange(-1, 1);
 
 
-		leftSparkPID.setP(Constants.kLeftAutoP, 0);
-		leftSparkPID.setD(Constants.kLeftAutoD, 0);
-		leftSparkPID.setFF(Constants.kLeftAutoF);
+		leftSparkPID.setP(Constants.kDriveLeftAutoP, 0);
+		leftSparkPID.setD(Constants.kDriveLeftAutoD, 0);
+		leftSparkPID.setFF(Constants.kDriveLeftAutoF);
 		leftSparkPID.setOutputRange(-1, 1);
 		
 
@@ -174,24 +174,24 @@ public class Drive extends Threaded {
 	}
 
 	private void configHigh() {
-		rightTalon.config_kP(0, Constants.kRightHighP, 10);
-		rightTalon.config_kD(0, Constants.kRightHighD, 10);
-		rightTalon.config_kF(0, Constants.kRightHighF, 10);
+		rightTalon.config_kP(0, Constants.kDriveRightHighP, 10);
+		rightTalon.config_kD(0, Constants.kDriveRightHighD, 10);
+		rightTalon.config_kF(0, Constants.kDriveRightHighF, 10);
 		rightTalon.configClosedloopRamp(12d / 200d, 10);
-		leftTalon.config_kP(0, Constants.kLeftHighP, 10);
-		leftTalon.config_kD(0, Constants.kRightHighD, 10);
-		leftTalon.config_kF(0, Constants.kLeftHighF, 10);
+		leftTalon.config_kP(0, Constants.kDriveLeftHighP, 10);
+		leftTalon.config_kD(0, Constants.kDriveRightHighD, 10);
+		leftTalon.config_kF(0, Constants.kDriveLeftHighF, 10);
 		leftTalon.configClosedloopRamp(12d / 200d, 10);
 
-		driveMultiplier = Constants.HighDriveSpeed;
+		driveMultiplier = Constants.DriveHighSpeed;
 	}
 
 	private void configLow() {
-		rightTalon.config_kP(0, Constants.kRightLowP, 10);
-		rightTalon.config_kF(0, Constants.kRightLowF, 10);
-		leftTalon.config_kP(0, Constants.kLeftLowP, 10);
-		leftTalon.config_kF(0, Constants.kLeftLowF, 10);
-		driveMultiplier = Constants.LowDriveSpeed;
+		rightTalon.config_kP(0, Constants.kDriveRightLowP, 10);
+		rightTalon.config_kF(0, Constants.kDriveRightLowF, 10);
+		leftTalon.config_kP(0, Constants.kDriveLeftLowP, 10);
+		leftTalon.config_kF(0, Constants.kDriveLeftLowF, 10);
+		driveMultiplier = Constants.DriveLowSpeed;
 	}
 
 	public void arcadeDrive(double moveValue, double rotateValue) {
@@ -215,8 +215,8 @@ public class Drive extends Threaded {
 		if (drivePercentVbus) {
 			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		} else {
-			leftMotorSpeed *= Constants.HighDriveSpeed;
-			rightMotorSpeed *= Constants.HighDriveSpeed;
+			leftMotorSpeed *= Constants.DriveHighSpeed;
+			rightMotorSpeed *= Constants.DriveHighSpeed;
 			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		}
 	}
@@ -332,10 +332,10 @@ public class Drive extends Threaded {
 		leftSparkSlave.setIdleMode(IdleMode.kBrake);
 		rightSparkSlave.setIdleMode(IdleMode.kBrake); 
 		/*
-		leftSlaveTalon.set(ControlMode.Follower, Constants.LeftMasterDriveId);
-		leftSlave2Talon.set(ControlMode.Follower, Constants.LeftMasterDriveId);
-		rightSlaveTalon.set(ControlMode.Follower, Constants.RightMasterDriveId);
-		rightSlave2Talon.set(ControlMode.Follower, Constants.RightMasterDriveId);
+		leftSlaveTalon.set(ControlMode.Follower, Constants.DriveLeftMasterId);
+		leftSlave2Talon.set(ControlMode.Follower, Constants.DriveLeftMasterId);
+		rightSlaveTalon.set(ControlMode.Follower, Constants.DriveRightMasterId);
+		rightSlave2Talon.set(ControlMode.Follower, Constants.DriveRightMasterId);
 		setBrakeState(NeutralMode.Brake);
 
 		leftTalon.setInverted(true);
@@ -442,10 +442,10 @@ public class Drive extends Threaded {
 	}
 
 	private void setWheelVelocity(DriveSignal setVelocity) {
-		if (Math.abs(setVelocity.rightVelocity) > Constants.HighDriveSpeed
-				|| Math.abs(setVelocity.leftVelocity) > Constants.HighDriveSpeed) {
+		if (Math.abs(setVelocity.rightVelocity) > Constants.DriveHighSpeed
+				|| Math.abs(setVelocity.leftVelocity) > Constants.DriveHighSpeed) {
 			DriverStation.getInstance();
-			DriverStation.reportError("Velocity set over " + Constants.HighDriveSpeed + " !", false);
+			DriverStation.reportError("Velocity set over " + Constants.DriveHighSpeed + " !", false);
 			return;
 		}
 		// System.out.println("Left: " + setVelocity.leftWheelSpeed + " Speed:"
@@ -500,7 +500,7 @@ public class Drive extends Threaded {
 		System.out.println("error: " + error);
 		deltaSpeed = turnPID.update(error);
 		deltaSpeed = Math.copySign(
-				OrangeUtility.coercedNormalize(Math.abs(deltaSpeed), 0, 180, 0, Constants.HighDriveSpeed), deltaSpeed);
+				OrangeUtility.coercedNormalize(Math.abs(deltaSpeed), 0, 180, 0, Constants.DriveHighSpeed), deltaSpeed);
 		if (Math.abs(error) < 2) {
 			setWheelVelocity(new DriveSignal(0, 0));
 			synchronized (this) {
@@ -542,10 +542,10 @@ public class Drive extends Threaded {
 		// boolean success =
 		boolean success = leftTalon.getSensorCollection().getPulseWidthRiseToRiseUs() == 0;
 		success = rightTalon.getSensorCollection().getPulseWidthRiseToRiseUs() == 0 && success;
-		success = OrangeUtility.checkMotors(.25, Constants.ExpectedDriveCurrent, Constants.ExpectedDriveRPM,
-				Constants.ExpectedDrivePosition, rightTalon, rightTalon, rightSlaveTalon, rightSlave2Talon);
-		success = OrangeUtility.checkMotors(.25, Constants.ExpectedDriveCurrent, Constants.ExpectedDriveRPM,
-				Constants.ExpectedDrivePosition, leftTalon, leftTalon, leftSlaveTalon, leftSlave2Talon) && success;
+		success = OrangeUtility.checkMotors(.25, Constants.DriveExpectedCurrent, Constants.DriveExpectedRPM,
+				Constants.DriveExpectedPosition, rightTalon, rightTalon, rightSlaveTalon, rightSlave2Talon);
+		success = OrangeUtility.checkMotors(.25, Constants.DriveExpectedCurrent, Constants.DriveExpectedRPM,
+				Constants.DriveExpectedPosition, leftTalon, leftTalon, leftSlaveTalon, leftSlave2Talon) && success;
 		configMotors();
 		return success;
 	}
