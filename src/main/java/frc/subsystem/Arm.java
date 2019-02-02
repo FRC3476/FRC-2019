@@ -17,6 +17,7 @@ public class Arm{
         return instance;
     }
 
+    //Punch the arm in or out
     public void punch(SolenoidState state){
         if(state == SolenoidState.IN){
             puncher.set(false);
@@ -28,9 +29,10 @@ public class Arm{
     }
 
 
-    private enum SolenoidState{
+    public enum SolenoidState{
         IN,OUT;
     }
+    
     private Arm(){
         puncher = new Solenoid(Constants.ArmPuncherId);
     }
