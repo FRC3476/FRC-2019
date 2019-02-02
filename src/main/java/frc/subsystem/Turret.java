@@ -24,9 +24,13 @@ public class Turret extends Threaded {
 		turretTalon = new LazyTalonSRX(Constants.TurretMotorId);
 		turretTalon.setSensorPhase(false);
 		turretTalon.setInverted(false);
-		//turretTalon.setSelectedSensorPosition(0,0,10);
-		
 		turretHalleffect = new DigitalInput(Constants.turretLimitId);
+	}
+
+	private void configMotors(){
+		turretTalon.config_kP(0, Constants.kTurretP, Constants.TimeoutMs);
+		turretTalon.config_kI(0, Constants.kTurretI, Constants.TimeoutMs);
+		turretTalon.config_kD(0, Constants.kTurretD, Constants.TimeoutMs);
 	}
 	
 	public void stop(){

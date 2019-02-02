@@ -111,6 +111,9 @@ public final class Constants {
 	public static final int turretLimitId = 8;//Random channel for now
 	public static final int maxTurretHomingAngle = 45;//Random degrees for now
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
+	public static final double kTurretP = 0.125;
+	public static final double kTurretI = 0.0;
+	public static final double kTurretD = 0.0;
 
 	//Arm
 	public static final int ArmPuncherId = 4;//Random id
