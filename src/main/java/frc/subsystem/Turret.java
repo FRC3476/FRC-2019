@@ -37,7 +37,7 @@ public class Turret extends Threaded {
 		turretTalon.set(ControlMode.PercentOutput, output);
 	}
 	
-	protected void setAngle(double angle) {
+	public void setAngle(double angle) {
 		turretTalon.set(ControlMode.Position, angle * Constants.EncoderTicksPerDegree);
 	}
 	
