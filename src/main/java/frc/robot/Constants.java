@@ -112,6 +112,9 @@ public final class Constants {
 	public static final int maxTurretHomingAngle = 45;//Random degrees for now
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
 
+	//Arm
+	public static final int ArmPuncherId = 4;//Random id
+
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.2;
 	public static final double ElevatorInchesPerMotorRotation = 8;
