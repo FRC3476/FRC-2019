@@ -58,7 +58,7 @@ public class Elevator extends Threaded {
 	}
 	
 	public void elevHome() {
-		while (getPulledCurrent() > Constants.ElevatorHighAmps) {
+		while (getPulledCurrent() < Constants.ElevatorStallAmps) {
 			elevMaster.set(ControlMode.PercentOutput,Constants.ElevatorHomeSpeed);
 		}
 		elevMaster.set(ControlMode.PercentOutput, 0);
