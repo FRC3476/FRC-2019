@@ -37,13 +37,13 @@ public class Manipulator {
 	}
 	
 	// Stop wheels from spinning
-	public static void stop() {
+	public void stop() {
 		leftTalon.set(ControlMode.PercentOutput, 0);
 		rightTalon.set(ControlMode.PercentOutput, 0);
 	}
 	
 	// Eject to the left or to the right
-	public static void setSideEject(EjectDirection dir) {
+	public void setSideEject(EjectDirection dir) {
 		if(dir == EjectDirection.LEFT){
 			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
 			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorLowSpeed);
