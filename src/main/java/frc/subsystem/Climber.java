@@ -31,11 +31,11 @@ public class Climber {
 		climberEncoder = climberMaster.getEncoder();
 	}
 	
-	public static void climb(double value) {
+	public void climb(double value) {
 		climberPID.setReference(value, ControlType.kPosition);
 	}
 	
-	public static void configMotors() {
+	public void configMotors() {
 		climberSlave.follow(climberMaster, true);
 	}
 }
