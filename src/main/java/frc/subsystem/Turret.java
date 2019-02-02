@@ -74,7 +74,7 @@ public class Turret extends Threaded {
 				dir*=-1;//Switch direction
 			}
 
-			if(turretHalleffect.isAnalogTrigger()){
+			if(turretHalleffect.get()){
 				stop();
 				turretTalon.setSelectedSensorPosition(0,0,10);//Zero the encoder
 			}
