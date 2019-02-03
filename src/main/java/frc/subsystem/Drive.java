@@ -82,7 +82,7 @@ public class Drive extends Threaded {
 	private Rotation2D wantedHeading;
 	private volatile double driveMultiplier;
 
-	private CANSparkMax leftSpark, rightSpark, leftSparkSlave, rightSparkSlave, leftSparkSlave2, rightSparkSlave2;
+	public CANSparkMax leftSpark, rightSpark, leftSparkSlave, rightSparkSlave, leftSparkSlave2, rightSparkSlave2;
   	private CANPIDController leftSparkPID, rightSparkPID;
   	private CANEncoder leftSparkEncoder, rightSparkEncoder;
 
@@ -96,8 +96,8 @@ public class Drive extends Threaded {
 		rightSparkSlave = new CANSparkMax(6, MotorType.kBrushless);
 		//rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
 		//leftSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
-	//	leftSpark.setInverted(true);
-
+		leftSpark.setInverted(true);
+		
 
 		leftSparkPID = leftSpark.getPIDController();
 		rightSparkPID = rightSpark.getPIDController();
@@ -140,9 +140,19 @@ public class Drive extends Threaded {
 	}
 
 	public void debug() {
-		System.out.println("L enc: " + getLeftDistance()); 
-		System.out.println("R enc: " + getRightDistance()); 
-		System.out.println("Gyro: " + gyroSensor.getAngle()/*getGyroAngle().getDegrees()*/);
+		System.out.println("L enc: " + getLeftDistance()+ " velo " + getLeftSpeed()); 
+		System.out.println("R enc: " + getRightDistance() + " velo " + getRightSpeed()); 
+		System.out.println("Gyro: " + getAngle()/*getGyroAngle().getDegrees()*/);
+	}
+
+	public void debugSpeed() {
+		System.out.println("L speed " +  " actual " + getLeftSpeed());
+		System.out.println("R speed " +   " actual " + getRightSpeed());
+
+	}
+
+	public void setRight() {
+		setWheelVelocity(new DriveSignal(40, 0));
 	}
 
 	private void configAuto() {
@@ -219,6 +229,7 @@ public class Drive extends Threaded {
 			rightMotorSpeed *= Constants.DriveHighSpeed;
 			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		}
+		System.out.println("left motor speed " + leftMotorSpeed);
 	}
 
 	public void calibrateGyro() {
@@ -364,7 +375,7 @@ public class Drive extends Threaded {
 	}
 
 	public double getAngle() {
-		return -gyroSensor.getAngle();
+		return gyroSensor.getAngle();
 	}
 
 	public double getDistance() {
@@ -373,7 +384,7 @@ public class Drive extends Threaded {
 
 	public Rotation2D getGyroAngle() {
 		// -180 through 180
-		return Rotation2D.fromDegrees(-gyroSensor.getAngle());
+		return Rotation2D.fromDegrees(gyroSensor.getAngle());
 	}
 
 	public double getLeftDistance() { 
@@ -393,18 +404,20 @@ public class Drive extends Threaded {
 	}
 
 	public double getSpeed() {
-		return ((-leftSparkEncoder.getVelocity() + rightSparkEncoder.getVelocity())
-				/ Constants.EncoderTicksPerRotation) / 10 / 2 * Constants.WheelDiameter * Math.PI;
+		/*
+		return (-leftSparkEncoder.getVelocity() + rightSparkEncoder.getVelocity())
+		 / 10 / 2 * Constants.WheelDiameter * Math.PI;  */
+		return (getLeftSpeed()+getRightSpeed())/2;
 	}
 
 	public double getLeftSpeed() {
-		return -leftSparkEncoder.getVelocity() / Constants.EncoderTicksPerRotation * 10
-				* Constants.WheelDiameter * Math.PI * 22d / 62d / 3d;
+		return -leftSparkEncoder.getVelocity()  * 2 * Math.PI/60d * Constants.WheelDiameter/2d
+		* 22d / 62d / 3d;
 	}
 
 	public double getRightSpeed() {
-		return rightSparkEncoder.getVelocity() / Constants.EncoderTicksPerRotation * 10
-				* Constants.WheelDiameter * Math.PI * 22d / 62d / 3d;
+		return rightSparkEncoder.getVelocity()  * 2 * Math.PI/60d * Constants.WheelDiameter/2d
+		* 22d / 62d / 3d;
 	}
 
 	public double scaleJoystickValues(double rawValue) {
@@ -437,8 +450,18 @@ public class Drive extends Threaded {
 	}
 
 	private void setWheelPower(DriveSignal setVelocity) {
-		leftTalon.set(ControlMode.PercentOutput, setVelocity.rightVelocity);
-		rightTalon.set(ControlMode.PercentOutput, setVelocity.leftVelocity);
+		//leftTalon.set(ControlMode.PercentOutput, setVelocity.rightVelocity);
+		//rightTalon.set(ControlMode.PercentOutput, setVelocity.leftVelocity);
+		
+		leftSpark.set(setVelocity.leftVelocity);
+		leftSparkSlave.set(setVelocity.leftVelocity);
+		rightSparkSlave.set(setVelocity.rightVelocity);
+
+		rightSpark.set(setVelocity.rightVelocity);
+		//System.out.println("velo: " + setVelocity.leftVelocity);
+
+		//leftSparkPID.setReference(setVelocity.leftVelocity, ControlType.kDutyCycle);
+		//rightSparkPID.setReference(setVelocity.rightVelocity, ControlType.kDutyCycle);
 	}
 
 	private void setWheelVelocity(DriveSignal setVelocity) {
@@ -448,19 +471,20 @@ public class Drive extends Threaded {
 			DriverStation.reportError("Velocity set over " + Constants.DriveHighSpeed + " !", false);
 			return;
 		}
-		// System.out.println("Left: " + setVelocity.leftWheelSpeed + " Speed:"
-		// + getLeftSpeed());
+		// System.out.println("Left: " + setVelocity.leftVelocitsdy + " Speed:"
+		 //+ getLeftSpeed());
 		// inches per sec to rotations per min
-		double leftSetpoint = (setVelocity.rightVelocity) * 4096 / (Constants.WheelDiameter * Math.PI * 10)
-				* (62d / 22d) * 3d;
-		double rightSetpoint = (setVelocity.leftVelocity) * 4096 / (Constants.WheelDiameter * Math.PI * 10) * (62 / 22d)
-				* 3d;
+		double leftSetpoint = (setVelocity.leftVelocity)/(2 * Math.PI * Constants.WheelDiameter/2d) * 60d *
+				 (62d / 22d) * 3d;
+		double rightSetpoint = (setVelocity.rightVelocity)/(2 * Math.PI * Constants.WheelDiameter/2d) * 60d *
+		(62d / 22d) * 3d;
 		//leftTalon.set(ControlMode.Velocity, leftSetpoint);
 		//rightTalon.set(ControlMode.Velocity, rightSetpoint);
-		leftSparkPID.setReference(-leftSetpoint, ControlType.kVelocity);
+		leftSparkPID.setReference(leftSetpoint, ControlType.kVelocity);
 		rightSparkPID.setReference(rightSetpoint, ControlType.kVelocity);
-		System.out.println(leftSetpoint);
-
+		//System.out.println("left rpm: " +leftSetpoint + " right rpm: " + rightSetpoint);
+		System.out.println("L speed " + setVelocity.leftVelocity + " actual " + getLeftSpeed());
+		System.out.println("R speed " + setVelocity.rightVelocity+  " actual " + getRightSpeed());
 	}
 
 	public synchronized void setSimpleDrive(boolean setting) {
@@ -528,6 +552,7 @@ public class Drive extends Threaded {
 			}
 			configHigh();
 		}
+		//System.out.println("signal l:" + signal.command.leftVelocity + " signal R " + signal.command.rightVelocity);
 		setWheelVelocity(signal.command);
 	}
 

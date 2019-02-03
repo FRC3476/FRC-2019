@@ -53,7 +53,7 @@ public final class Constants {
 	public static final double HatchPanelHeight = 2 + (1 / 6); // The height of each hatch panel
 	
 	// Autonomous Driving
-	public static final double TrackRadius = 12;
+	public static final double TrackRadius = -12;
 	public static final double WheelDiameter = 6;
 	public static final double MinTurningRadius = 40;
 	public static final double MinPathSpeed = 20;
@@ -65,7 +65,7 @@ public final class Constants {
 	public static final int TimeoutMs = 10;
 	
 	// Drive
-	public static final double DriveHighSpeed = 185;
+	public static final double DriveHighSpeed = 215;
 	public static final double DriveLowSpeed = 95;
 	
 	public static final double kDriveRightHighP = 0.02;
@@ -90,12 +90,12 @@ public final class Constants {
 	public static final double kDriveLeftLowFIntercept = 0;
 	public static final double kDriveLeftLowA = 0;
 	
-	public static final double kDriveRightAutoP = 0.12;
-	public static final double kDriveRightAutoD = 0.7;
-	public static final double kDriveRightAutoF = 0.035;
-	public static final double kDriveLeftAutoP = 0.12;
-	public static final double kDriveLeftAutoD = 0.7;
-	public static final double kDriveLeftAutoF = 0.035;
+	public static final double kDriveRightAutoP = 0.0; //0.15
+	public static final double kDriveRightAutoD = 0.0; //0.7
+	public static final double kDriveRightAutoF = 0.0; //0.055
+	public static final double kDriveLeftAutoP = 0.0;
+	public static final double kDriveLeftAutoD = 0.0;
+	public static final double kDriveLeftAutoF = 0.0; //0.065 too high
 	public static final double DriveTeleopAccLimit = 120;
 	public static final double DriveTeleopJerkLimit = 2000;
 	public static final double DriveExpectedCurrent = 1.5;

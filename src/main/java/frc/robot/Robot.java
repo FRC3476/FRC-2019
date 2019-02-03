@@ -10,6 +10,7 @@ import frc.subsystem.*;
 import frc.utility.auto.AutoRoutine;
 import frc.utility.math.*;
 import frc.utility.control.motion.Path;
+import edu.wpi.first.wpilibj.Joystick;
 
 
 /**
@@ -23,6 +24,7 @@ public class Robot extends IterativeRobot {
   //OrangeDrive drive = OrangeDrive.getInstance();
   Drive drive = Drive.getInstance();
   RobotTracker rt = RobotTracker.getInstance();
+  Joystick j = new Joystick(0);
 
 
   private static final String kDefaultAuto = "Default";
@@ -73,9 +75,15 @@ public class Robot extends IterativeRobot {
     AutoRoutine ar = new AutoRoutine();
     //ar.addComands(new DriveToPooints)
     Path drivePath = new Path(RobotTracker.getInstance().getOdometry().translationMat);
-    drivePath.addPoint(new Translation2D(10, 0), 40);
-    drivePath.addPoint(new Translation2D(20, 0), 40);
-    drivePath.addPoint(new Translation2D(30, 0), 40);
+    drivePath.addPoint(new Translation2D(10, 0), 80);
+    drivePath.addPoint(new Translation2D(20, 0), 80);
+    //drivePath.addPoint(new Translation2D(10, -5), 45);
+    drivePath.addPoint(new Translation2D(50, 0), 80);
+
+    //drivePath.addPoint(new Translation2D(40, -25), 45);
+    //drivePath.addPoint(new Translation2D(50, 20), 45);
+
+
 
     drive.setAutoPath(drivePath, false);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -104,10 +112,19 @@ public class Robot extends IterativeRobot {
     }
     rt.update();
     drive.update();
+    //drive.setRight();
+    /*
     System.out.println("X : " + rt.getOdometry().translationMat.getX());
     System.out.println("Y : " + rt.getOdometry().translationMat.getY());
     System.out.println("T : " + rt.getOdometry().rotationMat.getDegrees());
+    */
+    //  System.out.println("speed: " + drive.getSpeed());
 
+  }
+
+  @Override 
+  public void teleopInit() {
+    drive.stopMovement();
   }
 
   /**
@@ -115,6 +132,10 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
+      //drive.debug();
+      //drive.leftSpark.set (j.getRawAxis(1));
+     // drive.leftSparkSlave.set(j.getRawAxis(1));
+      drive.arcadeDrive(-j.getRawAxis(5), -j.getRawAxis(4));
       drive.debug();
      // d.getGyroAngle();
   }

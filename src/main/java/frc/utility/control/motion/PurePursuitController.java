@@ -57,6 +57,7 @@ public class PurePursuitController {
 			robotSpeed = 20;
 		}
 		Translation2D robotToLookAhead = getRobotToLookAheadPoint(robotPose, data.lookAheadPoint);
+		//System.out.println("desired point " + robotToLookAhead.getX() + ", " + robotToLookAhead.getY());
 		double radius;
 		radius = getRadius(robotToLookAhead);
 		double delta = (robotSpeed / radius);
