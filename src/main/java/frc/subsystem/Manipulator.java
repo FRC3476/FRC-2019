@@ -37,13 +37,13 @@ public class Manipulator {
 	}
 	
 	// Stop wheels from spinning
-	public static void stop() {
+	public void stop() {
 		leftTalon.set(ControlMode.PercentOutput, 0);
 		rightTalon.set(ControlMode.PercentOutput, 0);
 	}
 	
 	// Eject to the left or to the right
-	public static void setSideEject(EjectDirection dir) {
+	public void setSideEject(EjectDirection dir) {
 		if(dir == EjectDirection.LEFT){
 			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
 			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorLowSpeed);
@@ -55,7 +55,7 @@ public class Manipulator {
 	}
 	
 	// Eject the ball or hatch straight
-	public static void setStraightEject(ManipulatorState hatchBall) {
+	public void setStraightEject(ManipulatorState hatchBall) {
 		if (hatchBall == ManipulatorState.HATCH_EJECT) {
 			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
 			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
@@ -66,7 +66,7 @@ public class Manipulator {
 	}
 	
 	// Intakes Hatch or Ball depending on the inputed enum
-	public static void setIntake(ManipulatorState hatchBall) {
+	public void setIntake(ManipulatorState hatchBall) {
 		if (hatchBall == ManipulatorState.HATCH_INTAKE) {
 			// Close manipulator and spin wheels inward 
 			manipulatorSolenoid.set(false);

@@ -24,6 +24,9 @@ public final class Constants {
 	
 	public static final int ClimberMasterId = 21;
 	public static final int ClimberSlaveId = 26;
+
+	public static final int HatchIntakeMotorId = 5;//Just a random number for now
+	public static final int HatchHandoffId = 7;//Just a random number for now
 	
 	// PCM IDs
 	public static final int DriveShifterSolenoidId = 0;
@@ -105,7 +108,16 @@ public final class Constants {
 	// Superstructure
 
 	// Turret
-	
+	public static final int turretLimitId = 8;//Random channel for now
+	public static final int maxTurretHomingAngle = 45;//Random degrees for now
+	public static final double turretHomingSpeed = 0.2;//Random percent for now
+	public static final double kTurretP = 0.125;
+	public static final double kTurretI = 0.0;
+	public static final double kTurretD = 0.0;
+
+	//Arm
+	public static final int ArmPuncherId = 4;//Random id
+
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.2;
 	public static final double ElevatorInchesPerMotorRotation = 8;
@@ -114,6 +126,7 @@ public final class Constants {
 	
 	public static final double ElevatorLowAmps = 0;
 	public static final double ElevatorHighAmps = 25;
+	public static final double ElevatorStallAmps = 3;
 	
 	public static final int ELevatorIntegralZone = 1000;
 	public static final double kElevatorP = 0.125;
@@ -140,6 +153,13 @@ public final class Constants {
 	// Climber
 	public static final double ClimberMaxAngle = 90;//Just a random number for now
 	
+
+	//HatchIntake
+	public static final double HatchIntakeSpeed = 0.75;//Just a random percent for now
+	public static final double HatchHandoffAngle = 90;
+	public static final double HatchStowAngle = 0;
+	public static final double HatchIntakeAngle = 180;
+
 	private Constants() {
 	}
 }
