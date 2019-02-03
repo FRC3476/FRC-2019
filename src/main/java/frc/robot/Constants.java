@@ -157,6 +157,8 @@ public final class Constants {
 	//HatchIntake
 	public static final double HatchIntakeSpeed = 0.75;//Just a random percent for now
 	public static final double HatchHandoffAngle = 90;
+	public static final double HatchStowAngle = 0;
+	public static final double HatchIntakeAngle = 180;
 
 	private Constants() {
 	}
