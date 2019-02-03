@@ -55,7 +55,7 @@ public class Manipulator {
 	}
 	
 	// Eject the ball or hatch straight
-	public static void setStraightEject(ManipulatorState hatchBall) {
+	public void setStraightEject(ManipulatorState hatchBall) {
 		if (hatchBall == ManipulatorState.HATCH_EJECT) {
 			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
 			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
@@ -66,7 +66,7 @@ public class Manipulator {
 	}
 	
 	// Intakes Hatch or Ball depending on the inputed enum
-	public static void setIntake(ManipulatorState hatchBall) {
+	public void setIntake(ManipulatorState hatchBall) {
 		if (hatchBall == ManipulatorState.HATCH_INTAKE) {
 			// Close manipulator and spin wheels inward 
 			manipulatorSolenoid.set(false);

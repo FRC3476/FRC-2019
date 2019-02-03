@@ -29,13 +29,29 @@ class HatchIntake{
         HatchIntakeMotor.set(ControlMode.PercentOutput, Constants.HatchIntakeSpeed);
     }
 
-    //Handoff the hatch to the Manipulator
-    public void HandoffHatch(){
-        HatchHandoffMotor.set(ControlMode.Position, Constants.HatchHandoffAngle*Constants.DegreesPerEncoderTick);
+    //Set intake hatch state
+    public void setHatchIntake(HatchIntakeState state){
+        switch(state){
+            case STOW:
+                setAngle(Constants.HatchStowAngle);
+                break;
+            
+            case HANDOFF:
+                setAngle(Constants.HatchHandoffAngle);
+                break;
+
+            case INTAKE:
+                setAngle(Constants.HatchIntakeAngle);
+        }
     }
 
-    public void LowerHatchHandoff(){
-        HatchHandoffMotor.set(ControlMode.Position, 0);
+    public void setAngle(double angle){
+        HatchHandoffMotor.set(ControlMode.Position, angle*Constants.EncoderTicksPerDegree);
+    }
+
+
+    public enum HatchIntakeState{
+        STOW,HANDOFF,INTAKE
     }
 
     //Initialize variables
