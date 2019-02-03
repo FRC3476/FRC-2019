@@ -3,6 +3,9 @@
 package frc.robot;
 
 public final class Constants {
+	//Networking
+	public static final int JetsonSocket = 5800;
+	public static final String JetsonIPv4 = "10.34.76.72";
 
 	// CAN IDs
 	public static final int DriveLeftMasterId = 16;

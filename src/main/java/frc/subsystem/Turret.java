@@ -3,8 +3,10 @@
 package frc.subsystem;
 
 import frc.robot.Constants;
+import frc.utility.JetsonUDP;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+import frc.utility.VisionTarget;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -14,6 +16,7 @@ public class Turret extends Threaded {
 	private static Turret instance = new Turret();
 	private LazyTalonSRX turretTalon;
 	private static DigitalInput turretHalleffect;
+	JetsonUDP visionData = JetsonUDP.getInstance();
 
 
 	public static Turret getInstance() {
@@ -86,5 +89,8 @@ public class Turret extends Threaded {
 	}
 	
 	@Override
-	public void update() {}
+	public void update() {
+		VisionTarget[] target = visionData.getTargets();
+		
+	}
 }
