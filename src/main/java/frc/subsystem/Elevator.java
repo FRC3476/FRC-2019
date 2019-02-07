@@ -3,6 +3,7 @@
 package frc.subsystem;
 
 import frc.robot.Constants;
+import frc.subsystem.BallIntake.DeployState;
 import frc.utility.LazyTalonSRX;
 import frc.utility.OrangeUtility;
 import frc.utility.Threaded;
@@ -11,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class Elevator extends Threaded {
+
 
 	public enum ElevatorHeight {
 		BASE, MIDDLE, TOP
@@ -23,7 +25,9 @@ public class Elevator extends Threaded {
 	}
 	
 	private LazyTalonSRX elevMaster = new LazyTalonSRX(Constants.ElevatorMasterId);
-	
+	BallIntake ballIntake = BallIntake.getInstance();
+	Turret turret = Turret.getInstance();
+
 	// Elevator constructor to setup the elevator(zero it in the future with current measurement)
 	private Elevator() {
 		elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
@@ -50,6 +54,11 @@ public class Elevator extends Threaded {
 	
 	//Sets the height of the elevator
 	public void setHeight(double position) {
+		if(position < Constants.ElevatorIntakeSafe &&
+		 ballIntake.getDeployState() != DeployState.DEPLOY && 
+		 Math.abs(turret.getAngle()) < Constants.TurretCollisionRange) {
+			position = Constants.ElevatorIntakeSafe;
+		}
 		elevMaster.set(ControlMode.Position, position * Constants.ElevatorTicksPerInch);
 	}
 	

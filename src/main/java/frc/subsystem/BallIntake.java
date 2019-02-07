@@ -5,6 +5,7 @@ package frc.subsystem;
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+import edu.wpi.first.wpilibj.Solenoid;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -12,6 +13,9 @@ public class BallIntake extends Threaded {
 	
 	public enum IntakeState {
 		INTAKE, EJECT, NEUTRAL
+	}
+	public enum DeployState {
+		DEPLOY, DEPLOYING, RETRACTED
 	}
 	
 	private static final BallIntake instance = new BallIntake();
@@ -22,10 +26,17 @@ public class BallIntake extends Threaded {
 	
 	private LazyTalonSRX intakeMotor;
 	private IntakeState intakeState;
+	private DeployState deployState;
+	private Solenoid deploySolenoid;
+
 	
 	private BallIntake () {
 		intakeMotor = new LazyTalonSRX(Constants.BallIntakeMasterId);
 		intakeState = IntakeState.NEUTRAL;
+	}
+
+	public DeployState getDeployState() {
+		return deployState;
 	}
 	
 	//Set the state of the intake
@@ -47,8 +58,10 @@ public class BallIntake extends Threaded {
 	@Override
 	public void update () {
 		IntakeState snapIntake;
+		DeployState deploy;
 		synchronized (this) {
 			snapIntake = intakeState;
+			deploy = deployState;
 		}
 		
 		switch (snapIntake) {
@@ -64,5 +77,16 @@ public class BallIntake extends Threaded {
 			intakeMotor.set (ControlMode.PercentOutput, 0);
 			break;
 		}
+
+		switch(deploy) {
+			case DEPLOY:
+				deploySolenoid.set(true);
+				break;
+			case RETRACTED:
+				deploySolenoid.set(false);
+				break;
+		}
+
+
 	}
 }
