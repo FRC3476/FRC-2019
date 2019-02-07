@@ -27,6 +27,8 @@ public class Elevator extends Threaded {
 	private LazyTalonSRX elevMaster = new LazyTalonSRX(Constants.ElevatorMasterId);
 	BallIntake ballIntake = BallIntake.getInstance();
 	Turret turret = Turret.getInstance();
+	private double requested;
+	private boolean safetyEngage = false;
 
 	// Elevator constructor to setup the elevator(zero it in the future with current measurement)
 	private Elevator() {
@@ -57,8 +59,11 @@ public class Elevator extends Threaded {
 		if(position < Constants.ElevatorIntakeSafe &&
 		 ballIntake.getDeployState() != DeployState.DEPLOY && 
 		 Math.abs(turret.getAngle()) < Constants.TurretCollisionRange) {
+			requested = position;
 			position = Constants.ElevatorIntakeSafe;
-		}
+			safetyEngage = true;
+		} else safetyEngage = false;
+
 		elevMaster.set(ControlMode.Position, position * Constants.ElevatorTicksPerInch);
 	}
 	
@@ -91,5 +96,10 @@ public class Elevator extends Threaded {
 	}
 	
 	@Override
-	public void update() {}
+	public void update() {
+		if(safetyEngage && ballIntake.getDeployState() == DeployState.DEPLOY && 
+		 Math.abs(turret.getAngle()) > Constants.TurretCollisionRange) {
+			 setHeight(requested);
+		}
+	}
 }
