@@ -121,7 +121,7 @@ public final class Constants {
 	public static final double IntakeFastRPM = 700; // Random number for now
 
 	// Hatch Intake
-	public static final double HatchIntakeSpeed = 0.75;//Just a random percent for now
+	public static final double HatchIntakePower = 0.75;//Just a random percent for now
 	public static final double HatchHandoffAngle = 90;
 	public static final double HatchStowAngle = 0;
 	public static final double HatchIntakeAngle = 180;
@@ -129,7 +129,7 @@ public final class Constants {
 	// Turret
 	public static final int TurretCollisionRange = 0;
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
-	public static final double TurretHomingSpeed = 0.2;//Random percent for now
+	public static final double TurretHomingPower = 0.2;//Random percent for now
 	public static final double kTurretP = 0.125;
 	public static final double kTurretI = 0.0;
 	public static final double kTurretD = 0.0;
