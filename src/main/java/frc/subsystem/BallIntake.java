@@ -5,88 +5,96 @@ package frc.subsystem;
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+
 import edu.wpi.first.wpilibj.Solenoid;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class BallIntake extends Threaded {
+
+	public enum DeployState {
+		DEPLOY, STOW
+	}
 	
 	public enum IntakeState {
-		INTAKE, EJECT, NEUTRAL
-	}
-	public enum DeployState {
-		DEPLOY, DEPLOYING, RETRACTED
+		INTAKE, EJECT, OFF
 	}
 	
 	private static final BallIntake instance = new BallIntake();
 	
-	public static final BallIntake getInstance () {
+	public static BallIntake getInstance() {
 		return instance;
 	}
 	
-	private LazyTalonSRX intakeMotor;
-	private IntakeState intakeState;
-	private DeployState deployState;
 	private Solenoid deploySolenoid;
-
+	private LazyTalonSRX intakeMotor;
+	private DeployState deployState = DeployState.STOW;
+	private IntakeState intakeState = IntakeState.OFF;
 	
-	private BallIntake () {
+	private BallIntake() {
+		deploySolenoid = new Solenoid(Constants.BallIntakeSolenoidId);
 		intakeMotor = new LazyTalonSRX(Constants.BallIntakeMasterId);
-		intakeState = IntakeState.NEUTRAL;
 	}
 
 	public DeployState getDeployState() {
 		return deployState;
 	}
+
+	public IntakeState getIntakeState() {
+		return intakeState;
+	}
 	
-	//Set the state of the intake
-	public void setIntake (IntakeState intakeState) {
+	// Set the deployment state of the intake
+	public void setDeployState(DeployState deployState) {
+		synchronized (this) {
+			this.deployState = deployState;
+		}
+	}
+	
+	// Set the state of the intake
+	public void setIntakeState(IntakeState intakeState) {
 		synchronized (this) {
 			this.intakeState = intakeState;
 		}
 	}
 	
-	//Gets the pulled current
-	public double getCurrent () {
-		return intakeMotor.getOutputCurrent ();
+	// Gets the current draw
+	public double getCurrent() {
+		return intakeMotor.getOutputCurrent();
 	}
 	
-	public boolean isFinished () {
+	public boolean isFinished() {
 		return true;
 	}
 	
 	@Override
-	public void update () {
-		IntakeState snapIntake;
+	public void update() {
+		IntakeState intake;
 		DeployState deploy;
 		synchronized (this) {
-			snapIntake = intakeState;
+			intake = intakeState;
 			deploy = deployState;
 		}
 		
-		switch (snapIntake) {
+		switch (intake) {
 			case INTAKE:
-			intakeMotor.set (ControlMode.PercentOutput, 
-			Constants.IntakeMotorPercentOutputIntake);
-			break;
+				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerIntake);
+				break;
 			case EJECT:
-			intakeMotor.set (ControlMode.PercentOutput, 
-			Constants.IntakeMotorPercentOutputEject);
-			break;
-			case NEUTRAL:
-			intakeMotor.set (ControlMode.PercentOutput, 0);
-			break;
+				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerEject);
+				break;
+			case OFF:
+				intakeMotor.set(ControlMode.PercentOutput, 0);
+				break;
 		}
 
-		switch(deploy) {
+		switch (deploy) {
 			case DEPLOY:
 				deploySolenoid.set(true);
 				break;
-			case RETRACTED:
+			case STOW:
 				deploySolenoid.set(false);
 				break;
 		}
-
-
 	}
 }

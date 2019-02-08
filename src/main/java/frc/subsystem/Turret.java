@@ -27,7 +27,7 @@ public class Turret extends Threaded {
 		turretTalon = new LazyTalonSRX(Constants.TurretMotorId);
 		turretTalon.setSensorPhase(false);
 		turretTalon.setInverted(false);
-		turretHalleffect = new DigitalInput(Constants.turretLimitId);
+		turretHalleffect = new DigitalInput(Constants.TurretLimitId);
 	}
 
 	private void configMotors(){
@@ -75,9 +75,9 @@ public class Turret extends Threaded {
 
 		boolean isTriggered = false;
 		while(!isTriggered){
-			setPercentOutput(Constants.turretHomingSpeed*dir);
+			setPercentOutput(Constants.TurretHomingSpeed*dir);
 			
-			if(getAngle()>=Constants.maxTurretHomingAngle){
+			if(getAngle()>=Constants.TurretMaxHomingAngle){
 				dir*=-1;//Switch direction
 			}
 

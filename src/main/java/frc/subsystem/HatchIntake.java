@@ -57,7 +57,7 @@ class HatchIntake{
     //Initialize variables
     private HatchIntake(){
         HatchIntakeMotor = new LazyTalonSRX(Constants.HatchIntakeMotorId);
-        HatchHandoffMotor = new LazyTalonSRX(Constants.HatchHandoffId);
-        HatchHandoffMotor.setSelectedSensorPosition(0,0,10);
+        //HatchHandoffMotor = new LazyTalonSRX(Constants.HatchHandoffId);
+        //HatchHandoffMotor.setSelectedSensorPosition(0,0,10);
     }
 }
