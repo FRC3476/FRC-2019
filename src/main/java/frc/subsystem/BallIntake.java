@@ -17,7 +17,7 @@ public class BallIntake extends Threaded {
 	}
 	
 	public enum IntakeState {
-		INTAKE, EJECT, OFF
+		OFF, INTAKE, EJECT
 	}
 	
 	private static final BallIntake instance = new BallIntake();

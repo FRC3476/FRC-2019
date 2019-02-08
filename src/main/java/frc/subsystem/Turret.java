@@ -20,8 +20,8 @@ public class Turret extends Threaded {
 	}
 
 	private LazyTalonSRX turretTalon;
-	private static DigitalInput turretHallEffect;
-	JetsonUDP visionData = JetsonUDP.getInstance();
+	private DigitalInput turretHallEffect;
+	private JetsonUDP visionData = JetsonUDP.getInstance();
 
 	private Turret() {
 		turretTalon = new LazyTalonSRX(Constants.TurretMotorId);
