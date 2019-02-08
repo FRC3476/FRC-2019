@@ -158,8 +158,8 @@ public final class Constants {
 	public static final double ElevatorIntakeHeight = 10;//For now
 
 	// Manipulator
-	public static final double ManipulatorNormalSpeed = 0.75;
-	public static final double ManipulatorLowSpeed = 0.50;
+	public static final double ManipulatorNormalPower = 0.75;
+	public static final double ManipulatorLowPower = 0.50;
 	
 	// Climber
 	public static final double ClimberMaxAngle = 90;//Just a random number for now
