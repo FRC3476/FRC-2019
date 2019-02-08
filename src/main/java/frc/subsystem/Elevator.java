@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class Elevator extends Threaded {
 
-
 	public enum ElevatorHeight {
 		BASE, MIDDLE, TOP
 	}
@@ -30,33 +29,28 @@ public class Elevator extends Threaded {
 	private double requested;
 	private boolean safetyEngage = false;
 
-	// Elevator constructor to setup the elevator(zero it in the future with current measurement)
+	// Elevator constructor to setup the elevator (zero it in the future with current measurement)
 	private Elevator() {
 		elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
 		Constants.ElevatorSensorPidIdx, Constants.TimeoutMs);
 		elevMaster.setInverted(true);
 		elevMaster.setSensorPhase(true);
-		elevHome();
-		configMotors();
-	}
-	
-	// Set PID constants
-	private void configMotors() {
 		elevMaster.config_kP(0, Constants.kElevatorP, Constants.TimeoutMs);
 		elevMaster.config_kI(0, Constants.kElevatorI, Constants.TimeoutMs);
 		elevMaster.config_kD(0, Constants.kElevatorD, Constants.TimeoutMs);
 		elevMaster.config_IntegralZone(0, Constants.ELevatorIntegralZone, Constants.TimeoutMs);
+		elevHome();
 	}
 	
-	// Gets current position of the elevator
+	// Gets current height of the elevator
 	public double getHeight() {
 		return elevMaster.getSelectedSensorPosition(Constants.ElevatorSensorPidIdx) 
 			* Constants.ElevatorTicksPerInch;
 	}
 	
-	//Sets the height of the elevator
+	// Sets the height of the elevator
 	public void setHeight(double position) {
-		if(position < Constants.ElevatorIntakeSafe &&
+		if (position < Constants.ElevatorIntakeSafe &&
 		 ballIntake.getDeployState() != DeployState.DEPLOY && 
 		 Math.abs(turret.getAngle()) < Constants.TurretCollisionRange) {
 			requested = position;
