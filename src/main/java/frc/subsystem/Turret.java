@@ -16,6 +16,8 @@ public class Turret extends Threaded {
 	private static Turret instance = new Turret();
 	private LazyTalonSRX turretTalon;
 	private static DigitalInput turretHalleffect;
+	private double angle =0;
+	private double prevSign = 1;
 	JetsonUDP visionData = JetsonUDP.getInstance();
 
 
@@ -91,6 +93,19 @@ public class Turret extends Threaded {
 	@Override
 	public void update() {
 		VisionTarget[] target = visionData.getTargets();
-		
+		//printf(target[0].x);
+		//System.out.println(turretTalon.getSelectedSensorPosition());
+		if(target.length > 0 && target[0] != null) {
+			System.out.println("target x " + target[0].x + " angle " + getAngle() + " desired " + angle);
+			double error = target[0].x/640.0 - 0.5;
+			angle = getAngle() + error * 30.0;	
+			prevSign = Math.abs(error)/error;
+			setAngle(angle);
+		} else {
+			//angle += 0.1*prevSign;
+			//setAngle(angle);
+		}
+		//System.out.println(angle);
+	//	turretTalon.set(ControlMode.PercentOutput, 0.3);
 	}
 }

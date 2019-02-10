@@ -25,6 +25,7 @@ public class Robot extends IterativeRobot {
   Drive drive = Drive.getInstance();
   RobotTracker rt = RobotTracker.getInstance();
   Joystick j = new Joystick(0);
+  Turret t = Turret.getInstance();
 
 
   private static final String kDefaultAuto = "Default";
@@ -75,10 +76,14 @@ public class Robot extends IterativeRobot {
     AutoRoutine ar = new AutoRoutine();
     //ar.addComands(new DriveToPooints)
     Path drivePath = new Path(RobotTracker.getInstance().getOdometry().translationMat);
-    drivePath.addPoint(new Translation2D(10, 0), 80);
-    drivePath.addPoint(new Translation2D(20, 0), 80);
+    drivePath.addPoint(new Translation2D(10, 0), 40);
+    drivePath.addPoint(new Translation2D(20, 0), 40);
+    drivePath.addPoint(new Translation2D(30, 0), 40);
+    drivePath.addPoint(new Translation2D(30, -15), 40);
+
+
     //drivePath.addPoint(new Translation2D(10, -5), 45);
-    drivePath.addPoint(new Translation2D(50, 0), 80);
+    //drivePath.addPoint(new Translation2D(20, 0), 40);
 
     //drivePath.addPoint(new Translation2D(40, -25), 45);
     //drivePath.addPoint(new Translation2D(50, 20), 45);
@@ -101,6 +106,7 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void autonomousPeriodic() {
+  
     switch (m_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
@@ -135,8 +141,9 @@ public class Robot extends IterativeRobot {
       //drive.debug();
       //drive.leftSpark.set (j.getRawAxis(1));
      // drive.leftSparkSlave.set(j.getRawAxis(1));
-      drive.arcadeDrive(-j.getRawAxis(5), -j.getRawAxis(4));
-      drive.debug();
+      drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
+      //drive.debug();
+      t.update();
      // d.getGyroAngle();
   }
 

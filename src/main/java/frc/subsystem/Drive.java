@@ -90,8 +90,8 @@ public class Drive extends Threaded {
 
 		gyroSensor = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 
-		leftSpark = new CANSparkMax(7, MotorType.kBrushless);
-		leftSparkSlave = new CANSparkMax(8, MotorType.kBrushless);
+		leftSpark = new CANSparkMax(3, MotorType.kBrushless);
+		leftSparkSlave = new CANSparkMax(4, MotorType.kBrushless);
 		rightSpark = new CANSparkMax(5, MotorType.kBrushless);
 		rightSparkSlave = new CANSparkMax(6, MotorType.kBrushless);
 		//rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
@@ -229,7 +229,7 @@ public class Drive extends Threaded {
 			rightMotorSpeed *= Constants.DriveHighSpeed;
 			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		}
-		System.out.println("left motor speed " + leftMotorSpeed);
+		//System.out.println("left motor speed " + leftMotorSpeed + " right motor speed " + rightMotorSpeed);
 	}
 
 	public void calibrateGyro() {
@@ -471,7 +471,7 @@ public class Drive extends Threaded {
 			DriverStation.reportError("Velocity set over " + Constants.DriveHighSpeed + " !", false);
 			return;
 		}
-		// System.out.println("Left: " + setVelocity.leftVelocitsdy + " Speed:"
+		 System.out.println("Left: " + setVelocity.leftVelocity);
 		 //+ getLeftSpeed());
 		// inches per sec to rotations per min
 		double leftSetpoint = (setVelocity.leftVelocity)/(2 * Math.PI * Constants.WheelDiameter/2d) * 60d *
@@ -483,8 +483,7 @@ public class Drive extends Threaded {
 		leftSparkPID.setReference(leftSetpoint, ControlType.kVelocity);
 		rightSparkPID.setReference(rightSetpoint, ControlType.kVelocity);
 		//System.out.println("left rpm: " +leftSetpoint + " right rpm: " + rightSetpoint);
-		System.out.println("L speed " + setVelocity.leftVelocity + " actual " + getLeftSpeed());
-		System.out.println("R speed " + setVelocity.rightVelocity+  " actual " + getRightSpeed());
+		
 	}
 
 	public synchronized void setSimpleDrive(boolean setting) {
@@ -493,6 +492,8 @@ public class Drive extends Threaded {
 
 	@Override
 	public void update() {
+	//	System.out.println("L speed " + getLeftSpeed() + " position x " + RobotTracker.getInstance().getOdometry().translationMat.getX());
+	//	System.out.println("R speed " + getRightSpeed() + " position y " + RobotTracker.getInstance().getOdometry().translationMat.getY());
 		DriveState snapDriveState;
 		synchronized (this) {
 			snapDriveState = driveState;
@@ -507,6 +508,7 @@ public class Drive extends Threaded {
 				updateTurn();
 				break;
 		}
+		
 	}
 
 	public void setRotation(Rotation2D angle) {

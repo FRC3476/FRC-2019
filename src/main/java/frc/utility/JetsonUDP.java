@@ -19,14 +19,14 @@ public class JetsonUDP extends Thread {
   private DatagramSocket socket;
   private InetAddress address;
 
-  private VisionTarget[] target;
+  private VisionTarget[] target = new VisionTarget[12];
 
   public static JetsonUDP getInstance() {
     return instance;
   }
 
   public JetsonUDP() {
-    
+    super("bleh");
     try {
       socket = new DatagramSocket(Constants.JetsonSocket);
       address = InetAddress.getByName(Constants.JetsonIPv4);
@@ -61,13 +61,17 @@ public class JetsonUDP extends Thread {
       float f2 = ByteBuffer.wrap(to_be_parsed2).order(ByteOrder.LITTLE_ENDIAN).getFloat();
       float f3 = ByteBuffer.wrap(to_be_parsed3).order(ByteOrder.LITTLE_ENDIAN).getFloat();
       target[(int)(i/12)] = new VisionTarget(f1, f2, f3);
+     // System.out.println(f1);
     }
   }
 
     @Override
 	public void run() {
-    while(true) {
+      while(true) {
+
+      //System.out.println("receieving");
       recieve();  
-    }
+      }
+    
   }
 }

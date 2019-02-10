@@ -4,7 +4,7 @@ package frc.robot;
 
 public final class Constants {
 	//Networking
-	public static final int JetsonSocket = 5800;
+	public static final int JetsonSocket = 8000;
 	public static final String JetsonIPv4 = "10.34.76.72";
 
 	// CAN IDs
@@ -15,7 +15,7 @@ public final class Constants {
 	public static final int DriveRightSlave1Id = 12;
 	public static final int DriveRightSlave2Id = 13;
 
-	public static final int TurretMotorId = 2;
+	public static final int TurretMotorId = 7;
 	
 	public static final int ElevatorMasterId = 24;
 	public static final int ElevatorSlaveId = 25;
@@ -96,12 +96,12 @@ public final class Constants {
 	public static final double kDriveLeftLowFIntercept = 0;
 	public static final double kDriveLeftLowA = 0;
 	
-	public static final double kDriveRightAutoP = 0.0; //0.15
-	public static final double kDriveRightAutoD = 0.0; //0.7
-	public static final double kDriveRightAutoF = 0.0; //0.055
-	public static final double kDriveLeftAutoP = 0.0;
-	public static final double kDriveLeftAutoD = 0.0;
-	public static final double kDriveLeftAutoF = 0.0; //0.065 too high
+	public static final double kDriveRightAutoP = 0.00065; //0.15
+	public static final double kDriveRightAutoD = 0.0001; //0.7
+	public static final double kDriveRightAutoF = 0.0000; //0.055
+	public static final double kDriveLeftAutoP = 0.00065;
+	public static final double kDriveLeftAutoD = 0.0001;
+	public static final double kDriveLeftAutoF = 0.0000; //0.0005 too high
 	public static final double DriveTeleopAccLimit = 120;
 	public static final double DriveTeleopJerkLimit = 2000;
 	public static final double DriveExpectedCurrent = 1.5;
@@ -115,7 +115,7 @@ public final class Constants {
 	public static final int turretLimitId = 8;//Random channel for now
 	public static final int maxTurretHomingAngle = 45;//Random degrees for now
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
-	public static final double kTurretP = 0.125;
+	public static final double kTurretP = 0.25;
 	public static final double kTurretI = 0.0;
 	public static final double kTurretD = 0.0;
 
