@@ -15,7 +15,6 @@ public final class Constants {
 	public static final int DriveRightSlave1Id = 12;
 	public static final int DriveRightSlave2Id = 13;
 
-
 	public static final int BallIntakeMasterId = 20;
 
 	public static final int HatchIntakeMotorId = 5;
@@ -138,6 +137,7 @@ public final class Constants {
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
 	public static final double TurretHomingPower = 0.2;//Random percent for now
 	public static final double kTurretP = 1;
+
 
 	public static final double kTurretI = 0.0;
 	public static final double kTurretD = 0.0;
