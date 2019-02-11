@@ -13,37 +13,28 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Turret extends Threaded {
 	
-	private static Turret instance = new Turret();
+	//private static Turret instance = new Turret();
 	private LazyTalonSRX turretTalon;
-	private static DigitalInput turretHalleffect;
+	private static DigitalInput turretHallEffect;
 	private double angle =0;
 	private double prevSign = 1;
 	JetsonUDP visionData = JetsonUDP.getInstance();
 
 
+	private static final Turret instance = new Turret();
+
 	public static Turret getInstance() {
 		return instance;
 	}
-		
+
 	private Turret() {
 		turretTalon = new LazyTalonSRX(Constants.TurretMotorId);
 		turretTalon.setSensorPhase(false);
 		turretTalon.setInverted(false);
-		turretHalleffect = new DigitalInput(Constants.turretLimitId);
-	}
-
-	private void configMotors(){
 		turretTalon.config_kP(0, Constants.kTurretP, Constants.TimeoutMs);
 		turretTalon.config_kI(0, Constants.kTurretI, Constants.TimeoutMs);
 		turretTalon.config_kD(0, Constants.kTurretD, Constants.TimeoutMs);
-	}
-	
-	public void stop(){
-		setPercentOutput(0);
-	}
-
-	public void setPercentOutput(double output) {
-		turretTalon.set(ControlMode.PercentOutput, output);
+		turretHallEffect = new DigitalInput(Constants.TurretLimitId);
 	}
 	
 	public void setAngle(double angle) {
@@ -58,7 +49,7 @@ public class Turret extends Threaded {
 		return turretTalon.getSelectedSensorVelocity(Constants.TurretMotorId) * Constants.DegreesPerEncoderTick;
 	}
 	
-	public double getAngle () {
+	public double getAngle() {
 		return turretTalon.getSelectedSensorPosition(Constants.TurretMotorId) * Constants.DegreesPerEncoderTick;
 	}
 	
@@ -71,21 +62,19 @@ public class Turret extends Threaded {
 		return turretTalon.getOutputCurrent();
 	}
 
-	public void homeTurret(){
-		turretTalon.setSelectedSensorPosition(0,0,10);//Zero encoder
-		double dir = 1;//left
-
+	public void homeTurret() {
+		turretTalon.setSelectedSensorPosition(0, 0, 10); // Zero encoder
+		double dir = 1; // left
 		boolean isTriggered = false;
-		while(!isTriggered){
-			setPercentOutput(Constants.turretHomingSpeed*dir);
-			
-			if(getAngle()>=Constants.maxTurretHomingAngle){
-				dir*=-1;//Switch direction
-			}
 
-			if(turretHalleffect.get()){
-				stop();
-				turretTalon.setSelectedSensorPosition(0,0,10);//Zero the encoder
+		while (!isTriggered) {
+		  turretTalon.set(ControlMode.PercentOutput, Constants.TurretHomingPower * dir);
+			
+			if (getAngle() >= Constants.TurretMaxHomingAngle) dir *= -1;//Switch direction
+
+			if (turretHallEffect.get()) {
+				turretTalon.set(ControlMode.PercentOutput, 0);
+				turretTalon.setSelectedSensorPosition(0, 0, 10); // Zero encoder
 			}
 		}
 	}

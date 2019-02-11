@@ -15,25 +15,29 @@ public final class Constants {
 	public static final int DriveRightSlave1Id = 12;
 	public static final int DriveRightSlave2Id = 13;
 
-	public static final int TurretMotorId = 7;
-	
+
+	public static final int BallIntakeMasterId = 20;
+
+	public static final int HatchIntakeMotorId = 5;
+
+
 	public static final int ElevatorMasterId = 24;
 	public static final int ElevatorSlaveId = 25;
 
 	public static final int ManipulatorMotor1Id = 22;
 	public static final int ManipulatorMotor2Id = 23;
-
-	public static final int BallIntakeMasterId = 20;
 	
 	public static final int ClimberMasterId = 21;
 	public static final int ClimberSlaveId = 26;
-
-	public static final int HatchIntakeMotorId = 5;//Just a random number for now
-	public static final int HatchHandoffId = 7;//Just a random number for now
 	
 	// PCM IDs
 	public static final int DriveShifterSolenoidId = 0;
-	public static final int ManipulatorSolenoidId = 4;
+	public static final int BallIntakeSolenoidId = 1;
+	public static final int ArmSolenoidId = 2;
+	public static final int ManipulatorSolenoidId = 3;
+
+	// IO IDs
+	public static final int TurretLimitId = 0;
 	
 	// Controller
 	public static final double MinControllerInput = 0.15;
@@ -110,17 +114,33 @@ public final class Constants {
 
 	// Superstructure
 
+	// Ground Ball Intake	
+	public static final double IntakeMotorPowerIntake = 1;
+	public static final double IntakeMotorPowerEject = 0.275;
+	public static final double IntakeMediumRPM = 700; // Random number for now
+	public static final double IntakeFastRPM = 700; // Random number for now
+
+	// Hatch Intake
+	public static final double HatchIntakePower = 0.75;//Just a random percent for now
+	public static final double HatchHandoffAngle = 90;
+	public static final double HatchStowAngle = 0;
+	public static final double HatchIntakeAngle = 180;
+
 	// Turret
 	public static final int TurretCollisionRange = 0;
+
 	public static final int turretLimitId = 8;//Random channel for now
 	public static final int maxTurretHomingAngle = 45;//Random degrees for now
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
-	public static final double kTurretP = 0.25;
+	public static final int TurretMotorId = 7;
+//	public static final double kTurretP = 0.25;
+
+	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
+	public static final double TurretHomingPower = 0.2;//Random percent for now
+	public static final double kTurretP = 1;
+
 	public static final double kTurretI = 0.0;
 	public static final double kTurretD = 0.0;
-
-	//Arm
-	public static final int ArmPuncherId = 4;//Random id
 
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.2;
@@ -146,25 +166,12 @@ public final class Constants {
 	public static final double ElevatorIntakeHeight = 10;//For now
 
 	// Manipulator
-	public static final double ManipulatorNormalSpeed = 0.75;
-	public static final double ManipulatorLowSpeed = 0.50;
-
-	// Ground Ball Intake	
-	public static final double IntakeMotorPercentOutputIntake = -1;
-	public static final double IntakeMotorPercentOutputEject = 0.275;
-	public static final double IntakeMediumRPM = 700; // Random number for now
-	public static final double IntakeFastRPM = 700; // Random number for now
+	public static final double ManipulatorNormalPower = 0.75;
+	public static final double ManipulatorLowPower = 0.50;
 	
 	// Climber
 	public static final double ClimberMaxAngle = 90;//Just a random number for now
 	
-
-	//HatchIntake
-	public static final double HatchIntakeSpeed = 0.75;//Just a random percent for now
-	public static final double HatchHandoffAngle = 90;
-	public static final double HatchStowAngle = 0;
-	public static final double HatchIntakeAngle = 180;
-
 	private Constants() {
 	}
 }

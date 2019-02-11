@@ -4,20 +4,19 @@ package frc.subsystem;
 
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
+import frc.utility.Threaded;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Solenoid;
-import frc.utility.LazyTalonSRX;
-import frc.robot.Constants;
 
-public class Manipulator {
+public class Manipulator extends Threaded {
 
 	public enum ManipulatorState {
-		HATCH_INTAKE, BALL_INTAKE, HATCH_EJECT, BALL_EJECT
+		HATCH, BALL
 	}
-	
-	public enum EjectDirection {
-		LEFT, RIGHT
+
+	public enum ManipulatorIntakeState {
+		OFF, INTAKE, EJECT
 	}
 
 	private static final Manipulator instance = new Manipulator();
@@ -26,57 +25,61 @@ public class Manipulator {
 		return instance;
 	}
 
-	private static LazyTalonSRX leftTalon;
-	private static LazyTalonSRX rightTalon;
-	private static Solenoid manipulatorSolenoid;
+	private LazyTalonSRX leftTalon;
+	private LazyTalonSRX rightTalon;
+	private Solenoid manipulatorSolenoid;
+	private ManipulatorState state;
+	private ManipulatorIntakeState intakeState;
 
 	private Manipulator() {
 		leftTalon = new LazyTalonSRX(Constants.ManipulatorMotor1Id);
 		rightTalon = new LazyTalonSRX(Constants.ManipulatorMotor2Id);
 		manipulatorSolenoid = new Solenoid(Constants.ManipulatorSolenoidId);
 	}
-	
-	// Stop wheels from spinning
-	public void stop() {
-		leftTalon.set(ControlMode.PercentOutput, 0);
-		rightTalon.set(ControlMode.PercentOutput, 0);
+
+	public ManipulatorState getManipulatorState() {
+		return state;
+	}
+
+	public ManipulatorIntakeState getManipulatorIntakeState() {
+		return intakeState;
 	}
 	
-	// Eject to the left or to the right
-	public void setSideEject(EjectDirection dir) {
-		if(dir == EjectDirection.LEFT){
-			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
-			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorLowSpeed);
-		}
-		else if(dir == EjectDirection.RIGHT){
-			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorLowSpeed);
-			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
+	// Set the deployment state of the intake
+	public void setManipulatorState(ManipulatorState state) {
+		synchronized (this) {
+			this.state = state;
 		}
 	}
 	
-	// Eject the ball or hatch straight
-	public void setStraightEject(ManipulatorState hatchBall) {
-		if (hatchBall == ManipulatorState.HATCH_EJECT) {
-			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
-			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
-		} else if (hatchBall == ManipulatorState.BALL_EJECT) {
-			leftTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
-			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);          
+	// Set the state of the intake
+	public void setManipulatorIntakeState(ManipulatorIntakeState intakeState) {
+		synchronized (this) {
+			this.intakeState = intakeState;
 		}
 	}
 	
-	// Intakes Hatch or Ball depending on the inputed enum
-	public void setIntake(ManipulatorState hatchBall) {
-		if (hatchBall == ManipulatorState.HATCH_INTAKE) {
-			// Close manipulator and spin wheels inward 
-			manipulatorSolenoid.set(false);
-			leftTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
-			rightTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed); 
-		} else if (hatchBall == ManipulatorState.BALL_INTAKE) { 
-			// Open manipulator and spin wheels outward
-			manipulatorSolenoid.set(true);
-			leftTalon.set(ControlMode.PercentOutput, Constants.ManipulatorNormalSpeed);
-			rightTalon.set(ControlMode.PercentOutput, -1 * Constants.ManipulatorNormalSpeed);
+	@Override
+	public void update() {
+		ManipulatorState manipulator;
+		ManipulatorIntakeState intake;
+		synchronized (this) {
+			manipulator = state;
+			intake = intakeState;
+		}
+
+		if (intake == ManipulatorIntakeState.OFF) {
+			leftTalon.set(ControlMode.PercentOutput, 0);
+			rightTalon.set(ControlMode.PercentOutput, 0);
+		} else {
+			double basePower = ((manipulator == ManipulatorState.HATCH) ? 1D : -1D)
+			                 * ((intake == ManipulatorIntakeState.INTAKE) ? 1D : -1D);
+
+			leftTalon.set(ControlMode.PercentOutput, -1D * basePower * Constants.ManipulatorNormalPower);
+			rightTalon.set(ControlMode.PercentOutput, basePower * Constants.ManipulatorNormalPower);
+			
+			if (manipulator == ManipulatorState.HATCH) manipulatorSolenoid.set(false);
+			else manipulatorSolenoid.set(true);       
 		}
 	}
 }
