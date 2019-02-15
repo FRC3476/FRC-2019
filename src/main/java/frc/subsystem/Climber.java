@@ -4,6 +4,7 @@ package frc.subsystem;
 
 import frc.robot.Constants;
 import frc.utility.Threaded;
+import frc.utility.telemetry.TelemetryServer;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -23,6 +24,7 @@ public class Climber extends Threaded {
 		return instance;
 	}
 
+	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private CANSparkMax climberMaster;
 	private CANSparkMax climberSlave;
 	private CANPIDController climberPID;
@@ -39,6 +41,7 @@ public class Climber extends Threaded {
 	
 	public void beginClimb() {
 		state = ClimberState.CLIMB;
+		telemetryServer.sendString("sClm", "climb");
 		climberPID.setReference(Constants.ClimberMaxAngle, ControlType.kPosition);
 	}
 

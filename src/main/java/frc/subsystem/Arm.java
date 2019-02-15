@@ -30,12 +30,15 @@ public class Arm {
 	}
 	
 	public void setState(ArmState state) {
-		if (state == ArmState.RETRACT) {
-			armSolenoid.set(false);
-			telemetryServer.sendString("sArm", "retract");
-		} else if (state == ArmState.EXTEND) {
-			armSolenoid.set(true);
-			telemetryServer.sendString("sArm", "extend");
+		switch (state) {
+			case RETRACT:
+				armSolenoid.set(false);
+				telemetryServer.sendString("sArm", "retract");
+				break;
+			case EXTEND:
+				armSolenoid.set(true);
+				telemetryServer.sendString("sArm", "extend");
+				break;
 		}
 	}
 }

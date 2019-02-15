@@ -5,6 +5,7 @@ package frc.subsystem;
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -26,6 +27,7 @@ public class BallIntake extends Threaded {
 		return instance;
 	}
 	
+	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private Solenoid deploySolenoid;
 	private LazyTalonSRX intakeMotor;
 	private DeployState deployState = DeployState.STOW;
@@ -79,21 +81,26 @@ public class BallIntake extends Threaded {
 		switch (intake) {
 			case INTAKE:
 				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerIntake);
+				telemetryServer.sendString("sIB2", "intake");
 				break;
 			case EJECT:
 				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerEject);
+				telemetryServer.sendString("sIB2", "eject");
 				break;
 			case OFF:
 				intakeMotor.set(ControlMode.PercentOutput, 0);
+				telemetryServer.sendString("sIB2", "off");
 				break;
 		}
 
 		switch (deploy) {
 			case DEPLOY:
 				deploySolenoid.set(true);
+				telemetryServer.sendString("sIB1", "deploy");
 				break;
 			case STOW:
 				deploySolenoid.set(false);
+				telemetryServer.sendString("sIB1", "stow");
 				break;
 		}
 	}
