@@ -3,7 +3,7 @@
 package frc.robot;
 
 public final class Constants {
-	//Networking
+	// Networking
 	public static final int JetsonSocket = 8000;
 	public static final String JetsonIPv4 = "10.34.76.72";
 
