@@ -20,7 +20,7 @@ public final class Constants {
 	public static final int BallIntakeMasterId = 20;
 
 	public static final int HatchIntakeMotorId = 5;
-	public static final int HatchIntkaeDeployMotorId = 5;
+	public static final int HatchIntakeDeployMotorId = 5;
 
 	public static final int ElevatorMasterId = 24;
 	public static final int ElevatorSlaveId = 25;

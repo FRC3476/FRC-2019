@@ -5,6 +5,7 @@ package frc.subsystem;
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+import frc.utility.telemetry.TelemetryServer;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -19,6 +20,7 @@ public class Manipulator extends Threaded {
 		OFF, INTAKE, EJECT
 	}
 
+	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private static final Manipulator instance = new Manipulator();
 	
 	public static Manipulator getInstance() {
@@ -50,12 +52,35 @@ public class Manipulator extends Threaded {
 		synchronized (this) {
 			this.state = state;
 		}
+
+		switch (state) {
+			case HATCH:
+				manipulatorSolenoid.set(false);
+				telemetryServer.sendString("sMnM", "hatch");
+				break;
+			case BALL:
+				manipulatorSolenoid.set(true);
+				telemetryServer.sendString("sMnM", "ball");
+				break;
+		}
 	}
 	
 	// Set the state of the intake
 	public void setManipulatorIntakeState(ManipulatorIntakeState intakeState) {
 		synchronized (this) {
 			this.intakeState = intakeState;
+		}
+
+		switch (intakeState) {
+			case INTAKE:
+				telemetryServer.sendString("sMnI", "intake");
+				break;
+			case EJECT:
+				telemetryServer.sendString("sMnI", "eject");
+				break;
+			case OFF:
+				telemetryServer.sendString("sMnI", "off");
+				break;
 		}
 	}
 	
@@ -77,9 +102,6 @@ public class Manipulator extends Threaded {
 
 			leftTalon.set(ControlMode.PercentOutput, -1D * basePower * Constants.ManipulatorNormalPower);
 			rightTalon.set(ControlMode.PercentOutput, basePower * Constants.ManipulatorNormalPower);
-			
-			if (manipulator == ManipulatorState.HATCH) manipulatorSolenoid.set(false);
-			else manipulatorSolenoid.set(true);       
 		}
 	}
 }
