@@ -20,7 +20,7 @@ public final class Constants {
 	public static final int BallIntakeMasterId = 20;
 
 	public static final int HatchIntakeMotorId = 5;
-
+	public static final int HatchIntkaeDeployMotorId = 5;
 
 	public static final int ElevatorMasterId = 24;
 	public static final int ElevatorSlaveId = 25;
@@ -122,7 +122,7 @@ public final class Constants {
 	public static final double IntakeFastRPM = 700; // Random number for now
 
 	// Hatch Intake
-	public static final double HatchIntakePower = 0.75;//Just a random percent for now
+	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
 	public static final double HatchHandoffAngle = 90;
 	public static final double HatchStowAngle = 0;
 	public static final double HatchIntakeAngle = 180;
