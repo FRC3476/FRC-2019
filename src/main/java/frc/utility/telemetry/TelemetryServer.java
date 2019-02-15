@@ -4,6 +4,8 @@
 // Copyright 2018 jackw01. Released under the MIT License (see LICENSE for details).
 // robodashboard FRC interface v0.1.0
 
+package frc.utility.telemetry;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -13,12 +15,14 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import frc.robot.Constants;
+
 /**
  * Handles rx/tx of telemetry data on robot side
  */
 public class TelemetryServer {
 
-	private static final TelemetryServer instance = new TelemetryServer(5801);
+	private static final TelemetryServer instance = new TelemetryServer(Constants.TelemetryPort);
 
 	public static TelemetryServer getInstance() {
 		return instance;
@@ -40,7 +44,7 @@ public class TelemetryServer {
 	 * 		Message to log and send to dashboard
 	 */
 	public void sendString(String message) {
-		sendString(new TelemetryLogEntry("log ", message));
+		sendString("log ", message);
 	}
 
 	/**
@@ -48,13 +52,14 @@ public class TelemetryServer {
 	 * @param dataPoint
 	 * 		Data point to send
 	 */
-	public void sendData(TelemetryDataPoint dataPoint) {
+	public void sendData(String k, double... v) {
+		double[] values = v;
 		ByteBuffer sendBuffer;
 		long timestamp = System.currentTimeMillis();
-		sendBuffer = ByteBuffer.allocate(6 + 4 + 8 * dataPoint.values.length).order(ByteOrder.LITTLE_ENDIAN);
+		sendBuffer = ByteBuffer.allocate(6 + 4 + 8 * values.length).order(ByteOrder.LITTLE_ENDIAN);
 		sendBuffer.putLong(timestamp).position(6);
-		sendBuffer.put(dataPoint.key.getBytes());
-		for (double value : dataPoint.values) {
+		sendBuffer.put(k.getBytes());
+		for (double value : values) {
 			sendBuffer.putDouble(value);
 		}
 		sendRawData(sendBuffer);
@@ -65,13 +70,13 @@ public class TelemetryServer {
 	 * @param stringValue
 	 * 		String to send
 	 */
-	public void sendString(TelemetryLogEntry stringValue) {
+	public void sendString(String k, String v) {
 		ByteBuffer sendBuffer;
 		long timestamp = System.currentTimeMillis();
-		sendBuffer = ByteBuffer.allocate(6 + 4 + stringValue.value.length() + 1).order(ByteOrder.LITTLE_ENDIAN);
+		sendBuffer = ByteBuffer.allocate(6 + 4 + v.length() + 1).order(ByteOrder.LITTLE_ENDIAN);
 		sendBuffer.putLong(timestamp).position(6);
-		sendBuffer.put(stringValue.key.getBytes());
-		sendBuffer.put(stringValue.value.getBytes());
+		sendBuffer.put(k.getBytes());
+		sendBuffer.put(v.getBytes());
 		sendRawData(sendBuffer);
 	}
 
@@ -85,8 +90,8 @@ public class TelemetryServer {
 		// bytes 6-9: key string
 		// bytes 10+: value
 		try {
-			DatagramPacket msg = new DatagramPacket(sendBuffer.array(), sendBuffer.position(),
-			InetAddress.getByName("127.0.0.1"), 5800);
+			DatagramPacket msg = new DatagramPacket(sendBuffer.array(), sendBuffer.position(), 
+				InetAddress.getByName(Constants.DriverStationIPv4), Constants.TelemetryPort);
 			socket.send(msg);
 		} catch (IOException e) {
 			e.printStackTrace();
