@@ -38,7 +38,32 @@ public class Turret extends Threaded {
 	}
 	
 	public void setAngle(double angle) {
-		turretTalon.set(ControlMode.Position, angle * Constants.EncoderTicksPerDegree);
+		//normalize requested angle on [-180,180]
+		angle -= 360.0*Math.round(angle/360.0);
+
+		double setpoint = angle;
+		double current = this.angle;
+
+		double dCW;	 //calculate the distance to spin CCW
+		double dCCW; //calculate the distance to spin CW
+
+		//pick shortest rotate direction, given that it doesn't twist the cable beyond [-190, 190]
+		if (setpoint > current) {	//setpoint is ahead of current
+			dCW = Math.abs(setpoint - current);
+			dCCW = Math.abs((360 - setpoint) + current);
+			if(dCCW < dCW && dCCW <= Constants.maxTurretOverTravel) { //twist further case
+				setpoint = setpoint - 360;
+			}
+		} else {						//setpoint is behind current
+			dCCW = Math.abs(setpoint - current);
+			dCW = Math.abs((360 + setpoint) - current);
+			if(dCW < dCCW && dCW <= Constants.maxTurretOverTravel) {	//twist further case
+				setpoint = 360 + setpoint;
+			}
+		}
+
+		//set talon SRX setpoint between [-180, 180]
+		turretTalon.set(ControlMode.Position, setpoint * Constants.EncoderTicksPerDegree);
 	}
 	
 	public void setSpeed(double speed) {

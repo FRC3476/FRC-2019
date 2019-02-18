@@ -127,7 +127,7 @@ public final class Constants {
 
 	// Turret
 	public static final int TurretCollisionRange = 0;
-
+	public static final double maxTurretOverTravel = 10;
 	public static final int turretLimitId = 8;//Random channel for now
 	public static final int maxTurretHomingAngle = 45;//Random degrees for now
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
