@@ -116,8 +116,8 @@ public class Turret extends Threaded {
 			prevSign = Math.abs(error)/error;
 			setAngle(angle);
 		} else {
-			if(Robot.j.getRawButton(5)) setAngle(getAngle() - 0.3);
-    		else if(Robot.j.getRawButton(6)) setAngle(getAngle() + 0.3);
+			if(Robot.j.getRawButton(5)) setAngle(getAngle() - 0.05);
+    		else if(Robot.j.getRawButton(6)) setAngle(getAngle() + 0.05);
 		}
 
 		telemetryServer.sendData(

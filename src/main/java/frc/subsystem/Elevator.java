@@ -44,7 +44,7 @@ public class Elevator extends Threaded {
 		elevMaster.config_kI(0, Constants.kElevatorI, Constants.TimeoutMs);
 		elevMaster.config_kD(0, Constants.kElevatorD, Constants.TimeoutMs);
 		elevMaster.config_IntegralZone(0, Constants.ELevatorIntegralZone, Constants.TimeoutMs);
-		elevHome();
+		//elevHome();
 	}
 	
 	// Gets current height of the elevator
