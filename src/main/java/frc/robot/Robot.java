@@ -23,8 +23,9 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends IterativeRobot {
   Drive drive = Drive.getInstance();
   RobotTracker rt = RobotTracker.getInstance();
-  Joystick j = new Joystick(0);
+  public static Joystick j = new Joystick(0);
   Turret t = Turret.getInstance();
+  Elevator e = Elevator.getInstance();
 
 
   private static final String kDefaultAuto = "Default";
@@ -137,13 +138,13 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
-      //drive.debug();
-      //drive.leftSpark.set (j.getRawAxis(1));
-     // drive.leftSparkSlave.set(j.getRawAxis(1));
+
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
-      //drive.debug();
+    
       t.update();
-     // d.getGyroAngle();
+      e.update();
+
+
   }
 
   /**

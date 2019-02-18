@@ -11,6 +11,7 @@ import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import frc.robot.Robot;
 
 public class Turret extends Threaded {
 	
@@ -115,8 +116,8 @@ public class Turret extends Threaded {
 			prevSign = Math.abs(error)/error;
 			setAngle(angle);
 		} else {
-			//angle += 0.1*prevSign;
-			//setAngle(angle);
+			if(Robot.j.getRawButton(5)) setAngle(getAngle() - 0.3);
+    		else if(Robot.j.getRawButton(6)) setAngle(getAngle() + 0.3);
 		}
 
 		telemetryServer.sendData(

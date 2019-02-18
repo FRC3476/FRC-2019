@@ -22,8 +22,8 @@ public final class Constants {
 	public static final int HatchIntakeMotorId = 5;
 	public static final int HatchIntakeDeployMotorId = 5;
 
-	public static final int ElevatorMasterId = 24;
-	public static final int ElevatorSlaveId = 25;
+	public static final int ElevatorMasterId = 8;
+	public static final int ElevatorSlaveId = 9;
 
 	public static final int ManipulatorMotor1Id = 22;
 	public static final int ManipulatorMotor2Id = 23;
@@ -76,6 +76,8 @@ public final class Constants {
 	public static final int TimeoutMs = 10;
 	
 	// Drive
+	public static final double maxTurnError = 2;
+	public static final double maxPIDStopSpeed = 8;
 	public static final double DriveHighSpeed = 215;
 	public static final double DriveLowSpeed = 95;
 	
@@ -120,6 +122,7 @@ public final class Constants {
 	public static final double IntakeMotorPowerEject = 0.275;
 	public static final double IntakeMediumRPM = 700; // Random number for now
 	public static final double IntakeFastRPM = 700; // Random number for now
+	public static final long IntakeDeployTime = 0;
 
 	// Hatch Intake
 	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
@@ -160,6 +163,8 @@ public final class Constants {
 	public static final double kElevatorD = 0.0;
 	
 	public static final double ElevatorIntakeSafe = 0;
+	public static final double ElevatorDeployingSafe = 0;
+	public static final double ElevatorSafetyError = 0;
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);
 	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
 	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);

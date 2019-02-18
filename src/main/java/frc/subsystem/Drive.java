@@ -97,7 +97,12 @@ public class Drive extends Threaded {
 		//rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
 		//leftSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
 		leftSpark.setInverted(true);
-		
+		rightSpark.setInverted(true);
+		leftSparkSlave.setInverted(true);
+		rightSparkSlave.setInverted(true);
+
+
+
 
 		leftSparkPID = leftSpark.getPIDController();
 		rightSparkPID = rightSpark.getPIDController();
@@ -527,7 +532,7 @@ public class Drive extends Threaded {
 		deltaSpeed = turnPID.update(error);
 		deltaSpeed = Math.copySign(
 				OrangeUtility.coercedNormalize(Math.abs(deltaSpeed), 0, 180, 0, Constants.DriveHighSpeed), deltaSpeed);
-		if (Math.abs(error) < 2) {
+		if (Math.abs(error) < Constants.maxTurnError && deltaSpeed < Constants.maxPIDStopSpeed) {
 			setWheelVelocity(new DriveSignal(0, 0));
 			synchronized (this) {
 				driveState = DriveState.DONE;

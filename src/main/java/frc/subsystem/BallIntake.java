@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class BallIntake extends Threaded {
 
 	public enum DeployState {
-		DEPLOY, STOW
+		DEPLOY, STOW, DEPLOYING
 	}
 	
 	public enum IntakeState {
