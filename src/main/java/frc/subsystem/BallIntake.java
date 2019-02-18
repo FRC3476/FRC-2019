@@ -5,6 +5,7 @@ package frc.subsystem;
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
+import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -26,6 +27,7 @@ public class BallIntake extends Threaded {
 		return instance;
 	}
 	
+	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private Solenoid deploySolenoid;
 	private LazyTalonSRX intakeMotor;
 	private DeployState deployState = DeployState.STOW;
@@ -49,12 +51,38 @@ public class BallIntake extends Threaded {
 		synchronized (this) {
 			this.deployState = deployState;
 		}
+
+		switch (deployState) {
+			case DEPLOY:
+				deploySolenoid.set(true);
+				telemetryServer.sendString("sIB1", "deploy");
+				break;
+			case STOW:
+				deploySolenoid.set(false);
+				telemetryServer.sendString("sIB1", "stow");
+				break;
+		}
 	}
 	
 	// Set the state of the intake
 	public void setIntakeState(IntakeState intakeState) {
 		synchronized (this) {
 			this.intakeState = intakeState;
+		}
+
+		switch (intakeState) {
+			case INTAKE:
+				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerIntake);
+				telemetryServer.sendString("sIB2", "intake");
+				break;
+			case EJECT:
+				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerEject);
+				telemetryServer.sendString("sIB2", "eject");
+				break;
+			case OFF:
+				intakeMotor.set(ControlMode.PercentOutput, 0);
+				telemetryServer.sendString("sIB2", "off");
+				break;
 		}
 	}
 	
@@ -74,27 +102,6 @@ public class BallIntake extends Threaded {
 		synchronized (this) {
 			intake = intakeState;
 			deploy = deployState;
-		}
-		
-		switch (intake) {
-			case INTAKE:
-				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerIntake);
-				break;
-			case EJECT:
-				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerEject);
-				break;
-			case OFF:
-				intakeMotor.set(ControlMode.PercentOutput, 0);
-				break;
-		}
-
-		switch (deploy) {
-			case DEPLOY:
-				deploySolenoid.set(true);
-				break;
-			case STOW:
-				deploySolenoid.set(false);
-				break;
 		}
 	}
 }

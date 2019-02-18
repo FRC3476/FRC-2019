@@ -28,7 +28,7 @@ public class JetsonUDP extends Thread {
   public JetsonUDP() {
     super("bleh");
     try {
-      socket = new DatagramSocket(Constants.JetsonSocket);
+      socket = new DatagramSocket(Constants.JetsonPort);
       address = InetAddress.getByName(Constants.JetsonIPv4);
     } catch(Exception e) {
       System.out.println("Failed to intialize UDP socket with Jetson");

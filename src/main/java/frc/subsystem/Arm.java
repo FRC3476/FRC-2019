@@ -4,6 +4,7 @@ package frc.subsystem;
 
 import frc.robot.Constants;
 import frc.utility.LazyTalonSRX;
+import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -21,6 +22,7 @@ public class Arm {
 		return instance;
 	}
 	
+	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private Solenoid armSolenoid;
 	
 	private Arm() {
@@ -28,7 +30,15 @@ public class Arm {
 	}
 	
 	public void setState(ArmState state) {
-		if (state == ArmState.RETRACT) armSolenoid.set(false);
-		else if (state == ArmState.EXTEND) armSolenoid.set(true);
+		switch (state) {
+			case RETRACT:
+				armSolenoid.set(false);
+				telemetryServer.sendString("sArm", "retract");
+				break;
+			case EXTEND:
+				armSolenoid.set(true);
+				telemetryServer.sendString("sArm", "extend");
+				break;
+		}
 	}
 }

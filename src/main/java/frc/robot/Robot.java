@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.Joystick;
  * project.
  */
 public class Robot extends IterativeRobot {
-  //OrangeDrive drive = OrangeDrive.getInstance();
   Drive drive = Drive.getInstance();
   RobotTracker rt = RobotTracker.getInstance();
   Joystick j = new Joystick(0);
