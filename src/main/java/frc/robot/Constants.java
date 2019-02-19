@@ -32,10 +32,10 @@ public final class Constants {
 	public static final int ClimberSlaveId = 26;
 	
 	// PCM IDs
-	public static final int DriveShifterSolenoidId = 0;
-	public static final int BallIntakeSolenoidId = 1;
-	public static final int ArmSolenoidId = 2;
-	public static final int ManipulatorSolenoidId = 3;
+	public static final int DriveShifterSolenoidId = 4;
+	public static final int BallIntakeSolenoidId = 5;
+	public static final int ArmSolenoidId = 6;
+	public static final int ManipulatorSolenoidId = 7;
 
 	// IO IDs
 	public static final int TurretLimitId = 0;
