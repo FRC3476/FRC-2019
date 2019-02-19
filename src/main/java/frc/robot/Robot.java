@@ -147,6 +147,11 @@ public class Robot extends IterativeRobot {
 
   }
 
+  @Override
+  public void testInit() {
+    t.homeTurret();
+  }
+
   /**
    * This function is called periodically during test mode.
    */
