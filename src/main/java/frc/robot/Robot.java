@@ -147,6 +147,10 @@ public class Robot extends IterativeRobot {
 			if(j.getRawAxis(2) > 0.1) e.setHeight(e.getHeight() - 10*j.getRawAxis(2));
       else  e.setHeight(e.getHeight() + 10* j.getRawAxis(3));
         
+      if(j.getRawButton(8)){
+        e.elevHome();
+      }
+
       t.update();
       e.update();
 
