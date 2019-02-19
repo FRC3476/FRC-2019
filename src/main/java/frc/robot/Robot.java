@@ -140,10 +140,15 @@ public class Robot extends IterativeRobot {
   public void teleopPeriodic() {
 
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
-    
+      if(j.getRawButton(5)) t.setAngle(t.getAngle() - 0.05);
+			else if(j.getRawButton(6)) t.setAngle(t.getAngle() + 0.05);
+
+      //elevator on triggers
+			if(j.getRawAxis(2) > 0.1) e.setHeight(e.getHeight() - 10*j.getRawAxis(2));
+      else  e.setHeight(e.getHeight() + 10* j.getRawAxis(3));
+        
       t.update();
       e.update();
-
 
   }
 
