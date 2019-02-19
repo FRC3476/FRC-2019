@@ -123,14 +123,15 @@ public class Elevator extends Threaded {
 					elevMaster.set(ControlMode.PercentOutput, 0);
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
+					elevState = ElevatorState.SETPOINT;
 					System.out.println("Homing succeeded");
 					}
 				} else{
 					//Homing failed
-					elevState = ElevatorState.SETPOINT;
 					elevMaster.set(ControlMode.PercentOutput, 0);
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
+					elevState = ElevatorState.SETPOINT;
 					System.out.println("Homing failed");
 				}
 			break;
@@ -142,7 +143,8 @@ public class Elevator extends Threaded {
 				//elevator on triggers
 				if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
 				else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
-			break;
+
+				break;
 		}
 	}
 }
