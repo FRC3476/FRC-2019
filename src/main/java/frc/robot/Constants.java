@@ -168,6 +168,7 @@ public final class Constants {
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);
 	public static final double ElevatorPositionMiddle = ElevatorPositionDefault + HatchPanelHeight;
 	public static final double ElevatorPositionHigh = ElevatorPositionDefault + (2 * HatchPanelHeight);
+	public static final double ElevatorPositionLow = 0;
 	
 	public static final double ElevatorMaxHeight = 70;//in number for now
 	public static final double ElevatorIntakeHeight = 10;//For now

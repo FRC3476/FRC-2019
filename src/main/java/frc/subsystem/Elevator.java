@@ -10,12 +10,18 @@ import frc.utility.Threaded;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.*;
 
 public class Elevator extends Threaded {
 
 	public enum ElevatorHeight {
 		BASE, MIDDLE, TOP
+	}
+
+	public enum ElevatorState{
+		HOMING, SETPOINT
 	}
 	
 	private static final Elevator instance = new Elevator();
@@ -31,7 +37,8 @@ public class Elevator extends Threaded {
 	public double requested;
 	private boolean safetyEngage = false;
 	private double safeHeight = Constants.ElevatorDeployingSafe;
-
+	private double startTime;
+	private ElevatorState elevState;
 	// Elevator constructor to setup the elevator (zero it in the future with current measurement)
 	private Elevator() {
 		elevSlave.follow(elevMaster);
@@ -84,18 +91,14 @@ public class Elevator extends Threaded {
 	}
 	
 	public void elevHome() {
-		while (getPulledCurrent() < Constants.ElevatorStallAmps) {
-			elevMaster.set(ControlMode.PercentOutput,Constants.ElevatorHomeSpeed);
-		}
-		elevMaster.set(ControlMode.PercentOutput, 0);
-		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
-		Constants.TimeoutMs);
+		startTime = Timer.getFPGATimestamp();
+		elevState = ElevatorState.HOMING;
 	}
 	
 	public void setHeightState(ElevatorHeight level) {
 		switch (level) {
 			case BASE:
-			elevHome();
+			setHeight(Constants.ElevatorPositionLow);
 			break;
 			case MIDDLE:
 			setHeight(Constants.ElevatorPositionMiddle);
@@ -108,11 +111,38 @@ public class Elevator extends Threaded {
 	
 	@Override
 	public void update() {
-		if(safetyEngage) setHeight(requested);
+		switch(elevState){
+			//If is in homing mode
+			case HOMING:
+				if((Timer.getFPGATimestamp()-startTime)>=1){
 
-		//elevator on triggers
-		if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
-		else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
-		
+					if(getPulledCurrent() < Constants.ElevatorStallAmps) {
+						elevMaster.set(ControlMode.PercentOutput,Constants.ElevatorHomeSpeed);
+					} else {
+					//Zero
+					elevMaster.set(ControlMode.PercentOutput, 0);
+					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
+					Constants.TimeoutMs);
+					System.out.println("Homing succeeded");
+					}
+				} else{
+					//Homing failed
+					elevState = ElevatorState.SETPOINT;
+					elevMaster.set(ControlMode.PercentOutput, 0);
+					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
+					Constants.TimeoutMs);
+					System.out.println("Homing failed");
+				}
+			break;
+			
+			//If is in setpoint mode
+			case SETPOINT:
+				if(safetyEngage) setHeight(requested);
+
+				//elevator on triggers
+				if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
+				else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
+			break;
+		}
 	}
 }
