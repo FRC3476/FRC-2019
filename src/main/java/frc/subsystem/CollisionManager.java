@@ -14,6 +14,12 @@ public class CollisionManager extends Threaded {
     boolean waitingOnIntake = false;
     long prevTime;
 
+    private static final CollisionManager cm = new CollisionManager();
+
+    public static CollisionManager getInstance() {
+        return cm;
+    }    
+    
     public CollisionManager() {
 
     }
