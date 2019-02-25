@@ -1,8 +1,9 @@
 package frc.auton;
 
 import frc.subsystem.*;
+import frc.utility.Threaded;
 
-public class TemplateAuto {
+public class TemplateAuto extends Threaded { 
     Drive drive = Drive.getInstance();
     Elevator elevator = Elevator.getInstance();
     Arm arm = Arm.getInstance();
@@ -18,7 +19,8 @@ public class TemplateAuto {
         
     }
 
-    public void run() {
+    @Override
+    public void update() {
 
     }
 

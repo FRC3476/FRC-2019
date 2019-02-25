@@ -5,6 +5,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.auton.DriveForward;
 import frc.subsystem.*;
 //import frc.robot.subsystem.Drive;
 import frc.utility.math.*;
@@ -83,34 +84,8 @@ public class Robot extends IterativeRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // autoSelected = SmartDashboard.getString("Auto Selector",
-    // defaultAuto);
-    //AutoRoutine ar = new AutoRoutine();
-    //ar.addComands(new DriveToPooints)
-    Path drivePath = new Path(RobotTracker.getInstance().getOdometry().translationMat);
-    drivePath.addPoint(new Translation2D(10, 0), 40);
-    drivePath.addPoint(new Translation2D(20, 0), 40);
-    drivePath.addPoint(new Translation2D(30, 0), 40);
-    drivePath.addPoint(new Translation2D(30, -15), 40);
-
-
-    //drivePath.addPoint(new Translation2D(10, -5), 45);
-    //drivePath.addPoint(new Translation2D(20, 0), 40);
-
-    //drivePath.addPoint(new Translation2D(40, -25), 45);
-    //drivePath.addPoint(new Translation2D(50, 20), 45);
-
-
-
-    drive.setAutoPath(drivePath, false);
     System.out.println("Auto selected: " + m_autoSelected);
-
-    
-    //new Thread(rt).start();
-
-    //new Thread(ar).start();
-    //new Thread(ar).run();    
-    
+    new Thread(new DriveForward());
   }
 
   /**
