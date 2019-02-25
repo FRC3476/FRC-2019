@@ -152,6 +152,7 @@ public final class Constants {
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 512;
 	public static final int ElevatorSensorPidIdx = 0;
+	public static final double ElevatorTargetError = 10;
 	
 	public static final double ElevatorLowAmps = 0;
 	public static final double ElevatorHighAmps = 25;
