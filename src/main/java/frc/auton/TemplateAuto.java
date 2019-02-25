@@ -2,8 +2,11 @@ package frc.auton;
 
 import frc.subsystem.*;
 import frc.utility.Threaded;
+import frc.utility.control.*;
+import frc.utility.math.*;
 
-public class TemplateAuto extends Threaded { 
+
+public class TemplateAuto implements Runnable { 
     Drive drive = Drive.getInstance();
     Elevator elevator = Elevator.getInstance();
     Arm arm = Arm.getInstance();
@@ -20,7 +23,7 @@ public class TemplateAuto extends Threaded {
     }
 
     @Override
-    public void update() {
+    public void run() {
 
     }
 
