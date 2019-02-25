@@ -8,8 +8,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import frc.robot.Constants;
-import frc.utility.auto.AutoCommand;
-import frc.utility.auto.AutoRoutine;
+//import frc.utility.auto.AutoCommand;
+//import frc.utility.auto.AutoRoutine;
 import frc.utility.math.Rotation2D;
 import frc.utility.math.Translation2D;
 
@@ -25,7 +25,7 @@ public class Path {
 		public Translation2D closestPoint;
 		public Translation2D currentSegEnd;
 	}
-
+	/*
 	public static class AutoRoutineTrigger implements Comparable<AutoRoutineTrigger> {
 		private double percentage;
 		private AutoRoutine routine;
@@ -44,15 +44,16 @@ public class Path {
 				return -1;
 			return -0;
 		}
-	}
+	} */
 
 	private List<Segment> segments;
 	private Translation2D lastPoint;
 	private Rotation2D endAngle = null;
 	private double totalDist;
 	private double finishedDist;
-	private ArrayList<AutoRoutineTrigger> commands = new ArrayList<>();
+	//private ArrayList<AutoRoutineTrigger> commands = new ArrayList<>();
 	private volatile boolean isEmpty;
+	private double percentage;
 
 	/**
 	 * Contains a list of points and can create path segments with them.
@@ -147,7 +148,12 @@ public class Path {
 		System.out.println(segments.get(segments.size() - 1).getEnd().getX() + "   "
 				+ segments.get(segments.size() - 1).getEnd().getY());
 	}
+	
+	public double getPercentage() {
+		return this.percentage;
+	}
 
+	/*
 	public void addRoutine(AutoRoutine routine, double percentage) {
 		addAutoRoutineTrigger(new AutoRoutineTrigger(routine, percentage));
 	}
@@ -156,12 +162,12 @@ public class Path {
 		AutoRoutine routine = new AutoRoutine();
 		routine.addCommands(command);
 		addAutoRoutineTrigger(new AutoRoutineTrigger(routine, percentage));
-	}
+	} 
 
 	public void addAutoRoutineTrigger(AutoRoutineTrigger routine) {
 		this.commands.add(routine);
 		Collections.sort(this.commands);
-	}
+	}*/
 
 	/**
 	 * TODO: Explain what's goin on in this function. Review with uncool
@@ -197,13 +203,15 @@ public class Path {
 		double traveledDist = (segments.get(0).getPercentageOnSegment(pose) * segments.get(0).getDistance()
 				+ finishedDist);
 		double percentage = traveledDist / totalDist;
+		this.percentage = percentage;
+		/*
 		while (!commands.isEmpty()) {
 			if (commands.get(0).percentage <= percentage) {
 				commands.remove(0).routine.run();
 			} else {
 				break;
 			}
-		}
+		} */
 		data.closestPoint = closestPoint;
 		data.currentSegEnd = segments.get(0).getEnd();
 		Translation2D closestToEnd = closestPoint.inverse().translateBy(segments.get(0).getEnd());

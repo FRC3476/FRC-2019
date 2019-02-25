@@ -39,6 +39,7 @@ public class Elevator extends Threaded {
 	private double safeHeight = Constants.ElevatorDeployingSafe;
 	private double startTime;
 	private ElevatorState elevState;
+	private boolean isFinished;
 	// Elevator constructor to setup the elevator (zero it in the future with current measurement)
 	private Elevator() {
 		elevSlave.follow(elevMaster);
@@ -85,6 +86,10 @@ public class Elevator extends Threaded {
 		safeHeight = height;
 	}
 
+	public boolean isFinished() {
+		return isFinished;
+	}
+
 	public boolean isSafe() {
 		if(Math.abs(safeHeight - getHeight()) < Constants.ElevatorSafetyError) return true;
 		else return false;
@@ -111,6 +116,7 @@ public class Elevator extends Threaded {
 	
 	@Override
 	public void update() {
+		if(Math.abs(requested - getHeight()) < Constants.ElevatorTargetError) isFinished = true;
 		switch(elevState){
 			//If is in homing mode
 			case HOMING:

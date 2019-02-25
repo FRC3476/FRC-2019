@@ -5,12 +5,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.auton.DriveForward;
 import frc.subsystem.*;
 //import frc.robot.subsystem.Drive;
-import frc.utility.auto.AutoRoutine;
 import frc.utility.math.*;
 import frc.utility.control.motion.Path;
 import edu.wpi.first.wpilibj.Joystick;
+import java.util.concurrent.*;
+import frc.utility.ThreadScheduler;
+
 
 
 /**
@@ -22,11 +25,15 @@ import edu.wpi.first.wpilibj.Joystick;
  */
 public class Robot extends IterativeRobot {
   Drive drive = Drive.getInstance();
-  RobotTracker rt = RobotTracker.getInstance();
+  CollisionManager collisionManager = CollisionManager.getInstance();
   public static Joystick j = new Joystick(0);
-  Turret t = Turret.getInstance();
-  Elevator e = Elevator.getInstance();
+  Turret turret = Turret.getInstance();
+  Elevator elevator = Elevator.getInstance();
 
+  ExecutorService executor = Executors.newFixedThreadPool(4);
+	ThreadScheduler scheduler = new ThreadScheduler();
+
+  
 
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
@@ -43,6 +50,12 @@ public class Robot extends IterativeRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    scheduler.schedule(drive, executor);
+		scheduler.schedule(elevator, executor);
+		scheduler.schedule(turret, executor);
+		scheduler.schedule(collisionManager, executor);
+
   }
 
   /**
@@ -71,34 +84,8 @@ public class Robot extends IterativeRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // autoSelected = SmartDashboard.getString("Auto Selector",
-    // defaultAuto);
-    AutoRoutine ar = new AutoRoutine();
-    //ar.addComands(new DriveToPooints)
-    Path drivePath = new Path(RobotTracker.getInstance().getOdometry().translationMat);
-    drivePath.addPoint(new Translation2D(10, 0), 40);
-    drivePath.addPoint(new Translation2D(20, 0), 40);
-    drivePath.addPoint(new Translation2D(30, 0), 40);
-    drivePath.addPoint(new Translation2D(30, -15), 40);
-
-
-    //drivePath.addPoint(new Translation2D(10, -5), 45);
-    //drivePath.addPoint(new Translation2D(20, 0), 40);
-
-    //drivePath.addPoint(new Translation2D(40, -25), 45);
-    //drivePath.addPoint(new Translation2D(50, 20), 45);
-
-
-
-    drive.setAutoPath(drivePath, false);
     System.out.println("Auto selected: " + m_autoSelected);
-
-    
-    //new Thread(rt).start();
-
-    //new Thread(ar).start();
-    //new Thread(ar).run();    
-    
+    new DriveForward().run();
   }
 
   /**
@@ -116,16 +103,7 @@ public class Robot extends IterativeRobot {
         // Put default auto code here
         break;
     }
-    rt.update();
-    drive.update();
-    //drive.setRight();
-    /*
-    System.out.println("X : " + rt.getOdometry().translationMat.getX());
-    System.out.println("Y : " + rt.getOdometry().translationMat.getY());
-    System.out.println("T : " + rt.getOdometry().rotationMat.getDegrees());
-    */
-    //  System.out.println("speed: " + drive.getSpeed());
-
+  
   }
 
   @Override 
@@ -140,25 +118,13 @@ public class Robot extends IterativeRobot {
   public void teleopPeriodic() {
 
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
-      if(j.getRawButton(5)) t.setAngle(t.getAngle() - 0.05);
-			else if(j.getRawButton(6)) t.setAngle(t.getAngle() + 0.05);
-
-      //elevator on triggers
-			if(j.getRawAxis(2) > 0.1) e.setHeight(e.getHeight() - 10*j.getRawAxis(2));
-      else  e.setHeight(e.getHeight() + 10* j.getRawAxis(3));
-        
-      if(j.getRawButton(8)){
-        e.elevHome();
-      }
-
-      t.update();
-      e.update();
+    
 
   }
 
   @Override
   public void testInit() {
-    t.homeTurret();
+  
   }
 
   /**
