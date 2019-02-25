@@ -85,6 +85,10 @@ public class Elevator extends Threaded {
 		safeHeight = height;
 	}
 
+	public boolean isFinished() {
+		return true;
+	}
+
 	public boolean isSafe() {
 		if(Math.abs(safeHeight - getHeight()) < Constants.ElevatorSafetyError) return true;
 		else return false;

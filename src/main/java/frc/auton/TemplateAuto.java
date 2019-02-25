@@ -18,8 +18,12 @@ public class TemplateAuto implements Runnable {
     Manipulator manipulator = Manipulator.getInstance();
     Turret turret = Turret.getInstance();
 
-    public TemplateAuto() {
-        
+    public TemplateAuto(Translation2D start) {
+        RobotTracker.getInstance().setInitialTranslation(start);
+    }
+
+    public Translation2D here() {
+        return RobotTracker.getInstance().getOdometry().translationMat;
     }
 
     @Override
