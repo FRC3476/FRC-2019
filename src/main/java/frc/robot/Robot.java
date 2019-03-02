@@ -109,6 +109,7 @@ public class Robot extends IterativeRobot {
   @Override 
   public void teleopInit() {
     drive.stopMovement();
+    scheduler.resume();
   }
 
   /**
