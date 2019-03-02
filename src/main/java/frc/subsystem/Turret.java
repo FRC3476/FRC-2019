@@ -146,6 +146,7 @@ public class Turret extends Threaded {
 				}
 
 			break;
+			
 		}
 
 		/*telemetryServer.sendData(
@@ -156,5 +157,6 @@ public class Turret extends Threaded {
 		
 		//System.out.println(angle);
 	//	turretMotor.set(ControlMode.PercentOutput, 0.3);
+		System.out.println(getAngle());
 	}
 }
