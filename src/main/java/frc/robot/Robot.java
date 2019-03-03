@@ -5,6 +5,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.tables.ITable;
 import frc.auton.DriveForward;
 import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
@@ -28,10 +29,13 @@ import frc.utility.ThreadScheduler;
 public class Robot extends IterativeRobot {
   Drive drive = Drive.getInstance();
   CollisionManager collisionManager = CollisionManager.getInstance();
-  public static Joystick j = new Joystick(0);
+  public static Joystick xbox = new Joystick(0);
+  public static Joystick stick = new Joystick(1);
+  public static Joystick buttonPanel = new Joystick(2);
   Turret turret = Turret.getInstance();
   Elevator elevator = Elevator.getInstance();
   Manipulator manipulator = Manipulator.getInstance();
+  Arm arm = Arm.getInstance();
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
 	ThreadScheduler scheduler = new ThreadScheduler();
@@ -123,19 +127,67 @@ public class Robot extends IterativeRobot {
     //elevator.elevHome();
     manipulator.setManipulatorIntakeState(Manipulator.ManipulatorIntakeState.OFF);
   }
+  /*
   float angle = 0;
   boolean yeet = false;
   long yeetTime = System.currentTimeMillis();
   boolean btn4Edge = false;
   boolean btn3Edge = false;
   boolean prevManipulator = false;
+  */
+
+  boolean ballMode = false;
+  final double ballElevHigh = 20;
+  final double ballElevMid = 10;
+  final double ballElevLow = 4.5;
+  final double ballElevCargo = 5;
+
+  final double hatchElevHigh = 20;
+  final double hatchElevMid = 10;
+  final double hatchElevLow = 4.5;
+  final double hatchElevCargo = 5;
+
   
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
-      //turret.setAngle(angle);
+      //turret.setAngle(angle);'
+      
+      drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
+
+      if(stick.getRawButton(3)) ballMode = true;
+      else if(stick.getRawButton(4)) ballMode = false;
+
+      if(buttonPanel.getRawButton(1)) arm.setState(ArmState.EXTEND);
+      if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
+
+      if(buttonPanel.getRawButton(9)) elevator.zero();
+
+      if(ballMode) { //ball mode
+        //wheeled intake
+        if(stick.getRawButton(0)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL EJECT
+        else if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //BALL INTAKE
+        //elev setpoints
+        if(buttonPanel.getRawButton(8)) elevator.setHeight(ballElevHigh);
+        if(buttonPanel.getRawButton(7)) elevator.setHeight(ballElevMid);
+        if(buttonPanel.getRawButton(6)) elevator.setHeight(ballElevLow);
+        if(buttonPanel.getRawButton(5)) elevator.setHeight(ballElevCargo);
+
+
+      } else { //hatch mode
+        //wheeled intake
+        if(stick.getRawButton(0)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //HATCH EJECT
+        else if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //HATCH INTAKE
+        //elev setpoints
+        if(buttonPanel.getRawButton(8)) elevator.setHeight(hatchElevHigh);
+        if(buttonPanel.getRawButton(7)) elevator.setHeight(hatchElevMid);
+        if(buttonPanel.getRawButton(6)) elevator.setHeight(hatchElevLow);
+        if(buttonPanel.getRawButton(5)) elevator.setHeight(hatchElevCargo);
+      }
+
+    /*
       if(j.getRawButton(5)) angle -= 0.6;
       else if(j.getRawButton(6)) angle+=0.6;
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
@@ -186,11 +238,9 @@ public class Robot extends IterativeRobot {
 
       if(j.getRawAxis(2) > 0.1) elevator.setHeight(elevator.getHeight() - 2*Robot.j.getRawAxis(2));
 			else if(j.getRawAxis(3) > 0.1)  elevator.setHeight(elevator.getHeight() + 2* Robot.j.getRawAxis(3));
-
+      */
       System.out.println(elevator.getHeight());
-      //turret.update();
-      //System.out.println("actual: " + turret.getAngle() + " desired: " + angle);
-    //System.out.println("hall effect " + Turret.turretHallEffect.get());
+     
   }
 
   @Override
