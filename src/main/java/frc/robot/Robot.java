@@ -85,7 +85,11 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
     System.out.println("Auto selected: " + m_autoSelected);
-    new DriveForward().run();
+    //new DriveForward().run();
+    drive.stopMovement();
+    scheduler.resume();
+    turret.setAngle(90);
+
   }
 
   /**
@@ -111,21 +115,26 @@ public class Robot extends IterativeRobot {
     drive.stopMovement();
     scheduler.resume();
   }
-
+  float angle = 0;
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
-
+      //turret.setAngle(angle);
+      if(j.getRawButton(5)) angle -= 0.6;
+      else if(j.getRawButton(6)) angle+=0.6;
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
-    
+      turret.setAngle(angle);
+
+      System.out.println("actual: " + turret.getAngle() + " desired: " + angle);
 
   }
 
   @Override
   public void testInit() {
-  
+    drive.stopMovement();
+    scheduler.resume();
   }
 
   /**
@@ -133,5 +142,6 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void testPeriodic() {
+
   }
 }

@@ -42,6 +42,8 @@ public class Turret extends Threaded {
 		turretMotor.config_kD(0, Constants.kTurretD, Constants.TimeoutMs);
 		turretHallEffect = new DigitalInput(Constants.TurretLimitId);
 		homeTurret();
+		turretState = TurretState.SETPOINT;
+		
 	}
 
 	public static enum TurretState{
@@ -55,28 +57,33 @@ public class Turret extends Threaded {
 		angle -= 360.0*Math.round(angle/360.0);
 
 		double setpoint = angle;
-		double current = this.angle;
+		double current = getAngle();
 
 		double dCW;	 //calculate the distance to spin CCW
 		double dCCW; //calculate the distance to spin CW
-
+		
 		//pick shortest rotate direction, given that it doesn't twist the cable beyond [-190, 190]
 		if (setpoint > current) {	//setpoint is ahead of current
-			dCW = Math.abs(setpoint - current);
-			dCCW = Math.abs((360 - setpoint) + current);
-			if(dCCW < dCW && dCCW <= Constants.maxTurretOverTravel) { //twist further case
+			dCCW = Math.abs(setpoint - current);
+			dCW = Math.abs((360 - setpoint) + current);
+			if(dCW < dCCW && Math.abs(Math.abs(setpoint)-180) <= Constants.maxTurretOverTravel) { //twist further case
 				setpoint = setpoint - 360;
 			}
 		} else {						//setpoint is behind current
-			dCCW = Math.abs(setpoint - current);
-			dCW = Math.abs((360 + setpoint) - current);
-			if(dCW < dCCW && dCW <= Constants.maxTurretOverTravel) {	//twist further case
+			dCW = Math.abs(setpoint - current);
+			dCCW = Math.abs((360 + setpoint) - current);
+			if(dCCW < dCW && Math.abs(Math.abs(setpoint)-180) <= Constants.maxTurretOverTravel) {	//twist further case
 				setpoint = 360 + setpoint;
 			}
 		}
-
+		System.out.println("setpoint translated: " +setpoint + " speed " + turretMotor.getSelectedSensorVelocity());
 		//set talon SRX setpoint between [-180, 180]
-		turretMotor.set(ControlMode.Position, setpoint * Constants.EncoderTicksPerDegree);
+		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
+			System.out.println("setpoint error");
+			setpoint = 0;
+		}
+
+		turretMotor.set(ControlMode.Position, -setpoint * Constants.EncoderTicksPerDegree*10.6);
 	}
 	
 	public void setSpeed(double speed) {
@@ -88,7 +95,7 @@ public class Turret extends Threaded {
 	}
 	
 	public double getAngle() {
-		return turretMotor.getSelectedSensorPosition() * Constants.DegreesPerEncoderTick;
+		return -turretMotor.getSelectedSensorPosition() * Constants.DegreesPerEncoderTick/10.6;
 	}
 	
 	public double getTargetAngle() {
@@ -157,6 +164,6 @@ public class Turret extends Threaded {
 		
 		//System.out.println(angle);
 	//	turretMotor.set(ControlMode.PercentOutput, 0.3);
-		System.out.println(getAngle());
+		
 	}
 }
