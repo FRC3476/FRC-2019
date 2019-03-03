@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.auton.DriveForward;
 import frc.subsystem.*;
+import frc.subsystem.Arm.ArmState;
+import frc.subsystem.Manipulator.ManipulatorIntakeState;
 //import frc.robot.subsystem.Drive;
 import frc.utility.math.*;
 import frc.utility.control.motion.Path;
@@ -29,6 +31,7 @@ public class Robot extends IterativeRobot {
   public static Joystick j = new Joystick(0);
   Turret turret = Turret.getInstance();
   Elevator elevator = Elevator.getInstance();
+  Manipulator manipulator = Manipulator.getInstance();
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
 	ThreadScheduler scheduler = new ThreadScheduler();
@@ -54,7 +57,8 @@ public class Robot extends IterativeRobot {
     scheduler.schedule(drive, executor);
 		scheduler.schedule(elevator, executor);
 		scheduler.schedule(turret, executor);
-		scheduler.schedule(collisionManager, executor);
+    scheduler.schedule(collisionManager, executor);
+    scheduler.schedule(manipulator, executor);
 
   }
 
@@ -114,8 +118,12 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     drive.stopMovement();
     scheduler.resume();
+    turret.homeTurret();
+    manipulator.setManipulatorIntakeState(Manipulator.ManipulatorIntakeState.OFF);
   }
   float angle = 0;
+  boolean yeet = false;
+  long yeetTime = System.currentTimeMillis();
   /**
    * This function is called periodically during operator control.
    */
@@ -126,14 +134,33 @@ public class Robot extends IterativeRobot {
       else if(j.getRawButton(6)) angle+=0.6;
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
       turret.setAngle(angle);
-
-      System.out.println("actual: " + turret.getAngle() + " desired: " + angle);
-
+      
+      if(j.getRawButton(3) && yeet == false) {
+        yeet = true;
+        yeetTime =  System.currentTimeMillis();
+        Arm.getInstance().setState(ArmState.EXTEND);
+      }
+      if(yeet) {
+        if(System.currentTimeMillis() - yeetTime > 500) {
+          Manipulator.getInstance().setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
+        } 
+        if(System.currentTimeMillis() - yeetTime > 1000) {
+          Manipulator.getInstance().setManipulatorIntakeState(ManipulatorIntakeState.OFF);
+          yeet = false;
+        }
+      }
+      if(j.getRawButton(1)) {
+        Arm.getInstance().setState(ArmState.RETRACT);
+      } 
+      //turret.update();
+      //System.out.println("actual: " + turret.getAngle() + " desired: " + angle);
+    //System.out.println("hall effect " + Turret.turretHallEffect.get());
   }
 
   @Override
   public void testInit() {
     drive.stopMovement();
+
     scheduler.resume();
   }
 

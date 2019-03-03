@@ -25,8 +25,8 @@ public final class Constants {
 	public static final int ElevatorMasterId = 8;
 	public static final int ElevatorSlaveId = 9;
 
-	public static final int ManipulatorMotor1Id = 22;
-	public static final int ManipulatorMotor2Id = 23;
+	public static final int ManipulatorMotor1Id = 10;
+	public static final int ManipulatorMotor2Id = 11;
 	
 	public static final int ClimberMasterId = 21;
 	public static final int ClimberSlaveId = 26;
@@ -140,7 +140,7 @@ public final class Constants {
 //	public static final double kTurretP = 0.25;
 
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
-	public static final double TurretHomingPower = 0.8;//Random percent for now
+	public static final double TurretHomingPower = 0.4;//Random percent for now
 	public static final double kTurretP = 0.4;
 
 

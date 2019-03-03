@@ -23,13 +23,14 @@ public class Turret extends Threaded {
 
 	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private LazyTalonSRX turretMotor;
-	private static DigitalInput turretHallEffect;
+	public static DigitalInput turretHallEffect;
 	private double angle = 0;
 	private double prevSign = 1;
 
 	private double dir = 1;
 	private boolean isTriggered = false;
 	private TurretState turretState;
+	private boolean switchFlag = false;
 
 	JetsonUDP visionData = JetsonUDP.getInstance();
 
@@ -41,8 +42,8 @@ public class Turret extends Threaded {
 		turretMotor.config_kI(0, Constants.kTurretI, Constants.TimeoutMs);
 		turretMotor.config_kD(0, Constants.kTurretD, Constants.TimeoutMs);
 		turretHallEffect = new DigitalInput(Constants.TurretLimitId);
-		homeTurret();
-		turretState = TurretState.SETPOINT;
+		//homeTurret();
+		//turretState = TurretState.SETPOINT;
 		
 	}
 
@@ -76,7 +77,7 @@ public class Turret extends Threaded {
 				setpoint = 360 + setpoint;
 			}
 		}
-		System.out.println("setpoint translated: " +setpoint + " speed " + turretMotor.getSelectedSensorVelocity());
+		//System.out.println("setpoint translated: " +setpoint + " speed " + turretMotor.getSelectedSensorVelocity());
 		//set talon SRX setpoint between [-180, 180]
 		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
 			System.out.println("setpoint error");
@@ -110,28 +111,39 @@ public class Turret extends Threaded {
 		turretState = TurretState.HOMING;
 		turretMotor.setSelectedSensorPosition(0, 0, 10); // Zero encoder
 		dir = 1; // left
+		switchFlag = false;
 		turretMotor.set(ControlMode.PercentOutput, 0);
+		System.out.println("starting homing");
 	}
 	
 	@Override
 	public void update() {
-		VisionTarget[] target = visionData.getTargets();
+		//System.out.println("turret hall effect: ");
+		
+		//System.out.println("turret hall effect: " + turretHallEffect.get());
+		//VisionTarget[] target = visionData.getTargets();
 		//printf(target[0].x);
 		//System.out.println(turretMotor.getSelectedSensorPosition());
+		
 		switch(turretState){
 			//If it is in homing mode
 			case HOMING:
-				if(!turretHallEffect.get()){
+				System.out.println(switchFlag + " " + dir);
+				//System.out.println(Math.abs(getAngle()) >= Constants.TurretMaxHomingAngle);
+				if(turretHallEffect.get()){
 					turretMotor.set(ControlMode.PercentOutput, Constants.TurretHomingPower * dir);
-				
-					if (getAngle() >= Constants.TurretMaxHomingAngle) dir *= -1; // Switch direction
-
+					
+					if (Math.abs(getAngle()) >= Constants.TurretMaxHomingAngle && switchFlag == false) {
+						dir *= -1; // Switch direction
+						switchFlag = true;
+					}
 					//Failed
-					if(getAngle() <= -Constants.TurretMaxHomingAngle){
+					/*
+					if(Math.abs(getAngle()) <= Constants.TurretMaxHomingAngle){
 						turretState = TurretState.SETPOINT;
 						turretMotor.setSelectedSensorPosition(0,0,10);
 						System.out.println("Homing failed");
-					}
+					}*/
 
 				} else {
 						//Success
@@ -144,6 +156,7 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
+			/*
 				if(target.length > 0 && target[0] != null) {
 					System.out.println("target x " + target[0].x + " angle " + getAngle() + " desired " + angle);
 					double error = target[0].x/640.0 - 0.5;
@@ -151,7 +164,7 @@ public class Turret extends Threaded {
 					prevSign = Math.abs(error)/error;
 					setAngle(angle);
 				}
-
+				*/
 			break;
 			
 		}
@@ -160,10 +173,10 @@ public class Turret extends Threaded {
 			"trtL", 
 			getTargetAngle(), 
 			turretMotor.getSelectedSensorPosition() * Constants.DegreesPerEncoderTick
-		);*/
+		);
 		
 		//System.out.println(angle);
 	//	turretMotor.set(ControlMode.PercentOutput, 0.3);
-		
+		*/
 	}
 }
