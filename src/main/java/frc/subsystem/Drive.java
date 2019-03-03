@@ -97,9 +97,9 @@ public class Drive extends Threaded {
 		//rightSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
 		//leftSparkSlave2 = new CANSparkMax(0, MotorType.kBrushless);
 		leftSpark.setInverted(true);
-		rightSpark.setInverted(true);
+		rightSpark.setInverted(false);
 		leftSparkSlave.setInverted(true);
-		rightSparkSlave.setInverted(true);
+		rightSparkSlave.setInverted(false);
 
 
 

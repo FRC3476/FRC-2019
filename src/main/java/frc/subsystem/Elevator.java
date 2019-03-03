@@ -62,6 +62,10 @@ public class Elevator extends Threaded {
 		return elevMaster.getSelectedSensorPosition()/Constants.ElevatorTicksPerInch;
 	}
 
+	public void zero() {
+		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
+					Constants.TimeoutMs);
+	}
 	
 	
 	// Sets the height of the elevator
@@ -122,8 +126,8 @@ public class Elevator extends Threaded {
 		switch(elevState){
 			//If is in homing mode
 			case HOMING:
-				if((Timer.getFPGATimestamp()-startTime)>=1){
-
+				if((Timer.getFPGATimestamp()-startTime)<=5) {
+					System.out.println(getPulledCurrent());
 					if(getPulledCurrent() < Constants.ElevatorStallAmps) {
 						elevMaster.set(ControlMode.PercentOutput,Constants.ElevatorHomeSpeed);
 					} else {
@@ -148,10 +152,10 @@ public class Elevator extends Threaded {
 			case SETPOINT:
 				if(safetyEngage) setHeight(requested);
 
-				System.out.println("moving elevator");
+				//System.out.println("moving elevator");
 				//elevator on triggers
-				if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
-				else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
+				//if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
+				//else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
 
 				break;
 		}

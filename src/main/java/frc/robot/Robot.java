@@ -120,11 +120,16 @@ public class Robot extends IterativeRobot {
     drive.stopMovement();
     scheduler.resume();
     turret.homeTurret();
+    //elevator.elevHome();
     manipulator.setManipulatorIntakeState(Manipulator.ManipulatorIntakeState.OFF);
   }
   float angle = 0;
   boolean yeet = false;
   long yeetTime = System.currentTimeMillis();
+  boolean btn4Edge = false;
+  boolean btn3Edge = false;
+  boolean prevManipulator = false;
+  
   /**
    * This function is called periodically during operator control.
    */
@@ -136,6 +141,7 @@ public class Robot extends IterativeRobot {
       drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
       turret.setAngle(angle);
       
+
       if(j.getRawButton(3) && yeet == false) {
         yeet = true;
         yeetTime =  System.currentTimeMillis();
@@ -149,10 +155,38 @@ public class Robot extends IterativeRobot {
           Manipulator.getInstance().setManipulatorIntakeState(ManipulatorIntakeState.OFF);
           yeet = false;
         }
+      } else {
+        if(j.getRawButton(2)) {
+          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+        } else {
+          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.OFF);
+        }
       }
+
       if(j.getRawButton(1)) {
         Arm.getInstance().setState(ArmState.RETRACT);
       } 
+
+      if(j.getRawButton(4) && !btn4Edge) {
+        System.out.println("switching claw state");
+        if(prevManipulator) manipulator.setManipulatorState(Manipulator.ManipulatorState.BALL);
+        else manipulator.setManipulatorState(Manipulator.ManipulatorState.HATCH);
+        prevManipulator = !prevManipulator;
+      }
+
+      
+      btn4Edge = j.getRawButton(4);
+
+      if(j.getRawButton(4) == false) {
+        btn4Edge = false;
+      }
+
+      if(j.getRawButton(8)) elevator.setHeight(4.5);
+      if(j.getRawButton(7)) elevator.zero();
+
+      if(j.getRawAxis(2) > 0.1) elevator.setHeight(elevator.getHeight() - 2*Robot.j.getRawAxis(2));
+			else if(j.getRawAxis(3) > 0.1)  elevator.setHeight(elevator.getHeight() + 2* Robot.j.getRawAxis(3));
+
       System.out.println(elevator.getHeight());
       //turret.update();
       //System.out.println("actual: " + turret.getAngle() + " desired: " + angle);

@@ -128,7 +128,7 @@ public class Turret extends Threaded {
 		switch(turretState){
 			//If it is in homing mode
 			case HOMING:
-				System.out.println(switchFlag + " " + dir);
+				//System.out.println(switchFlag + " " + dir);
 				//System.out.println(Math.abs(getAngle()) >= Constants.TurretMaxHomingAngle);
 				if(turretHallEffect.get()){
 					turretMotor.set(ControlMode.PercentOutput, Constants.TurretHomingPower * dir);
