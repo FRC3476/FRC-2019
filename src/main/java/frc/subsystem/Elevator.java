@@ -56,6 +56,10 @@ public class Elevator extends Threaded {
 		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 	}
+
+	public void manualControl(double input) {
+		elevMaster.set(ControlMode.PercentOutput, input);
+	}
 	
 	// Gets current height of the elevator
 	public double getHeight() {

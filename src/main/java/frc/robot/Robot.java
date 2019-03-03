@@ -10,6 +10,7 @@ import frc.auton.DriveForward;
 import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
 import frc.subsystem.Manipulator.ManipulatorIntakeState;
+import frc.subsystem.Manipulator.ManipulatorState;
 //import frc.robot.subsystem.Drive;
 import frc.utility.math.*;
 import frc.utility.control.motion.Path;
@@ -137,6 +138,7 @@ public class Robot extends IterativeRobot {
   */
 
   boolean ballMode = false;
+  boolean elevatorManual = false;
   final double ballElevHigh = 20;
   final double ballElevMid = 10;
   final double ballElevLow = 4.5;
@@ -147,6 +149,7 @@ public class Robot extends IterativeRobot {
   final double hatchElevLow = 4.5;
   final double hatchElevCargo = 5;
 
+  double desiredAngle = 90;
   
   /**
    * This function is called periodically during operator control.
@@ -155,6 +158,10 @@ public class Robot extends IterativeRobot {
   public void teleopPeriodic() {
       //turret.setAngle(angle);'
       
+      if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
+      //System.out.println(desiredAngle);
+      turret.setAngle(desiredAngle-90);
+
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
 
       if(stick.getRawButton(3)) ballMode = true;
@@ -165,26 +172,42 @@ public class Robot extends IterativeRobot {
 
       if(buttonPanel.getRawButton(9)) elevator.zero();
 
+      if(Math.abs(buttonPanel.getRawAxis(1)) > 0.5) {
+        elevatorManual = true;
+        elevator.manualControl(-buttonPanel.getRawAxis(1));
+       // elevatorbuttonPanel.getRawAxis(1)
+      }
+      if(elevatorManual == true && buttonPanel.getRawAxis(1) == 0.0) {
+        elevatorManual = false;
+        elevator.setHeight(elevator.getHeight());
+      }
+
       if(ballMode) { //ball mode
+        manipulator.setManipulatorState(ManipulatorState.BALL);
         //wheeled intake
-        if(stick.getRawButton(0)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL EJECT
-        else if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //BALL INTAKE
+        if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL EJECT
+        else if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //BALL INTAKE
+        else manipulator.setManipulatorIntakeState(ManipulatorIntakeState.OFF);
         //elev setpoints
         if(buttonPanel.getRawButton(8)) elevator.setHeight(ballElevHigh);
-        if(buttonPanel.getRawButton(7)) elevator.setHeight(ballElevMid);
-        if(buttonPanel.getRawButton(6)) elevator.setHeight(ballElevLow);
-        if(buttonPanel.getRawButton(5)) elevator.setHeight(ballElevCargo);
+        else if(buttonPanel.getRawButton(7)) elevator.setHeight(ballElevMid);
+        else if(buttonPanel.getRawButton(6)) elevator.setHeight(ballElevLow);
+        else if(buttonPanel.getRawButton(5)) elevator.setHeight(ballElevCargo);
 
 
       } else { //hatch mode
+        manipulator.setManipulatorState(ManipulatorState.HATCH);
+
         //wheeled intake
-        if(stick.getRawButton(0)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //HATCH EJECT
-        else if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //HATCH INTAKE
+        if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //HATCH EJECT
+        else if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //HATCH INTAKE
+        else manipulator.setManipulatorIntakeState(ManipulatorIntakeState.OFF);
+
         //elev setpoints
         if(buttonPanel.getRawButton(8)) elevator.setHeight(hatchElevHigh);
-        if(buttonPanel.getRawButton(7)) elevator.setHeight(hatchElevMid);
-        if(buttonPanel.getRawButton(6)) elevator.setHeight(hatchElevLow);
-        if(buttonPanel.getRawButton(5)) elevator.setHeight(hatchElevCargo);
+        else if(buttonPanel.getRawButton(7)) elevator.setHeight(hatchElevMid);
+        else if(buttonPanel.getRawButton(6)) elevator.setHeight(hatchElevLow);
+        else if(buttonPanel.getRawButton(5)) elevator.setHeight(hatchElevCargo);
       }
 
     /*
@@ -239,7 +262,7 @@ public class Robot extends IterativeRobot {
       if(j.getRawAxis(2) > 0.1) elevator.setHeight(elevator.getHeight() - 2*Robot.j.getRawAxis(2));
 			else if(j.getRawAxis(3) > 0.1)  elevator.setHeight(elevator.getHeight() + 2* Robot.j.getRawAxis(3));
       */
-      System.out.println(elevator.getHeight());
+     // System.out.println(elevator.getHeight());
      
   }
 
