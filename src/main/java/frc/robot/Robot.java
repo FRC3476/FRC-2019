@@ -93,7 +93,7 @@ public class Robot extends IterativeRobot {
     drive.stopMovement();
     scheduler.resume();
     //turret.setAngle(90);
-    elevator.setHeight(3.0);
+    elevator.setHeight(10.0);
   }
 
   /**
@@ -111,6 +111,7 @@ public class Robot extends IterativeRobot {
         // Put default auto code here
         break;
     }
+    System.out.println(elevator.getHeight());
   
   }
 

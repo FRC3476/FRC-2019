@@ -159,7 +159,7 @@ public final class Constants {
 	public static final double ElevatorStallAmps = 3;
 	
 	public static final int ELevatorIntegralZone = 1000;
-	public static final double kElevatorP = 0.010;
+	public static final double kElevatorP = 0.20;
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.0;
 	

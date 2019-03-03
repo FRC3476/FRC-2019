@@ -47,7 +47,7 @@ public class Elevator extends Threaded {
 		Constants.ElevatorSensorPidIdx, Constants.TimeoutMs);
 		elevMaster.setInverted(false);
 		elevSlave.setInverted(false);
-		elevMaster.setSensorPhase(true);
+		elevMaster.setSensorPhase(false);
 		elevMaster.config_kP(0, Constants.kElevatorP, Constants.TimeoutMs);
 		elevMaster.config_kI(0, Constants.kElevatorI, Constants.TimeoutMs);
 		elevMaster.config_kD(0, Constants.kElevatorD, Constants.TimeoutMs);
