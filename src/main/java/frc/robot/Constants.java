@@ -150,7 +150,7 @@ public final class Constants {
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.2;
 	public static final double ElevatorInchesPerMotorRotation = 8;
-	public static final double ElevatorTicksPerInch = 512;
+	public static final double ElevatorTicksPerInch = (1.5*3.141592/4096.0);
 	public static final int ElevatorSensorPidIdx = 0;
 	public static final double ElevatorTargetError = 10;
 	
@@ -159,7 +159,7 @@ public final class Constants {
 	public static final double ElevatorStallAmps = 3;
 	
 	public static final int ELevatorIntegralZone = 1000;
-	public static final double kElevatorP = 0.125;
+	public static final double kElevatorP = 0.300;
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.0;
 	

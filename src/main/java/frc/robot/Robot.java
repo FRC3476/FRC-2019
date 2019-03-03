@@ -92,8 +92,8 @@ public class Robot extends IterativeRobot {
     //new DriveForward().run();
     drive.stopMovement();
     scheduler.resume();
-    turret.setAngle(90);
-
+    //turret.setAngle(90);
+    elevator.setHeight(10.0);
   }
 
   /**

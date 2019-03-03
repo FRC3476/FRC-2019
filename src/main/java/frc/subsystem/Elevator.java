@@ -53,18 +53,20 @@ public class Elevator extends Threaded {
 		elevMaster.config_kD(0, Constants.kElevatorD, Constants.TimeoutMs);
 		elevMaster.config_IntegralZone(0, Constants.ELevatorIntegralZone, Constants.TimeoutMs);
 		//elevHome();
+		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
+					Constants.TimeoutMs);
 	}
 	
 	// Gets current height of the elevator
 	public double getHeight() {
-		return elevMaster.getSelectedSensorPosition(Constants.ElevatorSensorPidIdx) 
-			* Constants.ElevatorTicksPerInch;
+		return elevMaster.getSelectedSensorPosition(Constants.ElevatorSensorPidIdx)/Constants.ElevatorTicksPerInch;
 	}
 
 	
 	
 	// Sets the height of the elevator
 	public void setHeight(double position) {
+		/*
 		if (position < Constants.ElevatorIntakeSafe &&
 		 ballIntake.getDeployState() != DeployState.DEPLOY && 
 		 Math.abs(turret.getAngle()) < Constants.TurretCollisionRange) {
@@ -73,7 +75,7 @@ public class Elevator extends Threaded {
 			safetyEngage = true;
 			return;
 		} else safetyEngage = false;
-
+		*/
 		requested = position;
 		elevMaster.set(ControlMode.Position, position * Constants.ElevatorTicksPerInch);
 	}
@@ -146,6 +148,7 @@ public class Elevator extends Threaded {
 			case SETPOINT:
 				if(safetyEngage) setHeight(requested);
 
+				System.out.println("moving elevator");
 				//elevator on triggers
 				if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
 				else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
