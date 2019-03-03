@@ -45,8 +45,8 @@ public class Elevator extends Threaded {
 		elevSlave.follow(elevMaster);
 		elevMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
 		Constants.ElevatorSensorPidIdx, Constants.TimeoutMs);
-		elevMaster.setInverted(true);
-		elevSlave.setInverted(true);
+		elevMaster.setInverted(false);
+		elevSlave.setInverted(false);
 		elevMaster.setSensorPhase(true);
 		elevMaster.config_kP(0, Constants.kElevatorP, Constants.TimeoutMs);
 		elevMaster.config_kI(0, Constants.kElevatorI, Constants.TimeoutMs);
