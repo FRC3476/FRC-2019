@@ -22,8 +22,8 @@ public final class Constants {
 	public static final int HatchIntakeMotorId = 5;
 	public static final int HatchIntakeDeployMotorId = 5;
 
-	public static final int ElevatorMasterId = 8;
-	public static final int ElevatorSlaveId = 9;
+	public static final int ElevatorMasterId = 9;
+	public static final int ElevatorSlaveId = 8;
 
 	public static final int ManipulatorMotor1Id = 10;
 	public static final int ManipulatorMotor2Id = 11;

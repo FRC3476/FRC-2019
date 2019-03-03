@@ -152,6 +152,7 @@ public class Robot extends IterativeRobot {
       if(j.getRawButton(1)) {
         Arm.getInstance().setState(ArmState.RETRACT);
       } 
+      System.out.println(elevator.getHeight());
       //turret.update();
       //System.out.println("actual: " + turret.getAngle() + " desired: " + angle);
     //System.out.println("hall effect " + Turret.turretHallEffect.get());

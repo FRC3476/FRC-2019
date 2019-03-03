@@ -59,7 +59,7 @@ public class Elevator extends Threaded {
 	
 	// Gets current height of the elevator
 	public double getHeight() {
-		return elevMaster.getSelectedSensorPosition(Constants.ElevatorSensorPidIdx)/Constants.ElevatorTicksPerInch;
+		return elevMaster.getSelectedSensorPosition()/Constants.ElevatorTicksPerInch;
 	}
 
 	
