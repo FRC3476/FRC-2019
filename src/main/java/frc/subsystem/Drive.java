@@ -241,6 +241,10 @@ public class Drive extends Threaded {
 		gyroSensor.calibrate();
 	}
 
+	public void printCurrent() {
+		System.out.println(leftSpark);
+	}
+
 	public void cheesyDrive(double moveValue, double rotateValue, boolean isQuickTurn) {
 		synchronized (this) {
 			driveState = DriveState.TELEOP;

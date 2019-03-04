@@ -116,7 +116,7 @@ public class Robot extends IterativeRobot {
         // Put default auto code here
         break;
     }
-    System.out.println(elevator.getHeight());
+    //System.out.println(elevator.getHeight());
   
   }
 
@@ -149,15 +149,15 @@ public class Robot extends IterativeRobot {
 
   boolean ballMode = false;
   boolean elevatorManual = false;
-  final double ballElevHigh = 20;
-  final double ballElevMid = 10;
-  final double ballElevLow = 4.5;
-  final double ballElevCargo = 5;
+  final double ballElevHigh = 55.18;
+  final double ballElevMid = 31.02;
+  final double ballElevLow = 5.8;
+  final double ballElevCargo = 5.8;
 
-  final double hatchElevHigh = 20;
-  final double hatchElevMid = 10;
+  final double hatchElevHigh = 51.6;
+  final double hatchElevMid = 26.4;
   final double hatchElevLow = 4.5;
-  final double hatchElevCargo = 10;
+  final double hatchElevCargo = 4.5;
 
   double desiredAngle = 90;
   
@@ -166,14 +166,16 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
+
       //Turret control
       if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
       turret.setAngle(desiredAngle-90 + drive.getAngle());
       desiredAngle += stick.getZ();
 
+      System.out.println(elevator.getHeight());
       //Drive control
      // drive.arcadeDrive(-xbox.getRawAxis(1) * -xbox.getRawAxis(1) * xbox.getRawAxis(1)/Math.abs(-xbox.getRawAxis(1)), xbox.getRawAxis(4) * xbox.getRawAxis(4) * xbox.getRawAxis(4)/Math.abs(xbox.getRawAxis(4)));
-     drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
+    // drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
       //Ball vs Turret Mode
       if(stick.getRawButton(3)) ballMode = true;
       else if(stick.getRawButton(4)) ballMode = false;
@@ -184,14 +186,15 @@ public class Robot extends IterativeRobot {
 
       //Zero elevator and elev manual override
       if(buttonPanel.getRawButton(9)) elevator.zero();
-      if(Math.abs(buttonPanel.getRawAxis(1)) > 0.5) {
+      /*
+      if(Math.abs(xbox.getRawAxis(1)) > 0.1) {
         elevatorManual = true;
-        elevator.manualControl(-buttonPanel.getRawAxis(1) * 0.2);
+        elevator.manualControl(-xbox.getRawAxis(1) * 0.6);
       }
-      if(elevatorManual == true && buttonPanel.getRawAxis(1) == 0.0) {
-        elevatorManual = false;
-        elevator.setHeight(elevator.getHeight());
-      }
+      if(elevatorManual == true && xbox.getRawAxis(1) < 0.3) {
+        //elevatorManual = false;
+        //elevator.setHeight(elevator.getHeight());
+      }*/
 
       //ball mode
       if(ballMode) { 
