@@ -147,7 +147,7 @@ public class Robot extends IterativeRobot {
   final double hatchElevHigh = 20;
   final double hatchElevMid = 10;
   final double hatchElevLow = 4.5;
-  final double hatchElevCargo = 5;
+  final double hatchElevCargo = 10;
 
   double desiredAngle = 90;
   
@@ -159,8 +159,9 @@ public class Robot extends IterativeRobot {
       //turret.setAngle(angle);'
       
       if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
-      //System.out.println(desiredAngle);
-      turret.setAngle(desiredAngle-90);
+      System.out.println(-drive.getAngle());
+      turret.setAngle(desiredAngle-90 + drive.getAngle());
+      desiredAngle += stick.getZ();
 
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
 
@@ -174,7 +175,7 @@ public class Robot extends IterativeRobot {
 
       if(Math.abs(buttonPanel.getRawAxis(1)) > 0.5) {
         elevatorManual = true;
-        elevator.manualControl(-buttonPanel.getRawAxis(1));
+        elevator.manualControl(-buttonPanel.getRawAxis(1) * 0.2);
        // elevatorbuttonPanel.getRawAxis(1)
       }
       if(elevatorManual == true && buttonPanel.getRawAxis(1) == 0.0) {
@@ -183,11 +184,16 @@ public class Robot extends IterativeRobot {
       }
 
       if(ballMode) { //ball mode
-        manipulator.setManipulatorState(ManipulatorState.BALL);
         //wheeled intake
         if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL EJECT
-        else if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //BALL INTAKE
-        else manipulator.setManipulatorIntakeState(ManipulatorIntakeState.OFF);
+        else if(stick.getRawButton(2)) {
+          manipulator.setManipulatorState(ManipulatorState.BALL);
+          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL INTAKE
+        } 
+        else {
+          manipulator.setManipulatorState(ManipulatorState.HATCH);
+          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);
+        } 
         //elev setpoints
         if(buttonPanel.getRawButton(8)) elevator.setHeight(ballElevHigh);
         else if(buttonPanel.getRawButton(7)) elevator.setHeight(ballElevMid);
@@ -201,7 +207,7 @@ public class Robot extends IterativeRobot {
         //wheeled intake
         if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //HATCH EJECT
         else if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //HATCH INTAKE
-        else manipulator.setManipulatorIntakeState(ManipulatorIntakeState.OFF);
+        else manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
 
         //elev setpoints
         if(buttonPanel.getRawButton(8)) elevator.setHeight(hatchElevHigh);

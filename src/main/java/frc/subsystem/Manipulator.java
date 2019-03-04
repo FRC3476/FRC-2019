@@ -17,7 +17,7 @@ public class Manipulator extends Threaded {
 	}
 
 	public enum ManipulatorIntakeState {
-		OFF, INTAKE, EJECT
+		OFF, INTAKE, EJECT, HATCH_HOLD, BALL_HOLD
 	}
 
 	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
@@ -81,6 +81,7 @@ public class Manipulator extends Threaded {
 			case OFF:
 				telemetryServer.sendString("sMnI", "off");
 				break;
+			
 		}
 	}
 	
@@ -96,12 +97,25 @@ public class Manipulator extends Threaded {
 		if (intake == ManipulatorIntakeState.OFF) {
 			leftTalon.set(ControlMode.PercentOutput, 0);
 			rightTalon.set(ControlMode.PercentOutput, 0);
-		} else {
+		} else if(intake == ManipulatorIntakeState.INTAKE || intake == ManipulatorIntakeState.EJECT){
 			double basePower = ((manipulator == ManipulatorState.HATCH) ? 1D : -1D)
 			                 * ((intake == ManipulatorIntakeState.INTAKE) ? 1D : -1D);
+			
+			leftTalon.set(ControlMode.PercentOutput,  basePower * Constants.ManipulatorNormalPower);
+			rightTalon.set(ControlMode.PercentOutput, -1D *basePower * Constants.ManipulatorNormalPower);
+		} else {
+			if(intake == ManipulatorIntakeState.HATCH_HOLD) {
+				leftTalon.set(ControlMode.PercentOutput, 0.05);
+				rightTalon.set(ControlMode.PercentOutput, -0.05);
+				//leftTalon.set(ControlMode.Current, 1);
+				//leftTalon.set(ControlMode.Current, -1);
 
-			leftTalon.set(ControlMode.PercentOutput, -1D * basePower * Constants.ManipulatorNormalPower);
-			rightTalon.set(ControlMode.PercentOutput, basePower * Constants.ManipulatorNormalPower);
+			} else {
+				leftTalon.set(ControlMode.PercentOutput, -0.05);
+				rightTalon.set(ControlMode.PercentOutput, 0.05);
+				//leftTalon.set(ControlMode.Current, -1);
+				//leftTalon.set(ControlMode.Current, 1);
+			}
 		}
 	}
 }

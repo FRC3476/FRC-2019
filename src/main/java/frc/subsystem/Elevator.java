@@ -55,6 +55,9 @@ public class Elevator extends Threaded {
 		//elevHome();
 		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
+
+		elevMaster.configContinuousCurrentLimit(10);
+		elevMaster.configPeakCurrentLimit(20, 200);
 	}
 
 	public void manualControl(double input) {
@@ -126,6 +129,8 @@ public class Elevator extends Threaded {
 	
 	@Override
 	public void update() {
+
+
 		if(Math.abs(requested - getHeight()) < Constants.ElevatorTargetError) isFinished = true;
 		switch(elevState){
 			//If is in homing mode
