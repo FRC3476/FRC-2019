@@ -141,6 +141,8 @@ public class Robot extends IterativeRobot {
   boolean btn2Edge = false;
   int hatchIntakeOption = 0;
   int ballIntakeOption = 0;
+  boolean intakeAttempted = false;
+  long intakeAttemptedTime = 0;
 
   boolean yeet = false;
   long yeetTime = 0;
@@ -164,93 +166,35 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
-      //turret.setAngle(angle);'
-      /*
+      //Turret control
       if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
-      System.out.println(-drive.getAngle());
       turret.setAngle(desiredAngle-90 + drive.getAngle());
       desiredAngle += stick.getZ();
 
-      drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
-
+      //Drive control
+     // drive.arcadeDrive(-xbox.getRawAxis(1) * -xbox.getRawAxis(1) * xbox.getRawAxis(1)/Math.abs(-xbox.getRawAxis(1)), xbox.getRawAxis(4) * xbox.getRawAxis(4) * xbox.getRawAxis(4)/Math.abs(xbox.getRawAxis(4)));
+     drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
+      //Ball vs Turret Mode
       if(stick.getRawButton(3)) ballMode = true;
       else if(stick.getRawButton(4)) ballMode = false;
 
+      //Arm manual override
       if(buttonPanel.getRawButton(1)) arm.setState(ArmState.EXTEND);
       if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
 
+      //Zero elevator and elev manual override
       if(buttonPanel.getRawButton(9)) elevator.zero();
-
       if(Math.abs(buttonPanel.getRawAxis(1)) > 0.5) {
         elevatorManual = true;
         elevator.manualControl(-buttonPanel.getRawAxis(1) * 0.2);
-       // elevatorbuttonPanel.getRawAxis(1)
       }
       if(elevatorManual == true && buttonPanel.getRawAxis(1) == 0.0) {
         elevatorManual = false;
         elevator.setHeight(elevator.getHeight());
       }
 
-      if(ballMode) { //ball mode
-        //wheeled intake
-        if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL EJECT
-        else if(stick.getRawButton(2)) {
-          manipulator.setManipulatorState(ManipulatorState.BALL);
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL INTAKE
-        } 
-        else {
-          manipulator.setManipulatorState(ManipulatorState.HATCH);
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);
-        } 
-        //elev setpoints
-        if(buttonPanel.getRawButton(8)) elevator.setHeight(ballElevHigh);
-        else if(buttonPanel.getRawButton(7)) elevator.setHeight(ballElevMid);
-        else if(buttonPanel.getRawButton(6)) elevator.setHeight(ballElevLow);
-        else if(buttonPanel.getRawButton(5)) elevator.setHeight(ballElevCargo);
-
-
-      } else { //hatch mode
-        manipulator.setManipulatorState(ManipulatorState.HATCH);
-
-        //wheeled intake
-        if(stick.getRawButton(1)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT); //HATCH EJECT
-        else if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //HATCH INTAKE
-        else manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-
-        //elev setpoints
-        if(buttonPanel.getRawButton(8)) elevator.setHeight(hatchElevHigh);
-        else if(buttonPanel.getRawButton(7)) elevator.setHeight(hatchElevMid);
-        else if(buttonPanel.getRawButton(6)) elevator.setHeight(hatchElevLow);
-        else if(buttonPanel.getRawButton(5)) elevator.setHeight(hatchElevCargo);
-      } */
-
-       
-      if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
-      System.out.println(-drive.getAngle());
-      turret.setAngle(desiredAngle-90 + drive.getAngle());
-      desiredAngle += stick.getZ();
-
-      drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
-
-      if(stick.getRawButton(3)) ballMode = true;
-      else if(stick.getRawButton(4)) ballMode = false;
-
-      if(buttonPanel.getRawButton(1)) arm.setState(ArmState.EXTEND);
-      if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
-
-      if(buttonPanel.getRawButton(9)) elevator.zero();
-
-      if(Math.abs(buttonPanel.getRawAxis(1)) > 0.5) {
-        elevatorManual = true;
-        elevator.manualControl(-buttonPanel.getRawAxis(1) * 0.2);
-       // elevatorbuttonPanel.getRawAxis(1)
-      }
-      if(elevatorManual == true && buttonPanel.getRawAxis(1) == 0.0) {
-        elevatorManual = false;
-        elevator.setHeight(elevator.getHeight());
-      }
-
-      if(ballMode) { //ball mode
+      //ball mode
+      if(ballMode) { 
         //wheeled intake
         if(stick.getRawButton(1) && yeet == false)  {
           yeet = true;
@@ -281,9 +225,8 @@ public class Robot extends IterativeRobot {
         else {
           manipulator.setManipulatorState(ManipulatorState.HATCH);
           manipulator.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);
+          arm.setState(ArmState.RETRACT);
         } 
-
-        
 
         //elev setpoints
         if(buttonPanel.getRawButton(8)) elevator.setHeight(ballElevHigh);
@@ -296,29 +239,23 @@ public class Robot extends IterativeRobot {
         manipulator.setManipulatorState(ManipulatorState.HATCH);
 
         //wheeled intake
-        if(stick.getRawButton(1) && !btn1Edge) {
-          if(hatchIntakeOption == 2) hatchIntakeOption = 3;
-          else hatchIntakeOption = 2;
-        }
-        else if(stick.getRawButton(2) && !btn2Edge) {
-          if(hatchIntakeOption == 0) hatchIntakeOption = 1;
-          else hatchIntakeOption = 0;
-          //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //HATCH INTAKE
-        
-        }
-
-        if(hatchIntakeOption == 0) {
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-          arm.setState(ArmState.RETRACT);
-        } else if(hatchIntakeOption == 1){
+        if(stick.getRawButton(1)){ //attempting to outake
           arm.setState(ArmState.EXTEND);
+          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+          if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
+        }else if(stick.getRawButton(2)) { //attempting to intake
           manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
-        } else if(hatchIntakeOption == 2){
           arm.setState(ArmState.EXTEND);
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-        } else if(hatchIntakeOption == 3) {
-          arm.setState(ArmState.EXTEND);
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
+          intakeAttempted = true;
+          intakeAttemptedTime = System.currentTimeMillis();
+        }  
+        else {  //attempting to hold otherwise
+          if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+          else  manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+          arm.setState(ArmState.RETRACT);
+          if(System.currentTimeMillis() - intakeAttemptedTime > 350) {
+            intakeAttempted = false;
+          }
         }
         //elev setpoints
         if(buttonPanel.getRawButton(8)) elevator.setHeight(hatchElevHigh);
@@ -329,61 +266,6 @@ public class Robot extends IterativeRobot {
 
       btn2Edge = stick.getRawButton(2);
       btn1Edge = stick.getRawButton(1);
-
-    /*
-      if(j.getRawButton(5)) angle -= 0.6;
-      else if(j.getRawButton(6)) angle+=0.6;
-      drive.arcadeDrive(-j.getRawAxis(1), j.getRawAxis(4));
-      turret.setAngle(angle);
-      
-
-      if(j.getRawButton(3) && yeet == false) {
-        yeet = true;
-        yeetTime =  System.currentTimeMillis();
-        Arm.getInstance().setState(ArmState.EXTEND);
-      }
-      if(yeet) {
-        if(System.currentTimeMillis() - yeetTime > 500) {
-          Manipulator.getInstance().setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
-        } 
-        if(System.currentTimeMillis() - yeetTime > 1000) {
-          Manipulator.getInstance().setManipulatorIntakeState(ManipulatorIntakeState.OFF);
-          yeet = false;
-        }
-      } else {
-        if(j.getRawButton(2)) {
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
-        } else {
-          manipulator.setManipulatorIntakeState(ManipulatorIntakeState.OFF);
-        }
-      }
-
-      if(j.getRawButton(1)) {
-        Arm.getInstance().setState(ArmState.RETRACT);
-      } 
-
-      if(j.getRawButton(4) && !btn4Edge) {
-        System.out.println("switching claw state");
-        if(prevManipulator) manipulator.setManipulatorState(Manipulator.ManipulatorState.BALL);
-        else manipulator.setManipulatorState(Manipulator.ManipulatorState.HATCH);
-        prevManipulator = !prevManipulator;
-      }
-
-      
-      btn4Edge = j.getRawButton(4);
-
-      if(j.getRawButton(4) == false) {
-        btn4Edge = false;
-      }
-
-      if(j.getRawButton(8)) elevator.setHeight(4.5);
-      if(j.getRawButton(7)) elevator.zero();
-
-      if(j.getRawAxis(2) > 0.1) elevator.setHeight(elevator.getHeight() - 2*Robot.j.getRawAxis(2));
-			else if(j.getRawAxis(3) > 0.1)  elevator.setHeight(elevator.getHeight() + 2* Robot.j.getRawAxis(3));
-      */
-     // System.out.println(elevator.getHeight());
-     
   }
 
   @Override
