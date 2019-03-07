@@ -463,10 +463,15 @@ public class Drive extends Threaded {
 		//rightTalon.set(ControlMode.PercentOutput, setVelocity.leftVelocity);
 		
 		leftSpark.set(setVelocity.leftVelocity);
-		leftSparkSlave.set(setVelocity.leftVelocity);
-		rightSparkSlave.set(setVelocity.rightVelocity);
-
+		//leftSparkSlave.set(setVelocity.leftVelocity);
+		//rightSparkSlave.set(setVelocity.rightVelocity);
 		rightSpark.set(setVelocity.rightVelocity);
+	/*	System.out.println(
+			"Left Spark: " + leftSpark.getOutputCurrent() + "\n" +
+			"Left Slave: " + leftSparkSlave.getOutputCurrent() + "\n" +
+			"Right Spark: " + rightSpark.getOutputCurrent() + "\n" +
+			"Right Slave: " + rightSparkSlave.getOutputCurrent() + "\n"
+		); */
 		//System.out.println("velo: " + setVelocity.leftVelocity);
 
 		//leftSparkPID.setReference(setVelocity.leftVelocity, ControlType.kDutyCycle);

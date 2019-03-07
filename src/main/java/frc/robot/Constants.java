@@ -6,8 +6,8 @@ public final class Constants {
 	// Networking
 	public static final int TelemetryPort = 5801;
 	public static final String DriverStationIPv4 = "10.34.76.5";
-	public static final int JetsonPort = 8000;
-	public static final String JetsonIPv4 = "10.34.76.72";
+	public static final int JetsonPort = 5001;
+	public static final String JetsonIPv4 = "10.34.76.57";
 
 	// CAN IDs
 	public static final int DriveLeftMasterId = 16;
@@ -156,7 +156,7 @@ public final class Constants {
 	
 	public static final double ElevatorLowAmps = 0;
 	public static final double ElevatorHighAmps = 25;
-	public static final double ElevatorStallAmps = 3;
+	public static final double ElevatorStallAmps = 1;
 	
 	public static final int ELevatorIntegralZone = 1000;
 	public static final double kElevatorP = 0.20;

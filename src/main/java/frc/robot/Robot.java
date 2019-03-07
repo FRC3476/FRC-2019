@@ -156,7 +156,7 @@ public class Robot extends IterativeRobot {
 
   final double hatchElevHigh = 51.6;
   final double hatchElevMid = 26.4;
-  final double hatchElevLow = 4.5;
+  final double hatchElevLow = 0;
   final double hatchElevCargo = 4.5;
 
   double desiredAngle = 90;
@@ -175,7 +175,7 @@ public class Robot extends IterativeRobot {
       System.out.println(elevator.getHeight());
       //Drive control
      // drive.arcadeDrive(-xbox.getRawAxis(1) * -xbox.getRawAxis(1) * xbox.getRawAxis(1)/Math.abs(-xbox.getRawAxis(1)), xbox.getRawAxis(4) * xbox.getRawAxis(4) * xbox.getRawAxis(4)/Math.abs(xbox.getRawAxis(4)));
-    // drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
+     drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
       //Ball vs Turret Mode
       if(stick.getRawButton(3)) ballMode = true;
       else if(stick.getRawButton(4)) ballMode = false;

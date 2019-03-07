@@ -121,8 +121,8 @@ public class Turret extends Threaded {
 		//System.out.println("turret hall effect: ");
 		
 		//System.out.println("turret hall effect: " + turretHallEffect.get());
-		//VisionTarget[] target = visionData.getTargets();
-		//printf(target[0].x);
+		VisionTarget[] target = visionData.getTargets();
+		System.out.println(target[0].x);
 		//System.out.println(turretMotor.getSelectedSensorPosition());
 		
 		switch(turretState){
