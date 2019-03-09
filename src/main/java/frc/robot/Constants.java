@@ -148,6 +148,9 @@ public final class Constants {
 	public static final double kTurretD = 0.0;
 
 	// Elevator
+	public static final double ElevatorVelocityLimit = 1000;
+	public static final double ElevatorAccelerationLimit = 250;
+
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);
