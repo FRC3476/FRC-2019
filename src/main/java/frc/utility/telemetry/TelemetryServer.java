@@ -43,7 +43,7 @@ public class TelemetryServer {
 	 * @param message
 	 * 		Message to log and send to dashboard
 	 */
-	public void sendString(String message) {
+	public void log(String message) {
 		sendString("log ", message);
 	}
 
