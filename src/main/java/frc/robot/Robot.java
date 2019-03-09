@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import java.util.concurrent.*;
 import frc.utility.ThreadScheduler;
 import frc.utility.JetsonUDP;
+import frc.utility.VisionTarget;
 
 
 
@@ -38,9 +39,12 @@ public class Robot extends IterativeRobot {
   Elevator elevator = Elevator.getInstance();
   Manipulator manipulator = Manipulator.getInstance();
   Arm arm = Arm.getInstance();
+  HatchIntake groundHatch = HatchIntake.getInstance();
+  JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
-	ThreadScheduler scheduler = new ThreadScheduler();
+  ThreadScheduler scheduler = new ThreadScheduler();
+  
 
   
 
@@ -138,6 +142,9 @@ public class Robot extends IterativeRobot {
   boolean prevManipulator = false;
   */
 
+
+  boolean visionMode = false;
+
   boolean btn1Edge = false;
   boolean btn2Edge = false;
   int hatchIntakeOption = 0;
@@ -168,6 +175,27 @@ public class Robot extends IterativeRobot {
   @Override
   public void teleopPeriodic() {
 
+      //set turret to vision vs setpoint
+      if(stick.getRawButton(6)) visionMode = true;
+      if(stick.getRawButton(5)) visionMode = false;
+
+      if(visionMode) {
+        VisionTarget[] targets = jetsonUDP.getTargets();
+        double d = targets[0].distance;
+        if(targets.length < 0) visionMode = false;
+        else {
+          double f = (targets[0].x/640.0 - 0.5) * 34.0;
+          desiredAngle = Math.atan2(Math.sin(f) * d - Constants.cameraYOffset, Math.cos(f) * d -  Constants.cameraXOffset);
+          System.out.println("Desired angle: " + desiredAngle);
+        }
+      }
+
+      //ground hatch 
+      groundHatch.setDeploySpeed(xbox.getRawAxis(3)-xbox.getRawAxis(2));
+      if(xbox.getRawButton(1)) groundHatch.setSpeed(1.0);
+      else if(xbox.getRawButton(2)) groundHatch.setSpeed(-1.0);
+      else groundHatch.setSpeed(0);
+
       //Turret control
       if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
       turret.setAngle(desiredAngle-90 + drive.getAngle());
@@ -176,7 +204,7 @@ public class Robot extends IterativeRobot {
       System.out.println(elevator.getHeight());
       //Drive control
      // drive.arcadeDrive(-xbox.getRawAxis(1) * -xbox.getRawAxis(1) * xbox.getRawAxis(1)/Math.abs(-xbox.getRawAxis(1)), xbox.getRawAxis(4) * xbox.getRawAxis(4) * xbox.getRawAxis(4)/Math.abs(xbox.getRawAxis(4)));
-     drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
+      drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
       //Ball vs Turret Mode
       if(stick.getRawButton(3)) ballMode = true;
       else if(stick.getRawButton(4)) ballMode = false;

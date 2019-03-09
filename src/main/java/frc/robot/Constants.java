@@ -181,6 +181,10 @@ public final class Constants {
 	// Climber
 	public static final double ClimberMaxAngle = 90;//Just a random number for now
 	
+	// Camera
+	public static final double cameraXOffset = 4;
+	public static final double cameraYOffset = 4;
+
 	private Constants() {
 	}
 }

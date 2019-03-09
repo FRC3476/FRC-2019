@@ -74,8 +74,13 @@ public class HatchIntake extends Threaded {
 		deployMotor.set(ControlMode.Position, angle * Constants.EncoderTicksPerDegree);
 	}
 
-	public void setSpeed() {
-		
+	public void setDeploySpeed(double speed) {
+		deployMotor.set(ControlMode.PercentOutput, speed);
+	}
+
+	public void setSpeed(double speed) {
+		intakeMotor.set(ControlMode.PercentOutput, speed);
+
 	}
 	
 	@Override
