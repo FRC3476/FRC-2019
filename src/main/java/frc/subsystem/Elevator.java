@@ -58,6 +58,7 @@ public class Elevator extends Threaded {
 
 		elevMaster.configContinuousCurrentLimit(15,1500);
 		elevMaster.configPeakCurrentLimit(20, 50);
+		elevState = ElevatorState.SETPOINT;
 	}
 
 	public void manualControl(double input) {
@@ -91,24 +92,24 @@ public class Elevator extends Threaded {
 		elevMaster.set(ControlMode.Position, position * Constants.ElevatorTicksPerInch);
 	}
 	
-	public double getPulledCurrent() {
+	synchronized public double getPulledCurrent() {
 		return elevMaster.getOutputCurrent();
 	}
 
-	public void setSafetyHeight(double height) {
+	synchronized public void setSafetyHeight(double height) {
 		safeHeight = height;
 	}
 
-	public boolean isFinished() {
+	synchronized public boolean isFinished() {
 		return isFinished;
 	}
 
-	public boolean isSafe() {
+	synchronized public boolean isSafe() {
 		if(Math.abs(safeHeight - getHeight()) < Constants.ElevatorSafetyError) return true;
 		else return false;
 	}
 	
-	public void elevHome() {
+	synchronized public void elevHome() {
 		startTime = Timer.getFPGATimestamp();
 		elevState = ElevatorState.HOMING;
 	}
@@ -126,10 +127,13 @@ public class Elevator extends Threaded {
 			break;
 		}
 	}
-	
+	boolean started = false;
 	@Override
-	public void update() {
-
+	synchronized public void update() {
+		if(started != true) {
+			startTime = Timer.getFPGATimestamp();
+			started = true;
+		}
 
 		if(Math.abs(requested - getHeight()) < Constants.ElevatorTargetError) isFinished = true;
 		switch(elevState){

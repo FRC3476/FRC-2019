@@ -347,10 +347,10 @@ public class Drive extends Threaded {
 		leftSparkSlave.follow(leftSpark);
 		rightSparkSlave.follow(rightSpark);
 		
-		leftSpark.setIdleMode(IdleMode.kBrake);
-		rightSpark.setIdleMode(IdleMode.kBrake);
-		leftSparkSlave.setIdleMode(IdleMode.kBrake);
-		rightSparkSlave.setIdleMode(IdleMode.kBrake); 
+		leftSpark.setIdleMode(IdleMode.kCoast);
+		rightSpark.setIdleMode(IdleMode.kCoast);
+		leftSparkSlave.setIdleMode(IdleMode.kCoast);
+		rightSparkSlave.setIdleMode(IdleMode.kCoast); 
 		/*
 		leftSlaveTalon.set(ControlMode.Follower, Constants.DriveLeftMasterId);
 		leftSlave2Talon.set(ControlMode.Follower, Constants.DriveLeftMasterId);

@@ -19,8 +19,8 @@ public final class Constants {
 
 	public static final int BallIntakeMasterId = 20;
 
-	public static final int HatchIntakeMotorId = 5;
-	public static final int HatchIntakeDeployMotorId = 5;
+	public static final int HatchIntakeMotorId = 23;
+	public static final int HatchIntakeDeployMotorId = 22;
 
 	public static final int ElevatorMasterId = 9;
 	public static final int ElevatorSlaveId = 8;
@@ -141,11 +141,11 @@ public final class Constants {
 
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
 	public static final double TurretHomingPower = 0.4;//Random percent for now
-	public static final double kTurretP = 0.4;
+	public static final double kTurretP = 1.6;
 
 
 	public static final double kTurretI = 0.00;
-	public static final double kTurretD = 0.0;
+	public static final double kTurretD = 1.0;
 
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.1;
@@ -182,8 +182,8 @@ public final class Constants {
 	public static final double ClimberMaxAngle = 90;//Just a random number for now
 	
 	// Camera
-	public static final double cameraXOffset = 4;
-	public static final double cameraYOffset = 4;
+	public static final double cameraXOffset = -5.310 - 1.25;
+	public static final double cameraYOffset = -4.815+1.25;
 
 	private Constants() {
 	}

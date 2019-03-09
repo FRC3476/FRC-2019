@@ -69,7 +69,8 @@ public class Robot extends IterativeRobot {
 		scheduler.schedule(turret, executor);
     scheduler.schedule(collisionManager, executor);
     scheduler.schedule(manipulator, executor);
-
+    turret.homeTurret();
+    elevator.elevHome();
   }
 
   /**
@@ -129,7 +130,7 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     drive.stopMovement();
     scheduler.resume();
-    //turret.homeTurret();
+   // turret.homeTurret();
     //elevator.elevHome();
     manipulator.setManipulatorIntakeState(Manipulator.ManipulatorIntakeState.OFF);
   }
@@ -146,7 +147,8 @@ public class Robot extends IterativeRobot {
   boolean visionMode = false;
 
   boolean btn1Edge = false;
-  boolean btn2Edge = false;
+  boolean btn2Edge = false;  
+
   int hatchIntakeOption = 0;
   int ballIntakeOption = 0;
   boolean intakeAttempted = false;
@@ -167,7 +169,7 @@ public class Robot extends IterativeRobot {
   final double hatchElevLow = 0;
   final double hatchElevCargo = 4.5;
 
-  double desiredAngle = 90;
+  double desiredAngle = 0;
   
   /**
    * This function is called periodically during operator control.
@@ -177,19 +179,31 @@ public class Robot extends IterativeRobot {
 
       //set turret to vision vs setpoint
       if(stick.getRawButton(6)) visionMode = true;
-      if(stick.getRawButton(5)) visionMode = false;
-
+      if(stick.getRawButton(5)) {
+        visionMode = false;
+        desiredAngle = turret.getAngle();
+      }
       if(visionMode) {
+        System.out.println("in vision mode ");
         VisionTarget[] targets = jetsonUDP.getTargets();
-        double d = targets[0].distance;
-        if(targets.length < 0) visionMode = false;
+        //Memes
+        
+        if(targets.length == 0 || targets == null) {
+          visionMode = false;
+          desiredAngle = turret.getAngle();
+        }
         else {
-          double f = (targets[0].x/640.0 - 0.5) * 34.0;
-          desiredAngle = Math.atan2(Math.sin(f) * d - Constants.cameraYOffset, Math.cos(f) * d -  Constants.cameraXOffset);
-          System.out.println("Desired angle: " + desiredAngle);
+          //double f = (targets[0].x/640.0 - 0.5) * 34.0;
+          
+          double d = targets[0].distance;
+          double f = (targets[0].x/640.0 - 0.5) * (59.7/2);
+          double corrected = Math.atan2(Math.sin(f) * d + Constants.cameraYOffset, Math.cos(f) * d +  Constants.cameraXOffset);
+          desiredAngle = turret.getAngle() - corrected;
+         // desiredAngle = turret.getAngle() - f;
+          turret.setAngle(desiredAngle);                   
         }
       }
-
+      //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch 
       groundHatch.setDeploySpeed(xbox.getRawAxis(3)-xbox.getRawAxis(2));
       if(xbox.getRawButton(1)) groundHatch.setSpeed(1.0);
@@ -198,10 +212,11 @@ public class Robot extends IterativeRobot {
 
       //Turret control
       if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
-      turret.setAngle(desiredAngle-90 + drive.getAngle());
-      desiredAngle += stick.getZ();
-
-      System.out.println(elevator.getHeight());
+      if(visionMode == false) turret.setAngle(desiredAngle + drive.getAngle());
+      if(Math.abs(stick.getZ()) >= 0.15) {
+        desiredAngle -= stick.getZ();
+      }
+     // System.out.println(elevator.getHeight());
       //Drive control
      // drive.arcadeDrive(-xbox.getRawAxis(1) * -xbox.getRawAxis(1) * xbox.getRawAxis(1)/Math.abs(-xbox.getRawAxis(1)), xbox.getRawAxis(4) * xbox.getRawAxis(4) * xbox.getRawAxis(4)/Math.abs(xbox.getRawAxis(4)));
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
@@ -216,15 +231,30 @@ public class Robot extends IterativeRobot {
       //Zero elevator and elev manual override
       if(buttonPanel.getRawButton(9)) elevator.elevHome();
       if(buttonPanel.getRawButton(10)) turret.homeTurret();
+    
       /*
       if(Math.abs(xbox.getRawAxis(1)) > 0.1) {
         elevatorManual = true;
         elevator.manualControl(-xbox.getRawAxis(1) * 0.6);
+        //Elevator.setWonkavator()
       }
       if(elevatorManual == true && xbox.getRawAxis(1) < 0.3) {
         //elevatorManual = false;
         //elevator.setHeight(elevator.getHeight());
       }*/
+
+      if(buttonPanel.getPOV() != -1) {
+        elevatorManual = true;
+        if(buttonPanel.getPOV() == 90)
+          elevator.manualControl(0.2);
+        else if (buttonPanel.getPOV() == 270) 
+          elevator.manualControl(-0.2);
+        //Elevator.setWonkavator()
+      }
+      if(elevatorManual == true && buttonPanel.getPOV() == -1) {
+        elevatorManual = false;
+        elevator.setHeight(elevator.getHeight());
+      }
 
       //ball mode
       if(ballMode) { 
@@ -318,8 +348,8 @@ public class Robot extends IterativeRobot {
   @Override
   public void disabledPeriodic() {
     try {
-      System.out.println(JetsonUDP.getInstance().getTargets()[0].x);
-      System.out.println(JetsonUDP.getInstance().getTargets()[0].distance);
+     // System.out.println(JetsonUDP.getInstance().getTargets()[0].x);
+     // System.out.println(JetsonUDP.getInstance().getTargets()[0].distance);
     } catch(Exception e) {
       //System.out.println("cant get vision");
     }

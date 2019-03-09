@@ -32,7 +32,9 @@ public class Turret extends Threaded {
 	private TurretState turretState;
 	private boolean switchFlag = false;
 
-	JetsonUDP visionData = JetsonUDP.getInstance();
+	private double desired;
+
+	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 
 	private Turret() {
 		turretMotor = new LazyTalonSRX(Constants.TurretMotorId);
@@ -44,12 +46,12 @@ public class Turret extends Threaded {
 		turretHallEffect = new DigitalInput(Constants.TurretLimitId);
 		turretMotor.setSelectedSensorPosition(0, 0, 10);
 		//homeTurret();
-		//turretState = TurretState.SETPOINT;
+		turretState = TurretState.SETPOINT;
 		
 	}
 
 	public static enum TurretState{
-		HOMING, SETPOINT
+		HOMING, SETPOINT, VISION
 	}
 	
 	public void setAngle(double angle) {
@@ -108,7 +110,7 @@ public class Turret extends Threaded {
 		return turretMotor.getOutputCurrent();
 	}
 
-	public void homeTurret() {
+	synchronized public void homeTurret() {
 		turretState = TurretState.HOMING;
 		turretMotor.setSelectedSensorPosition(0, 0, 10); // Zero encoder
 		dir = 1; // left
@@ -116,9 +118,22 @@ public class Turret extends Threaded {
 		turretMotor.set(ControlMode.PercentOutput, 0);
 		System.out.println("starting homing");
 	}
+
+	public void setDesired(double desired) {
+		this.desired = desired;
+	}
+
+	public void addDesired(double delta) {
+		this.desired += desired;
+	}
 	
+	public void setDesired(double desired) {
+		this.desired = desired;
+	}
+
+
 	@Override
-	public void update() {
+	synchronized public void update() {
 		//System.out.println("turret hall effect: ");
 		
 		//System.out.println("turret hall effect: " + turretHallEffect.get());
@@ -127,8 +142,10 @@ public class Turret extends Threaded {
 		//System.out.println(turretMotor.getSelectedSensorPosition());
 		
 		switch(turretState){
+	
 			//If it is in homing mode
 			case HOMING:
+				//System.out.println("homing now");
 				//System.out.println(switchFlag + " " + dir);
 				//System.out.println(Math.abs(getAngle()) >= Constants.TurretMaxHomingAngle);
 				if(turretHallEffect.get()){
@@ -157,16 +174,28 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
-				
-			/*
-				if(target.length > 0 && target[0] != null) {
-					System.out.println("target x " + target[0].x + " angle " + getAngle() + " desired " + angle);
-					double error = target[0].x/640.0 - 0.5;
-					angle = getAngle() + error * 30.0;	
-					prevSign = Math.abs(error)/error;
-					setAngle(angle);
+				setAngle(desired);
+			break;
+
+			case VISION:
+				double desiredAngle = 0;
+				System.out.println("in vision mode ");
+				VisionTarget[] targets = jetsonUDP.getTargets();
+			
+				if(targets.length == 0 || targets == null) {
+			  		turretState = TurretState.SETPOINT;
+			  		desiredAngle = getAngle();
 				}
-				*/
+				else {
+			
+			  		double d = targets[0].distance;
+			  		double f = (targets[0].x/640.0 - 0.5) * (59.7/2);
+			  		double corrected = Math.atan2(Math.sin(f) * d + Constants.cameraYOffset, Math.cos(f) * d +  Constants.cameraXOffset);
+			  		desiredAngle = getAngle() - corrected;
+			 // desiredAngle = turret.getAngle() - f;
+			  		setAngle(desiredAngle);                   
+				}
+			
 			break;
 			
 		}

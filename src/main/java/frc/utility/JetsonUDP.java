@@ -36,11 +36,11 @@ public class JetsonUDP extends Thread {
     start();
   }
 
-  public VisionTarget[] getTargets() {
+  synchronized public VisionTarget[] getTargets() {
     return target;
   }
 
-  private void recieve() {
+  synchronized private void recieve() {
     byte[] b = new byte[256];
     DatagramPacket packet = new DatagramPacket(b, b.length);
     try {
