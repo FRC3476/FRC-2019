@@ -5,23 +5,29 @@ public class VisionTarget {
     public float x;
     public float y;
     public float connectorMag;
+    public float distance;
 
-    public VisionTarget(float x, float y, float connectorMag) {
+    public VisionTarget(float x, float y, float connectorMag, float distance) {
         this.x = x;
         this.y = y;
         this.connectorMag = connectorMag;
+        this.distance = distance;
     }
 
-    float getX() {
+    public float getX() {
         return this.x;
     }
     
-    float getY() {
+    public float getY() {
         return this.y;
     }
 
-    float getMag() {
+    public float getMag() {
         return this.connectorMag;
+    }
+
+    public float getDistance() {
+        return this.distance;
     }
 
 }

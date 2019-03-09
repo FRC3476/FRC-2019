@@ -10,6 +10,7 @@ import frc.utility.telemetry.TelemetryServer;
 import edu.wpi.first.wpilibj.Solenoid;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.revrobotics.CANSparkMaxFrames.SetpointOut;
 
 public class HatchIntake extends Threaded {
 
@@ -67,10 +68,14 @@ public class HatchIntake extends Threaded {
 	
 	public boolean isFinished() {
 		return true;
-  }
+  	}
   
-  public void setAngle(double angle){
+  	public void setAngle(double angle){
 		deployMotor.set(ControlMode.Position, angle * Constants.EncoderTicksPerDegree);
+	}
+
+	public void setSpeed() {
+		
 	}
 	
 	@Override

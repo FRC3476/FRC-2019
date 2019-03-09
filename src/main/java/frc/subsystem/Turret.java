@@ -42,6 +42,7 @@ public class Turret extends Threaded {
 		turretMotor.config_kI(0, Constants.kTurretI, Constants.TimeoutMs);
 		turretMotor.config_kD(0, Constants.kTurretD, Constants.TimeoutMs);
 		turretHallEffect = new DigitalInput(Constants.TurretLimitId);
+		turretMotor.setSelectedSensorPosition(0, 0, 10);
 		//homeTurret();
 		//turretState = TurretState.SETPOINT;
 		
@@ -121,8 +122,8 @@ public class Turret extends Threaded {
 		//System.out.println("turret hall effect: ");
 		
 		//System.out.println("turret hall effect: " + turretHallEffect.get());
-		VisionTarget[] target = visionData.getTargets();
-		System.out.println(target[0].x);
+		//VisionTarget[] target = visionData.getTargets();
+		//System.out.println(target[0].x);
 		//System.out.println(turretMotor.getSelectedSensorPosition());
 		
 		switch(turretState){
@@ -156,6 +157,7 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
+				
 			/*
 				if(target.length > 0 && target[0] != null) {
 					System.out.println("target x " + target[0].x + " angle " + getAngle() + " desired " + angle);

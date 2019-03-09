@@ -17,6 +17,7 @@ import frc.utility.control.motion.Path;
 import edu.wpi.first.wpilibj.Joystick;
 import java.util.concurrent.*;
 import frc.utility.ThreadScheduler;
+import frc.utility.JetsonUDP;
 
 
 
@@ -124,7 +125,7 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     drive.stopMovement();
     scheduler.resume();
-    turret.homeTurret();
+    //turret.homeTurret();
     //elevator.elevHome();
     manipulator.setManipulatorIntakeState(Manipulator.ManipulatorIntakeState.OFF);
   }
@@ -185,7 +186,8 @@ public class Robot extends IterativeRobot {
       if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
 
       //Zero elevator and elev manual override
-      if(buttonPanel.getRawButton(9)) elevator.zero();
+      if(buttonPanel.getRawButton(9)) elevator.elevHome();
+      if(buttonPanel.getRawButton(10)) turret.homeTurret();
       /*
       if(Math.abs(xbox.getRawAxis(1)) > 0.1) {
         elevatorManual = true;
@@ -274,7 +276,6 @@ public class Robot extends IterativeRobot {
   @Override
   public void testInit() {
     drive.stopMovement();
-
     scheduler.resume();
   }
 
@@ -283,6 +284,16 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void testPeriodic() {
+  
+  }
 
+  @Override
+  public void disabledPeriodic() {
+    try {
+      System.out.println(JetsonUDP.getInstance().getTargets()[0].x);
+      System.out.println(JetsonUDP.getInstance().getTargets()[0].distance);
+    } catch(Exception e) {
+      //System.out.println("cant get vision");
+    }
   }
 }

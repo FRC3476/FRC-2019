@@ -56,8 +56,8 @@ public class Elevator extends Threaded {
 		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 
-		elevMaster.configContinuousCurrentLimit(10);
-		elevMaster.configPeakCurrentLimit(20, 200);
+		elevMaster.configContinuousCurrentLimit(15,1500);
+		elevMaster.configPeakCurrentLimit(20, 50);
 	}
 
 	public void manualControl(double input) {
@@ -160,7 +160,7 @@ public class Elevator extends Threaded {
 			//If is in setpoint mode
 			case SETPOINT:
 				if(safetyEngage) setHeight(requested);
-
+				//if(elevMaster.getOutputCurrent())
 				//System.out.println("moving elevator");
 				//elevator on triggers
 				//if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
