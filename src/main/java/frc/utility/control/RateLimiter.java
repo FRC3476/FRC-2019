@@ -153,7 +153,7 @@ public class RateLimiter {
 	* @param accelLimit
 	*            Desired max acceleration
 	*/
-	public void setaccelLimit(double accelLimit) {
+	public void setAccelLimit(double accelLimit) {
 		this.accelLimit = accelLimit;
 		currentAccel = OrangeUtility.coerce(currentAccel, accelLimit, -accelLimit);
 	}
@@ -163,7 +163,7 @@ public class RateLimiter {
 	* @param jerkLimit
 	*            Desired max Jerk
 	*/
-	public void setjerkLimit(double jerkLimit) {
+	public void setJerkLimit(double jerkLimit) {
 		this.jerkLimit = jerkLimit;
 	}
 	
@@ -172,7 +172,7 @@ public class RateLimiter {
 	* @param currentAccel
 	*            Desired acceleration value
 	*/
-	public void setcurrentAccel(double currentAccel) {
+	public void setCurrentAccel(double currentAccel) {
 		this.currentAccel = currentAccel;
 	}
 }

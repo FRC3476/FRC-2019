@@ -56,7 +56,6 @@ public class Elevator extends Threaded {
 		elevMaster.config_kI(0, Constants.kElevatorI, Constants.TimeoutMs);
 		elevMaster.config_kD(0, Constants.kElevatorD, Constants.TimeoutMs);
 		elevMaster.config_IntegralZone(0, Constants.ELevatorIntegralZone, Constants.TimeoutMs);
-		//elevHome();
 		elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 
@@ -67,8 +66,8 @@ public class Elevator extends Threaded {
 	}
 
 	public void resetRateLimits() {
-		elevatorLimiter.setMaxAccel(Constants.ElevatorVelocityLimit);
-		elevatorLimiter.setMaxJerk(Constants.ElevatorAccelerationLimit);
+		elevatorLimiter.setAccelLimit(Constants.ElevatorVelocityLimit);
+		elevatorLimiter.setJerkLimit(Constants.ElevatorAccelerationLimit);
 	}
 
 	public void manualControl(double input) {
@@ -151,6 +150,8 @@ public class Elevator extends Threaded {
 					double setpoint = elevatorLimiter.update(requested);
 					elevMaster.set(ControlMode.Position, setpoint * Constants.ElevatorTicksPerInch);
 				}
+				double setpoint = elevatorLimiter.update(requested);
+				elevMaster.set(ControlMode.Position, setpoint * Constants.ElevatorTicksPerInch);
 				//if(elevMaster.getOutputCurrent())
 				//System.out.println("moving elevator");
 				//elevator on triggers

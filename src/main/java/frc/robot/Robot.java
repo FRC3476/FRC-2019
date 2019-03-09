@@ -214,7 +214,7 @@ public class Robot extends IterativeRobot {
       if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
 
       //Zero elevator and elev manual override
-      if(buttonPanel.getRawButton(9)) elevator.elevHome();
+      if(buttonPanel.getRawButton(9)) elevator.home();
       if(buttonPanel.getRawButton(10)) turret.homeTurret();
       /*
       if(Math.abs(xbox.getRawAxis(1)) > 0.1) {
