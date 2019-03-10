@@ -37,6 +37,11 @@ public class HatchIntake extends Threaded {
 	private HatchIntake() {
 		deployMotor = new LazyTalonSRX(Constants.HatchIntakeDeployMotorId);
 		intakeMotor = new LazyTalonSRX(Constants.HatchIntakeMotorId);
+		deployMotor.setSelectedSensorPosition(0, 0, 10);
+		deployMotor.config_kP(0, Constants.kHatchP, Constants.TimeoutMs);
+		deployMotor.config_kI(0, Constants.kHatchI, Constants.TimeoutMs);
+		deployMotor.config_kD(0, Constants.kHatchD, Constants.TimeoutMs);
+
 	}
 
 	public DeployState getDeployState() {
@@ -82,9 +87,13 @@ public class HatchIntake extends Threaded {
 		intakeMotor.set(ControlMode.PercentOutput, speed);
 
 	}
+	public double  getAngle() {
+		return deployMotor.getSelectedSensorPosition() * Constants.DegreesPerEncoderTick;
+	}
 	
 	@Override
-	public void update() {
+	public void update() { 
+		
 		IntakeState intake;
 		DeployState deploy;
 		synchronized (this) {
@@ -120,6 +129,7 @@ public class HatchIntake extends Threaded {
 				setAngle(Constants.HatchIntakeAngle);
 				telemetryServer.sendString("sIH1", "intake");
 				break;
-		}
+		} 
+		System.out.println(getAngle());
 	}
 }

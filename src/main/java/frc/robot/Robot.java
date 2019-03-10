@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.tables.ITable;
 import frc.auton.DriveForward;
 import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
+import frc.subsystem.HatchIntake.DeployState;
 import frc.subsystem.Manipulator.ManipulatorIntakeState;
 import frc.subsystem.Manipulator.ManipulatorState;
 import frc.subsystem.Turret.TurretState;
@@ -42,6 +43,7 @@ public class Robot extends IterativeRobot {
   Arm arm = Arm.getInstance();
   HatchIntake groundHatch = HatchIntake.getInstance();
   JetsonUDP jetsonUDP = JetsonUDP.getInstance();
+  HatchIntake hatchIntake = HatchIntake.getInstance();
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
   ThreadScheduler scheduler = new ThreadScheduler();
@@ -70,6 +72,7 @@ public class Robot extends IterativeRobot {
 		scheduler.schedule(turret, executor);
     scheduler.schedule(collisionManager, executor);
     scheduler.schedule(manipulator, executor);
+    scheduler.schedule(hatchIntake, executor);
     turret.homeTurret();
     elevator.elevHome();
   }
@@ -177,7 +180,7 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
-
+      //System.out.println(hatchIntake.getAngle());
       //set turret to vision vs setpoint
       if(stick.getRawButton(6)) turret.setState(TurretState.VISION);
       else {
@@ -187,15 +190,21 @@ public class Robot extends IterativeRobot {
 
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch 
+      /*
       groundHatch.setDeploySpeed(xbox.getRawAxis(3)-xbox.getRawAxis(2));
       if(xbox.getRawButton(1)) groundHatch.setSpeed(1.0);
       else if(xbox.getRawButton(2)) groundHatch.setSpeed(-1.0);
       else groundHatch.setSpeed(0);
+      */
+      if(xbox.getRawButton(1)) groundHatch.setDeployState(DeployState.HANDOFF);
+      else if(xbox.getRawButton(2)) groundHatch.setDeployState(DeployState.INTAKE);
+      else groundHatch.setDeployState(DeployState.STOW);
+
 
       //Turret control
       if(Math.abs(stick.getY()) > 0.5 || Math.abs(stick.getX()) > 0.5) turret.setDesired(Math.toDegrees((Math.atan2(-stick.getY(), stick.getX()))) - 90, true);
     
-      else if(Math.abs(stick.getZ()) >= 0.15) {
+      else if(Math.abs(stick.getZ()) >= 0.3) {
          turret.addDesired(-stick.getZ());
       }
      // System.out.println(elevator.getHeight());

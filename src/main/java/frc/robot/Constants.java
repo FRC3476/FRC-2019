@@ -126,13 +126,17 @@ public final class Constants {
 
 	// Hatch Intake
 	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
-	public static final double HatchHandoffAngle = 90;
+	public static final double HatchHandoffAngle = 48;
 	public static final double HatchStowAngle = 0;
-	public static final double HatchIntakeAngle = 180;
+	public static final double HatchIntakeAngle = 178;
+
+	public static final double kHatchP = 0.8;
+	public static final double kHatchI = 0.00;
+	public static final double kHatchD = 0.0;
 
 	// Turret
 	public static final int TurretCollisionRange = 0;
-	public static final double maxTurretOverTravel = 15;
+	public static final double maxTurretOverTravel = 20;
 	public static final int turretLimitId = 8;//Random channel for now
 	public static final int maxTurretHomingAngle = 45;//Random degrees for now
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
