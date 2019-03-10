@@ -33,6 +33,8 @@ public class HatchIntake extends Threaded {
 	private LazyTalonSRX intakeMotor;
 	private DeployState deployState = DeployState.STOW;
 	private IntakeState intakeState = IntakeState.OFF;
+
+	private double requested;
 	
 	private HatchIntake() {
 		deployMotor = new LazyTalonSRX(Constants.HatchIntakeDeployMotorId);
@@ -41,8 +43,9 @@ public class HatchIntake extends Threaded {
 		deployMotor.config_kP(0, Constants.kHatchP, Constants.TimeoutMs);
 		deployMotor.config_kI(0, Constants.kHatchI, Constants.TimeoutMs);
 		deployMotor.config_kD(0, Constants.kHatchD, Constants.TimeoutMs);
-
+		intakeMotor.setInverted(true);
 	}
+
 
 	public DeployState getDeployState() {
 		return deployState;
@@ -56,6 +59,20 @@ public class HatchIntake extends Threaded {
 	public void setDeployState(DeployState deployState) {
 		synchronized (this) {
 			this.deployState = deployState;
+			switch (deployState) {
+				case STOW:
+					setAngle(Constants.HatchStowAngle);
+					telemetryServer.sendString("sIH1", "stow");
+					break;
+				case HANDOFF:
+					setAngle(Constants.HatchHandoffAngle);
+					telemetryServer.sendString("sIH1", "handoff");
+					break;
+				case INTAKE:
+					setAngle(Constants.HatchIntakeAngle);
+					telemetryServer.sendString("sIH1", "intake");
+					break;
+			} 
 		}
 	}
 	
@@ -64,6 +81,7 @@ public class HatchIntake extends Threaded {
 		synchronized (this) {
 			this.intakeState = intakeState;
 		}
+		
 	}
 	
 	// Gets the current draw
@@ -72,10 +90,12 @@ public class HatchIntake extends Threaded {
 	}
 	
 	public boolean isFinished() {
-		return true;
+		if(Math.abs(getAngle() - requested) < Constants.HatchTargetError) return true;
+		else return false;
   	}
   
   	public void setAngle(double angle){
+		requested = angle;
 		deployMotor.set(ControlMode.Position, angle * Constants.EncoderTicksPerDegree);
 	}
 

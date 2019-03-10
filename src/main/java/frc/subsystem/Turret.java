@@ -39,6 +39,8 @@ public class Turret extends Threaded {
 	private double desired;
 	private boolean fieldRelative;
 
+	private double requested;
+
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 	Drive drive = Drive.getInstance();
 
@@ -92,7 +94,7 @@ public class Turret extends Threaded {
 			System.out.println("setpoint error");
 			setpoint = 0;
 		}
-
+		requested = setpoint;
 		turretMotor.set(ControlMode.Position, -setpoint * Constants.EncoderTicksPerDegree*10.6);
 	}
 	
@@ -144,6 +146,10 @@ public class Turret extends Threaded {
 		else this.desired = getAngle();
 	}
 	
+	synchronized public boolean isFinished() {//NOT YET IMPLEMENTED
+		if(Math.abs(Math.abs(getAngle()) - Math.abs(requested)) < Constants.ElevatorTargetError) return true;
+		else return false;
+	}
 
 
 	@Override

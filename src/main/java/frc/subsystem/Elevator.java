@@ -101,7 +101,8 @@ public class Elevator extends Threaded {
 	}
 
 	synchronized public boolean isFinished() {
-		return isFinished;
+		if(Math.abs(getHeight() - requested) < Constants.ElevatorTargetError) return true;
+		else return false;
 	}
 
 	synchronized public boolean isSafe() {

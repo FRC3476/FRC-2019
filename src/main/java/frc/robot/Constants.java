@@ -129,6 +129,7 @@ public final class Constants {
 	public static final double HatchHandoffAngle = 48;
 	public static final double HatchStowAngle = 0;
 	public static final double HatchIntakeAngle = 178;
+	public static final double HatchTargetError = 10;
 
 	public static final double kHatchP = 0.8;
 	public static final double kHatchI = 0.00;
@@ -156,11 +157,11 @@ public final class Constants {
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);
 	public static final int ElevatorSensorPidIdx = 0;
-	public static final double ElevatorTargetError = 10;
+	public static final double ElevatorTargetError = 2;
 	
 	public static final double ElevatorLowAmps = 0;
 	public static final double ElevatorHighAmps = 25;
-	public static final double ElevatorStallAmps = 0.875;
+	public static final double ElevatorStallAmps = 0.5;
 	
 	public static final int ELevatorIntegralZone = 1000;
 	public static final double kElevatorP = 0.20;

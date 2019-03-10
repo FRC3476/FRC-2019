@@ -45,6 +45,7 @@ public class Robot extends IterativeRobot {
   JetsonUDP jetsonUDP = JetsonUDP.getInstance();
   HatchIntake hatchIntake = HatchIntake.getInstance();
 
+
   ExecutorService executor = Executors.newFixedThreadPool(4);
   ThreadScheduler scheduler = new ThreadScheduler();
   
@@ -196,9 +197,9 @@ public class Robot extends IterativeRobot {
       else if(xbox.getRawButton(2)) groundHatch.setSpeed(-1.0);
       else groundHatch.setSpeed(0);
       */
-      if(xbox.getRawButton(1)) groundHatch.setDeployState(DeployState.HANDOFF);
-      else if(xbox.getRawButton(2)) groundHatch.setDeployState(DeployState.INTAKE);
-      else groundHatch.setDeployState(DeployState.STOW);
+      if(xbox.getRawButton(1)) collisionManager.handoffHatch();
+      if(xbox.getRawButton(2)) collisionManager.groundHatchIntake();//groundHatch.setDeployState(DeployState.INTAKE);
+      //else groundHatch.setDeployState(DeployState.STOW);
 
 
       //Turret control
