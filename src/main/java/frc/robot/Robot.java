@@ -152,7 +152,7 @@ public class Robot extends IterativeRobot {
   boolean visionMode = false;
 
   boolean btn1Edge = false;
-  boolean btn2Edge = false;  
+  boolean btn2Edge = false; 
 
   int hatchIntakeOption = 0;
   int ballIntakeOption = 0;
@@ -174,6 +174,7 @@ public class Robot extends IterativeRobot {
   final double hatchElevLow = 0;
   final double hatchElevCargo = 4.5;
 
+  boolean hatchIn = true;
 
   
   /**
@@ -197,6 +198,12 @@ public class Robot extends IterativeRobot {
       else if(xbox.getRawButton(2)) groundHatch.setSpeed(-1.0);
       else groundHatch.setSpeed(0);
       */
+      /*
+      if(!btn1Edge && xbox.getRawButton(1)) {
+        if(!hatchIn) collisionManager.handoffHatch();
+        else collisionManager.groundHatchIntake(); 
+        hatchIn = !hatchIn;
+      } */
       if(xbox.getRawButton(1)) collisionManager.handoffHatch();
       if(xbox.getRawButton(2)) collisionManager.groundHatchIntake();//groundHatch.setDeployState(DeployState.INTAKE);
       //else groundHatch.setDeployState(DeployState.STOW);
@@ -319,8 +326,8 @@ public class Robot extends IterativeRobot {
         else if(buttonPanel.getRawButton(5)) elevator.setHeight(hatchElevCargo);
       }
 
-      btn2Edge = stick.getRawButton(2);
-      btn1Edge = stick.getRawButton(1);
+      btn2Edge = xbox.getRawButton(2);
+      btn1Edge = xbox.getRawButton(1);
   }
 
   @Override
