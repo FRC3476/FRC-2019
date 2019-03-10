@@ -156,7 +156,7 @@ public final class Constants {
 	
 	public static final double ElevatorLowAmps = 0;
 	public static final double ElevatorHighAmps = 25;
-	public static final double ElevatorStallAmps = 1;
+	public static final double ElevatorStallAmps = 0.875;
 	
 	public static final int ELevatorIntegralZone = 1000;
 	public static final double kElevatorP = 0.20;
@@ -182,8 +182,8 @@ public final class Constants {
 	public static final double ClimberMaxAngle = 90;//Just a random number for now
 	
 	// Camera
-	public static final double cameraXOffset = -5.310 - 1.25;
-	public static final double cameraYOffset = -4.815+1.25;
+	public static final double cameraYOffset = 5.310 + 1.25;
+	public static final double cameraXOffset = -4.815+1.25;
 
 	private Constants() {
 	}

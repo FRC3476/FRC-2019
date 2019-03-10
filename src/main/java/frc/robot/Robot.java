@@ -11,6 +11,7 @@ import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
 import frc.subsystem.Manipulator.ManipulatorIntakeState;
 import frc.subsystem.Manipulator.ManipulatorState;
+import frc.subsystem.Turret.TurretState;
 //import frc.robot.subsystem.Drive;
 import frc.utility.math.*;
 import frc.utility.control.motion.Path;
@@ -169,7 +170,7 @@ public class Robot extends IterativeRobot {
   final double hatchElevLow = 0;
   final double hatchElevCargo = 4.5;
 
-  double desiredAngle = 0;
+
   
   /**
    * This function is called periodically during operator control.
@@ -178,31 +179,12 @@ public class Robot extends IterativeRobot {
   public void teleopPeriodic() {
 
       //set turret to vision vs setpoint
-      if(stick.getRawButton(6)) visionMode = true;
+      if(stick.getRawButton(6)) turret.setState(TurretState.VISION);
       if(stick.getRawButton(5)) {
-        visionMode = false;
-        desiredAngle = turret.getAngle();
+        turret.setState(TurretState.SETPOINT);
+        turret.restoreSetpoint();
       }
-      if(visionMode) {
-        System.out.println("in vision mode ");
-        VisionTarget[] targets = jetsonUDP.getTargets();
-        //Memes
-        
-        if(targets.length == 0 || targets == null) {
-          visionMode = false;
-          desiredAngle = turret.getAngle();
-        }
-        else {
-          //double f = (targets[0].x/640.0 - 0.5) * 34.0;
-          
-          double d = targets[0].distance;
-          double f = (targets[0].x/640.0 - 0.5) * (59.7/2);
-          double corrected = Math.atan2(Math.sin(f) * d + Constants.cameraYOffset, Math.cos(f) * d +  Constants.cameraXOffset);
-          desiredAngle = turret.getAngle() - corrected;
-         // desiredAngle = turret.getAngle() - f;
-          turret.setAngle(desiredAngle);                   
-        }
-      }
+
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch 
       groundHatch.setDeploySpeed(xbox.getRawAxis(3)-xbox.getRawAxis(2));
@@ -211,10 +193,10 @@ public class Robot extends IterativeRobot {
       else groundHatch.setSpeed(0);
 
       //Turret control
-      if(Math.abs(stick.getY()) > 0.2 || Math.abs(stick.getX()) > 0.2) desiredAngle = Math.toDegrees((Math.atan2(-stick.getY(), stick.getX())));
-      if(visionMode == false) turret.setAngle(desiredAngle + drive.getAngle());
-      if(Math.abs(stick.getZ()) >= 0.15) {
-        desiredAngle -= stick.getZ();
+      if(Math.abs(stick.getY()) > 0.5 || Math.abs(stick.getX()) > 0.5) turret.setDesired(Math.toDegrees((Math.atan2(-stick.getY(), stick.getX()))) - 90, true);
+    
+      else if(Math.abs(stick.getZ()) >= 0.15) {
+         turret.addDesired(-stick.getZ());
       }
      // System.out.println(elevator.getHeight());
       //Drive control
@@ -272,7 +254,7 @@ public class Robot extends IterativeRobot {
             yeet = false;
           }
           else if(System.currentTimeMillis() - yeetTime > 500) {
-            manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
+            manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //MAYBE SHOULD BE EJECT
           } 
            else {
             manipulator.setManipulatorState(ManipulatorState.HATCH);

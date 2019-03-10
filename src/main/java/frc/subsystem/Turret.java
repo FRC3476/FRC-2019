@@ -33,8 +33,10 @@ public class Turret extends Threaded {
 	private boolean switchFlag = false;
 
 	private double desired;
+	private boolean fieldRelative;
 
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
+	Drive drive = Drive.getInstance();
 
 	private Turret() {
 		turretMotor = new LazyTalonSRX(Constants.TurretMotorId);
@@ -119,17 +121,24 @@ public class Turret extends Threaded {
 		System.out.println("starting homing");
 	}
 
-	public void setDesired(double desired) {
+	synchronized public void setDesired(double desired, boolean fieldRelative) {
 		this.desired = desired;
+		this.fieldRelative = fieldRelative;
+
 	}
 
-	public void addDesired(double delta) {
-		this.desired += desired;
+	synchronized public void addDesired(double delta) {
+		this.desired += delta;
+	}
+
+	synchronized public void setState(TurretState state) {
+		this.turretState = state;
+	}
+
+	synchronized public void restoreSetpoint() {
+		this.desired = getAngle();
 	}
 	
-	public void setDesired(double desired) {
-		this.desired = desired;
-	}
 
 
 	@Override
@@ -174,25 +183,29 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
-				setAngle(desired);
+				if(this.fieldRelative) setAngle(desired + drive.getAngle());
+				else setAngle(desired);
 			break;
 
 			case VISION:
 				double desiredAngle = 0;
-				System.out.println("in vision mode ");
+				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
 			
 				if(targets.length == 0 || targets == null) {
 			  		turretState = TurretState.SETPOINT;
-			  		desiredAngle = getAngle();
+					restoreSetpoint();
 				}
 				else {
 			
 			  		double d = targets[0].distance;
-			  		double f = (targets[0].x/640.0 - 0.5) * (59.7/2);
-			  		double corrected = Math.atan2(Math.sin(f) * d + Constants.cameraYOffset, Math.cos(f) * d +  Constants.cameraXOffset);
-			  		desiredAngle = getAngle() - corrected;
-			 // desiredAngle = turret.getAngle() - f;
+			  		double f = Math.toRadians((targets[0].x/640.0 - 0.5) * (59.7/2));
+			  		double corrected = Math.atan2(Math.cos(f) * d + Constants.cameraYOffset, Math.sin(f) * d +  Constants.cameraXOffset);
+					corrected = 90 - Math.toDegrees(corrected);  
+					//double corrected = Math.toDegrees(f); 
+					desiredAngle = getAngle() - corrected;
+			 		// desiredAngle = turret.getAngle() - f;
+					System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 			  		setAngle(desiredAngle);                   
 				}
 			

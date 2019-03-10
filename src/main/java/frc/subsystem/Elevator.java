@@ -140,7 +140,7 @@ public class Elevator extends Threaded {
 			//If is in homing mode
 			case HOMING:
 				if((Timer.getFPGATimestamp()-startTime)<=5) {
-					System.out.println(getPulledCurrent());
+					//System.out.println(getPulledCurrent());
 					if(getPulledCurrent() < Constants.ElevatorStallAmps) {
 						elevMaster.set(ControlMode.PercentOutput,Constants.ElevatorHomeSpeed);
 					} else {
@@ -149,7 +149,7 @@ public class Elevator extends Threaded {
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 					elevState = ElevatorState.SETPOINT;
-					System.out.println("Homing succeeded");
+					System.out.println("Elevator homing succeeded");
 					}
 				} else{
 					//Homing failed
@@ -157,7 +157,7 @@ public class Elevator extends Threaded {
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 					elevState = ElevatorState.SETPOINT;
-					System.out.println("Homing failed");
+					System.out.println("Elevator homing failed");
 				}
 			break;
 			

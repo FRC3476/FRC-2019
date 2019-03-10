@@ -40,7 +40,7 @@ public class JetsonUDP extends Thread {
     return target;
   }
 
-  synchronized private void recieve() {
+  private void recieve() {
     byte[] b = new byte[256];
     DatagramPacket packet = new DatagramPacket(b, b.length);
     try {
@@ -50,8 +50,9 @@ public class JetsonUDP extends Thread {
     }
     //System.out.println(packet.getLength());
     //String received = new String(packet.getData(), 0, packet.getLength());
-    target = new VisionTarget[(int)(packet.getLength()/16)];
-
+    synchronized(this) {
+      target = new VisionTarget[(int)(packet.getLength()/16)];
+    
     for(int i = 0; i < packet.getLength(); i+=16) 
     {
       byte[] to_be_parsed1 = Arrays.copyOfRange(packet.getData(), i, i+4);
@@ -67,6 +68,7 @@ public class JetsonUDP extends Thread {
       target[(int)(i/12)] = new VisionTarget(f1, f2, f3, f4);
      // System.out.println(f1);
     }
+  }
   }
 
     @Override
