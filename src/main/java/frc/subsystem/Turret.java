@@ -31,6 +31,10 @@ public class Turret extends Threaded {
 	private boolean isTriggered = false;
 	private TurretState turretState;
 	private boolean switchFlag = false;
+	private double lastTargetGyro = 0;
+	private double lastDeltaX = 0;
+	private double lastX = 0 ;
+	private boolean reacquire = false;
 
 	private double desired;
 	private boolean fieldRelative;
@@ -49,7 +53,7 @@ public class Turret extends Threaded {
 		turretMotor.setSelectedSensorPosition(0, 0, 10);
 		//homeTurret();
 		turretState = TurretState.SETPOINT;
-		
+		this.fieldRelative = true;	
 	}
 
 	public static enum TurretState{
@@ -136,7 +140,8 @@ public class Turret extends Threaded {
 	}
 
 	synchronized public void restoreSetpoint() {
-		this.desired = getAngle();
+		if(fieldRelative) this.desired = getAngle() - drive.getAngle();
+		else this.desired = getAngle();
 	}
 	
 
@@ -189,15 +194,24 @@ public class Turret extends Threaded {
 
 			case VISION:
 				double desiredAngle = 0;
+				restoreSetpoint();
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
 			
 				if(targets.length == 0 || targets == null) {
-			  		turretState = TurretState.SETPOINT;
-					restoreSetpoint();
+					if(reacquire) {
+						//turretState = turretState.SETPOINT;
+						//restoreSetpoint();
+					} else {
+						//reacquire = true;
+						//if(lastDeltaX < 0) setAngle(getAngle() -20);
+						//else setAngle(getAngle()+20);
+					}
 				}
 				else {
-			
+					//lastTargetGyro = drive.getAngle();
+					reacquire = false;
+					lastDeltaX = lastX - targets[0].x; 
 			  		double d = targets[0].distance;
 			  		double f = Math.toRadians((targets[0].x/640.0 - 0.5) * (59.7/2));
 			  		double corrected = Math.atan2(Math.cos(f) * d + Constants.cameraYOffset, Math.sin(f) * d +  Constants.cameraXOffset);
@@ -206,7 +220,8 @@ public class Turret extends Threaded {
 					desiredAngle = getAngle() - corrected;
 			 		// desiredAngle = turret.getAngle() - f;
 					System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
-			  		setAngle(desiredAngle);                   
+					setAngle(desiredAngle);          
+					lastX = targets[0].x;           
 				}
 			
 			break;

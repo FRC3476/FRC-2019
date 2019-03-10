@@ -180,9 +180,9 @@ public class Robot extends IterativeRobot {
 
       //set turret to vision vs setpoint
       if(stick.getRawButton(6)) turret.setState(TurretState.VISION);
-      if(stick.getRawButton(5)) {
+      else {
         turret.setState(TurretState.SETPOINT);
-        turret.restoreSetpoint();
+        //turret.restoreSetpoint();
       }
 
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
