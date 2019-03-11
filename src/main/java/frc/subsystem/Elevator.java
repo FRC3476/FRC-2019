@@ -85,7 +85,6 @@ public class Elevator extends Threaded {
 	
 	// Sets the height of the elevator
 	public void setHeight(double position) {
-		/*
 		if (position < Constants.ElevatorIntakeSafe &&
 		 ballIntake.getDeployState() != DeployState.DEPLOY && 
 		 Math.abs(turret.getAngle()) < Constants.TurretCollisionRange) {
@@ -94,8 +93,7 @@ public class Elevator extends Threaded {
 			safetyEngage = true;
 			return;
 		} else safetyEngage = false;
-		*/
-		requested = position;
+		//requested = position;
 	}
 
 	public void setSafetyHeight(double height) {
@@ -150,8 +148,6 @@ public class Elevator extends Threaded {
 					double setpoint = elevatorLimiter.update(requested);
 					elevMaster.set(ControlMode.Position, setpoint * Constants.ElevatorTicksPerInch);
 				}
-				double setpoint = elevatorLimiter.update(requested);
-				elevMaster.set(ControlMode.Position, setpoint * Constants.ElevatorTicksPerInch);
 				//if(elevMaster.getOutputCurrent())
 				//System.out.println("moving elevator");
 				//elevator on triggers
