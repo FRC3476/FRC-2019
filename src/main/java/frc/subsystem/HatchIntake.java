@@ -9,6 +9,8 @@ import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.Solenoid;
 
+import java.time.Duration;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.CANSparkMaxFrames.SetpointOut;
 
@@ -44,6 +46,8 @@ public class HatchIntake extends Threaded {
 		deployMotor.config_kI(0, Constants.kHatchI, Constants.TimeoutMs);
 		deployMotor.config_kD(0, Constants.kHatchD, Constants.TimeoutMs);
 		intakeMotor.setInverted(true);
+
+		setPeriod(Duration.ofMillis(20));
 	}
 
 
@@ -89,7 +93,7 @@ public class HatchIntake extends Threaded {
 		return intakeMotor.getOutputCurrent();
 	}
 	
-	public boolean isFinished() {
+	synchronized public boolean isFinished() {
 		if(Math.abs(getAngle() - requested) < Constants.HatchTargetError) return true;
 		else return false;
   	}
@@ -107,7 +111,7 @@ public class HatchIntake extends Threaded {
 		intakeMotor.set(ControlMode.PercentOutput, speed);
 
 	}
-	public double  getAngle() {
+	public double getAngle() {
 		return deployMotor.getSelectedSensorPosition() * Constants.DegreesPerEncoderTick;
 	}
 	
@@ -135,7 +139,7 @@ public class HatchIntake extends Threaded {
 				telemetryServer.sendString("sIH2", "off");
 				break;
 		}
-
+/*
 		switch (deploy) {
 			case STOW:
 				setAngle(Constants.HatchStowAngle);
@@ -149,7 +153,7 @@ public class HatchIntake extends Threaded {
 				setAngle(Constants.HatchIntakeAngle);
 				telemetryServer.sendString("sIH1", "intake");
 				break;
-		} 
-		System.out.println(getAngle());
+		} */
+		//System.out.println(getAngle());
 	}
 }

@@ -8,6 +8,8 @@ import frc.utility.LazyTalonSRX;
 import frc.utility.OrangeUtility;
 import frc.utility.Threaded;
 
+import java.time.Duration;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
@@ -34,7 +36,7 @@ public class Elevator extends Threaded {
 	private LazyTalonSRX elevSlave = new LazyTalonSRX(Constants.ElevatorSlaveId);
 	BallIntake ballIntake = BallIntake.getInstance();
 	Turret turret = Turret.getInstance();
-	public double requested;
+	public double requested = Constants.HatchElevLow;
 	private boolean safetyEngage = false;
 	private double safeHeight = Constants.ElevatorDeployingSafe;
 	private double startTime;
@@ -59,6 +61,8 @@ public class Elevator extends Threaded {
 		elevMaster.configContinuousCurrentLimit(15,1500);
 		elevMaster.configPeakCurrentLimit(20, 50);
 		elevState = ElevatorState.SETPOINT;
+
+		setPeriod(Duration.ofMillis(20));
 	}
 
 	public void manualControl(double input) {
@@ -109,6 +113,10 @@ public class Elevator extends Threaded {
 		if(Math.abs(safeHeight - getHeight()) < Constants.ElevatorSafetyError) return true;
 		else return false;
 	}
+
+	synchronized public double getRequested() {
+		return requested;
+	}
 	
 	synchronized public void elevHome() {
 		startTime = Timer.getFPGATimestamp();
@@ -140,7 +148,7 @@ public class Elevator extends Threaded {
 		switch(elevState){
 			//If is in homing mode
 			case HOMING:
-				if((Timer.getFPGATimestamp()-startTime)<=5) {
+				if((Timer.getFPGATimestamp()-startTime)<=3) {
 					//System.out.println(getPulledCurrent());
 					if(getPulledCurrent() < Constants.ElevatorStallAmps) {
 						elevMaster.set(ControlMode.PercentOutput,Constants.ElevatorHomeSpeed);
@@ -150,7 +158,7 @@ public class Elevator extends Threaded {
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 					elevState = ElevatorState.SETPOINT;
-					System.out.println("Elevator homing succeeded");
+					//System.out.println("Elevator homing succeeded");
 					}
 				} else{
 					//Homing failed
@@ -158,7 +166,7 @@ public class Elevator extends Threaded {
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 					elevState = ElevatorState.SETPOINT;
-					System.out.println("Elevator homing failed");
+					//System.out.println("Elevator homing failed");
 				}
 			break;
 			

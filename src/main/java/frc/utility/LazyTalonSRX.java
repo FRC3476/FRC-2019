@@ -21,10 +21,12 @@ public class LazyTalonSRX extends TalonSRX {
 
 	@Override
 	public void set(ControlMode controlMode, double outputValue) {
+		return;
+		/*
 		if (outputValue != prevValue || controlMode != prevControlMode) {
 			super.set(controlMode, outputValue);
 			prevValue = outputValue;
-		}
+		} */
 	}
 
 	public double getSetpoint() {

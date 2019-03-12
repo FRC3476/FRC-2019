@@ -24,6 +24,8 @@ public class TelemetryServer {
 
 	private static final TelemetryServer instance = new TelemetryServer(Constants.TelemetryPort);
 
+	private static final boolean disableSending = true;
+
 	public static TelemetryServer getInstance() {
 		return instance;
 	}
@@ -34,7 +36,7 @@ public class TelemetryServer {
 		try {
 			socket = new DatagramSocket(port);
 		} catch (SocketException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
@@ -71,6 +73,7 @@ public class TelemetryServer {
 	 * 		String to send
 	 */
 	public void sendString(String k, String v) {
+		if(disableSending) return;
 		ByteBuffer sendBuffer;
 		long timestamp = System.currentTimeMillis();
 		sendBuffer = ByteBuffer.allocate(6 + 4 + v.length() + 1).order(ByteOrder.LITTLE_ENDIAN);
@@ -94,7 +97,7 @@ public class TelemetryServer {
 				InetAddress.getByName(Constants.DriverStationIPv4), Constants.TelemetryPort);
 			socket.send(msg);
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 }

@@ -85,7 +85,7 @@ public class TakeBackHalfController implements Runnable {
 			}
 			output.pidWrite(outVal);
 		}
-		System.out.println(outVal);
+		//System.out.println(outVal);
 	}
 
 }

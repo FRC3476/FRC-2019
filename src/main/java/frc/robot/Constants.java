@@ -10,14 +10,14 @@ public final class Constants {
 	public static final String JetsonIPv4 = "10.34.76.57";
 
 	// CAN IDs
-	public static final int DriveLeftMasterId = 16;
-	public static final int DriveLeftSlave1Id = 15;
-	public static final int DriveLeftSlave2Id = 14;
-	public static final int DriveRightMasterId = 11;
-	public static final int DriveRightSlave1Id = 12;
-	public static final int DriveRightSlave2Id = 13;
+	public static final int DriveLeftMasterId = 3;
+	public static final int DriveLeftSlave1Id = 4;
+	public static final int DriveLeftSlave2Id = 14;//not currently used
+	public static final int DriveRightMasterId = 5;
+	public static final int DriveRightSlave1Id = 6;
+	public static final int DriveRightSlave2Id = 13;//not currently used
 
-	public static final int BallIntakeMasterId = 20;
+	
 
 	public static final int HatchIntakeMotorId = 23;
 	public static final int HatchIntakeDeployMotorId = 22;
@@ -25,8 +25,8 @@ public final class Constants {
 	public static final int ElevatorMasterId = 9;
 	public static final int ElevatorSlaveId = 8;
 
-	public static final int ManipulatorMotor1Id = 10;
-	public static final int ManipulatorMotor2Id = 11;
+	public static final int ManipulatorMotor1Id = 31;
+	public static final int ManipulatorMotor2Id = 32;
 	
 	public static final int ClimberMasterId = 21;
 	public static final int ClimberSlaveId = 26;
@@ -118,11 +118,13 @@ public final class Constants {
 	// Superstructure
 
 	// Ground Ball Intake	
-	public static final double IntakeMotorPowerIntake = 1;
+	public static final double IntakeMotorPowerIntake = 0.5;
 	public static final double IntakeMotorPowerEject = 0.275;
 	public static final double IntakeMediumRPM = 700; // Random number for now
 	public static final double IntakeFastRPM = 700; // Random number for now
 	public static final long IntakeDeployTime = 0;
+	//public static final int RollerMotorId = 25;
+	public static final int BallIntakeMasterId = 25;
 
 	// Hatch Intake
 	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
@@ -161,12 +163,12 @@ public final class Constants {
 	
 	public static final double ElevatorLowAmps = 0;
 	public static final double ElevatorHighAmps = 25;
-	public static final double ElevatorStallAmps = 0.5;
+	public static final double ElevatorStallAmps = 0.25;
 	
 	public static final int ELevatorIntegralZone = 1000;
-	public static final double kElevatorP = 0.20;
+	public static final double kElevatorP = 0.40;
 	public static final double kElevatorI = 0.0;
-	public static final double kElevatorD = 0.0;
+	public static final double kElevatorD = 0.3;
 	
 	public static final double ElevatorIntakeSafe = 0;
 	public static final double ElevatorDeployingSafe = 0;
@@ -179,9 +181,23 @@ public final class Constants {
 	public static final double ElevatorMaxHeight = 70;//in number for now
 	public static final double ElevatorIntakeHeight = 10;//For now
 
+
+
+	//setpoints
+	public static final double BallElevHigh = 55.18;
+	public static final double BallElevMid = 31.02;
+	public static final double BallElevLow = 5.8;
+	public static final double BallElevCargo = 5.8;
+
+	public static final double HatchElevHigh = 51.6;
+	public static final double HatchElevMid = 26.4;
+	public static final double HatchElevLow = 1.8;
+	public static final double HatchElevCargo = 4.5;
+
 	// Manipulator
-	public static final double ManipulatorNormalPower = 0.75;
+	public static final double ManipulatorNormalPower = 0.40;
 	public static final double ManipulatorLowPower = 0.50;
+	public static final double HandoffHoldTime = 0;
 	
 	// Climber
 	public static final double ClimberMaxAngle = 90;//Just a random number for now

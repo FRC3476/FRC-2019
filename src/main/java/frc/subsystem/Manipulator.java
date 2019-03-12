@@ -7,6 +7,8 @@ import frc.utility.LazyTalonSRX;
 import frc.utility.Threaded;
 import frc.utility.telemetry.TelemetryServer;
 
+import java.time.Duration;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -37,6 +39,8 @@ public class Manipulator extends Threaded {
 		leftTalon = new LazyTalonSRX(Constants.ManipulatorMotor1Id);
 		rightTalon = new LazyTalonSRX(Constants.ManipulatorMotor2Id);
 		manipulatorSolenoid = new Solenoid(Constants.ManipulatorSolenoidId);
+
+		setPeriod(Duration.ofMillis(50));
 	}
 
 	public ManipulatorState getManipulatorState() {
@@ -48,11 +52,11 @@ public class Manipulator extends Threaded {
 	}
 	
 	// Set the deployment state of the intake
-	public void setManipulatorState(ManipulatorState state) {
-		synchronized (this) {
+	 public void setManipulatorState(ManipulatorState state) {
+		synchronized(this) {
 			this.state = state;
+			changeManipulator();
 		}
-
 		switch (state) {
 			case HATCH:
 				manipulatorSolenoid.set(false);
@@ -62,15 +66,21 @@ public class Manipulator extends Threaded {
 				manipulatorSolenoid.set(true);
 				telemetryServer.sendString("sMnM", "ball");
 				break;
-		}
+		} 
+	
 	}
+
+	
 	
 	// Set the state of the intake
 	public void setManipulatorIntakeState(ManipulatorIntakeState intakeState) {
 		synchronized (this) {
 			this.intakeState = intakeState;
+			changeManipulator();
+
 		}
 
+		
 		switch (intakeState) {
 			case INTAKE:
 				telemetryServer.sendString("sMnI", "intake");
@@ -83,10 +93,22 @@ public class Manipulator extends Threaded {
 				break;
 			
 		}
+
+		
 	}
-	
-	@Override
-	public void update() {
+
+	private void changeManipulator() {
+		switch (state) {
+			case HATCH:
+				manipulatorSolenoid.set(false);
+				//telemetryServer.sendString("sMnM", "hatch");
+				break;
+			case BALL:
+				manipulatorSolenoid.set(true);
+				//telemetryServer.sendString("sMnM", "ball");
+				break;
+		} 
+
 		ManipulatorState manipulator;
 		ManipulatorIntakeState intake;
 		synchronized (this) {
@@ -105,17 +127,23 @@ public class Manipulator extends Threaded {
 			rightTalon.set(ControlMode.PercentOutput, -1D *basePower * Constants.ManipulatorNormalPower);
 		} else {
 			if(intake == ManipulatorIntakeState.HATCH_HOLD) {
-				leftTalon.set(ControlMode.PercentOutput, 0.05);
-				rightTalon.set(ControlMode.PercentOutput, -0.05);
+				leftTalon.set(ControlMode.PercentOutput, 0.1);
+				rightTalon.set(ControlMode.PercentOutput, -0.1);
 				//leftTalon.set(ControlMode.Current, 1);
 				//leftTalon.set(ControlMode.Current, -1);
 
 			} else {
-				leftTalon.set(ControlMode.PercentOutput, -0.05);
-				rightTalon.set(ControlMode.PercentOutput, 0.05);
+				leftTalon.set(ControlMode.PercentOutput, -0.1);
+				rightTalon.set(ControlMode.PercentOutput, 0.1);
 				//leftTalon.set(ControlMode.Current, -1);
 				//leftTalon.set(ControlMode.Current, 1);
 			}
 		}
+	}
+	
+	@Override
+	public void update() {
+		
+		
 	}
 }

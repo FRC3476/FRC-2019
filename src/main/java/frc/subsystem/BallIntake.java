@@ -72,11 +72,11 @@ public class BallIntake extends Threaded {
 
 		switch (intakeState) {
 			case INTAKE:
-				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerIntake);
+				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerIntake);
 				telemetryServer.sendString("sIB2", "intake");
 				break;
 			case EJECT:
-				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerEject);
+				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerEject);
 				telemetryServer.sendString("sIB2", "eject");
 				break;
 			case OFF:

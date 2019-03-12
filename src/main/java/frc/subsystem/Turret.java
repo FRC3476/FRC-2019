@@ -10,6 +10,10 @@ import frc.utility.VisionTarget;
 import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
+
+import java.time.Duration;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.robot.Robot;
 
@@ -55,7 +59,9 @@ public class Turret extends Threaded {
 		turretMotor.setSelectedSensorPosition(0, 0, 10);
 		//homeTurret();
 		turretState = TurretState.SETPOINT;
-		this.fieldRelative = true;	
+		this.fieldRelative = true;
+
+		setPeriod(Duration.ofMillis(20));
 	}
 
 	public static enum TurretState{
@@ -91,7 +97,7 @@ public class Turret extends Threaded {
 		//System.out.println("setpoint translated: " +setpoint + " speed " + turretMotor.getSelectedSensorVelocity());
 		//set talon SRX setpoint between [-180, 180]
 		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
-			System.out.println("setpoint error");
+			//System.out.println("setpoint error");
 			setpoint = 0;
 		}
 		requested = setpoint;
@@ -124,7 +130,7 @@ public class Turret extends Threaded {
 		dir = 1; // left
 		switchFlag = false;
 		turretMotor.set(ControlMode.PercentOutput, 0);
-		System.out.println("starting homing");
+		//System.out.println("starting turret homing");
 	}
 
 	synchronized public void setDesired(double desired, boolean fieldRelative) {
@@ -138,7 +144,10 @@ public class Turret extends Threaded {
 	}
 
 	synchronized public void setState(TurretState state) {
-		this.turretState = state;
+		if(this.turretState != TurretState.HOMING)
+		{
+			this.turretState = state;
+		}
 	}
 
 	synchronized public void restoreSetpoint() {
@@ -160,7 +169,10 @@ public class Turret extends Threaded {
 		//VisionTarget[] target = visionData.getTargets();
 		//System.out.println(target[0].x);
 		//System.out.println(turretMotor.getSelectedSensorPosition());
-		
+		// synchronized(this) {
+		// 	snapDesired 
+		// }
+
 		switch(turretState){
 	
 			//If it is in homing mode
@@ -168,6 +180,7 @@ public class Turret extends Threaded {
 				//System.out.println("homing now");
 				//System.out.println(switchFlag + " " + dir);
 				//System.out.println(Math.abs(getAngle()) >= Constants.TurretMaxHomingAngle);
+				//System.out.println("he: " + turretHallEffect.get());
 				if(turretHallEffect.get()){
 					turretMotor.set(ControlMode.PercentOutput, Constants.TurretHomingPower * dir);
 					
@@ -188,7 +201,7 @@ public class Turret extends Threaded {
 						turretMotor.set(ControlMode.PercentOutput, 0);
 						turretMotor.setSelectedSensorPosition(0, 0, 10); // Zero encoder
 						turretState = TurretState.SETPOINT;
-						System.out.println("Homing succeeded");
+						//System.out.println("Turret homing succeeded");
 				}
 			break;
 
@@ -225,7 +238,7 @@ public class Turret extends Threaded {
 					//double corrected = Math.toDegrees(f); 
 					desiredAngle = getAngle() - corrected;
 			 		// desiredAngle = turret.getAngle() - f;
-					System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
+					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 					setAngle(desiredAngle);          
 					lastX = targets[0].x;           
 				}
