@@ -71,7 +71,7 @@ public class CollisionManager extends Threaded {
     }
 
     synchronized public boolean isWorking() {
-        return handoffHatch || intakingHatch;
+        return (handoffHatch || intakingHatch) || (extendingBallIntake) || (retractingBallIntake);
     }
 
     synchronized public void extendBallIntake() {
