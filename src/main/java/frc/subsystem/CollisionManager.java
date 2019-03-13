@@ -32,7 +32,7 @@ public class CollisionManager extends Threaded {
 
     boolean extendingBallIntake = false;
     boolean retractingBallIntake = false;
-
+    int ballIntakeStage = 0;
     private static final CollisionManager cm = new CollisionManager();
 
     public static CollisionManager getInstance() {
@@ -77,14 +77,15 @@ public class CollisionManager extends Threaded {
     synchronized public void extendBallIntake() {
         extendingBallIntake = true;
         elevator.setHeight(Constants.ElevatorIntakeSafe);
-        turret.setDesired(0, false);
-        
+       // turret.setDesired(0, false);
+        ballIntakeStage = 0;
     }
 
     synchronized public void retractBallIntake() {
         retractingBallIntake = true;
         if(elevator.getHeight() < Constants.ElevatorIntakeSafe) elevator.setHeight(Constants.ElevatorIntakeSafe);
         //turret.setDesired(0, false);
+        ballIntakeStage = 0;
     }
 
     @Override
@@ -107,27 +108,47 @@ public class CollisionManager extends Threaded {
         } */
 
         if(extendingBallIntake) {
-            if(elevator.isFinished()) {
-                ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
-                if(ballIntake.isFinished()) {
+            switch(ballIntakeStage) {
+                case 0: 
+                    if(elevator.isFinished()) ballIntakeStage++;
+                    break;
+                case 1:
+                    ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
+                    ballIntakeStage++;
+                    break;
+                case 2:
+                    if(ballIntake.isFinished()) ballIntakeStage++;
+                    break;                
+                case 3:
                     elevator.setHeight(Constants.HatchElevLow);
                     combinedIntake.setManipulatorState(ManipulatorState.BALL);
                     combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
-                    turret.setDesired(0, true);
-                    turret.restoreSetpoint();
+                    //turret.setDesired(0, true);
+                    //turret.restoreSetpoint();
                     extendingBallIntake = false;
-                    
-                }
-            }
-        } else if(retractingBallIntake) {
-            if(elevator.isFinished()) {
-                ballIntake.setDeployState(BallIntake.DeployState.STOW);
-                if(ballIntake.isFinished()) {
-                    retractingBallIntake = false;
-                    
-                }
+                    System.out.println("extended ball intake");
+                    break;
             }
         }
+        else if(retractingBallIntake) {
+            switch(ballIntakeStage) {
+                case 0:
+                    if(elevator.isFinished()) ballIntakeStage++;
+                    break;
+                case 1:
+                    ballIntake.setDeployState(BallIntake.DeployState.STOW);
+                    ballIntakeStage++;
+                    break;
+                case 2:
+                    if(ballIntake.isFinished()) {
+                        retractingBallIntake = false;
+                        System.out.println("Retracted ball intake");
+                    }
+                    break;
+                }
+            }
+        
+        
 
         
         if(intakingHatch) {

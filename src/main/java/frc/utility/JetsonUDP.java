@@ -12,7 +12,7 @@ import frc.robot.Constants;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-public class JetsonUDP extends Thread {
+public class JetsonUDP extends Threaded {
 
 	private static final JetsonUDP instance = new JetsonUDP();
 
@@ -26,14 +26,14 @@ public class JetsonUDP extends Thread {
   }
 
   public JetsonUDP() {
-    super("bleh");
+    //super("bleh");
     try {
       socket = new DatagramSocket(Constants.JetsonPort);
       address = InetAddress.getByName(Constants.JetsonIPv4);
     } catch(Exception e) {
       System.out.println("Failed to intialize UDP socket with Jetson");
     }
-    start();
+    //start();
   }
 
   synchronized public VisionTarget[] getTargets() {
@@ -71,6 +71,15 @@ public class JetsonUDP extends Thread {
   }
   }
 
+  @Override
+	public void update() {
+
+      recieve();  
+      
+
+  }
+
+  /*
     @Override
 	public void run() {
       while(true) {
@@ -78,6 +87,6 @@ public class JetsonUDP extends Thread {
       //System.out.println("receieving");
       recieve();  
       }
-      
-  }
+
+  } */
 }

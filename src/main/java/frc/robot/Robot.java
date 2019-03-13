@@ -177,6 +177,7 @@ public class Robot extends IterativeRobot {
   boolean elevatorManual = false;
 
   boolean hatchIn = true;
+  boolean ballIntakeIn = true;
 
   
   /**
@@ -184,46 +185,32 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
-      if(firstTeleopRun) {
-        firstTeleopRun= false;
-        return;
-      } 
-      //String toPrint = "";
-      //double teleopStarttime = Timer.getFPGATimestamp();
+    
       xbox.update();
-      //System.out.println(hatchIntake.getAngle());
       //set turret to vision vs setpoint
-      //teleopStarttime = Timer.getFPGATimestamp();
       if(buttonPanel.getRawButton(4)) turret.setState(TurretState.VISION);
       else {
         turret.setState(TurretState.SETPOINT);
         //turret.restoreSetpoint();
       }
-      //if(firstTeleopRun) scheduler.resume();
-      //toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 1\n";
-
-      //if(Timer.getFPGATimestamp() - teleopStarttime > 0.01) System.out.println("overrun 1: " + (Timer.getFPGATimestamp() - teleopStarttime));
-
+     
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
-      //ground hatch 
-      /*
-      groundHatch.setDeploySpeed(xbox.getRawAxis(3)-xbox.getRawAxis(2));
-      if(xbox.getRawButton(1)) groundHatch.setSpeed(1.0);
-      else if(xbox.getRawButton(2)) groundHatch.setSpeed(-1.0);
-      else groundHatch.setSpeed(0);
-      */
+      //ground hatch W
+    
       //teleopStarttime = Timer.getFPGATimestamp();
       if(xbox.getRisingEdge(1)) {
-        if(!hatchIn) 
-        {
-          collisionManager.handoffHatch();
-        }
-        else
-        {
-          collisionManager.groundHatchIntake(); 
-        }
+        if(!hatchIn) collisionManager.handoffHatch();
+        else collisionManager.groundHatchIntake(); 
         hatchIn = !hatchIn;
       }
+
+      if(xbox.getRisingEdge(2)) {
+        if(!ballIntakeIn) collisionManager.retractBallIntake();
+        else collisionManager.extendBallIntake();
+        ballIntakeIn = !ballIntakeIn;
+      }
+
+      ballIntake.setSpeed(xbox.getRawAxis(3) - xbox.getRawAxis(2));
       //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 2\n";
 
       //btn1Edge = xbox.getRawButton(1);
@@ -240,7 +227,7 @@ public class Robot extends IterativeRobot {
         ballIntake.setDeployState(BallIntake.DeployState.STOW);
       }
       //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 3\n";
-
+      //System.out.println("hi");
 
       //teleopStarttime = Timer.getFPGATimestamp();
       if(xbox.getRawAxis(3) > 0.5) {
@@ -262,21 +249,11 @@ public class Robot extends IterativeRobot {
       } else if(Math.abs(stick.getZ()) >= 0.3) {
          turret.addDesired(-stick.getZ());
       }
-      //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 5\n";
-
-
-      //if(Timer.getFPGATimestamp() - teleopStarttime > 0.02) System.out.println("overrun 1-2-2: " + (Timer.getFPGATimestamp() - teleopStarttime));
 
      // System.out.println(elevator.getHeight());
       //Drive control
-     // drive.arcadeDrive(-xbox.getRawAxis(1) * -xbox.getRawAxis(1) * xbox.getRawAxis(1)/Math.abs(-xbox.getRawAxis(1)), xbox.getRawAxis(4) * xbox.getRawAxis(4) * xbox.getRawAxis(4)/Math.abs(xbox.getRawAxis(4)));
-      //teleopStarttime = Timer.getFPGATimestamp();
-      // THIS LINE 
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
-      //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 6\n";
-
-      //if(Timer.getFPGATimestamp() - teleopStarttime > 0.01) System.out.println("overrun 1-3: " + (Timer.getFPGATimestamp() - teleopStarttime));
-      //teleopStarttime = Timer.getFPGATimestamp();
+    
       //Ball vs Turret Mode
       if(stick.getRawButton(3)) ballMode = true;
       else if(stick.getRawButton(4)) ballMode = false;
@@ -391,12 +368,6 @@ public class Robot extends IterativeRobot {
         else if(buttonPanel.getRawButton(6)) elevator.setHeight(Constants.HatchElevLow);
         else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.HatchElevCargo);
       }
-//      //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 12\n";
-      //System.out.print(toPrint);
-      //System.out.println("target: " + elevator.getRequested() + " actual: " + elevator.getHeight());
-      //if(Timer.getFPGATimestamp() - teleopStarttime > 0.02) System.out.println("overrun 4: " + (Timer.getFPGATimestamp() - teleopStarttime));
-
-
       //btn2Edge = xbox.getRawButton(2);
       //btn1Edge = xbox.getRawButton(1);
       firstTeleopRun = false;

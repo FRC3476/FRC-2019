@@ -89,7 +89,10 @@ public class BallIntake extends Threaded {
 				break;
 		}
 	}
-	
+
+	public void setSpeed(double speed) {
+		intakeMotor.set(ControlMode.PercentOutput, speed);
+	}
 	// Gets the current draw
 	public double getCurrent() {
 		return intakeMotor.getOutputCurrent();

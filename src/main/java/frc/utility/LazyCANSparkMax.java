@@ -23,12 +23,12 @@ public class LazyCANSparkMax extends CANSparkMax {
 
 	@Override
 	public void set(double outputValue) {
-		return;
-		/*	
+		//return;
+			
 		if (outputValue != prevValue) {
 			super.set(outputValue);
 			prevValue = outputValue;
-		}*/
+		}
 	
 	}
 
