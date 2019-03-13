@@ -100,7 +100,9 @@ public class Turret extends Threaded {
 			//System.out.println("setpoint error");
 			setpoint = 0;
 		}
-		requested = setpoint;
+		synchronized(this) {
+			requested = setpoint;
+		}
 		turretMotor.set(ControlMode.Position, -setpoint * Constants.EncoderTicksPerDegree*10.6);
 	}
 	

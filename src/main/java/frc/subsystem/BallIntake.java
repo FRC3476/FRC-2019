@@ -8,6 +8,7 @@ import frc.utility.Threaded;
 import frc.utility.telemetry.TelemetryServer;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Timer;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
@@ -32,6 +33,8 @@ public class BallIntake extends Threaded {
 	private LazyTalonSRX intakeMotor;
 	private DeployState deployState = DeployState.STOW;
 	private IntakeState intakeState = IntakeState.OFF;
+
+	private double lastDeployCommandTime;
 	
 	private BallIntake() {
 		deploySolenoid = new Solenoid(Constants.BallIntakeSolenoidId);
@@ -50,6 +53,7 @@ public class BallIntake extends Threaded {
 	public void setDeployState(DeployState deployState) {
 		synchronized (this) {
 			this.deployState = deployState;
+			lastDeployCommandTime = Timer.getFPGATimestamp();
 		}
 
 		switch (deployState) {
@@ -92,16 +96,12 @@ public class BallIntake extends Threaded {
 	}
 	
 	public boolean isFinished() {
-		return true;
+		if(Timer.getFPGATimestamp() - lastDeployCommandTime >= Constants.BallIntakeDeployTime) return true;
+		return false;
 	}
 	
 	@Override
 	public void update() {
-		IntakeState intake;
-		DeployState deploy;
-		synchronized (this) {
-			intake = intakeState;
-			deploy = deployState;
-		}
+
 	}
 }

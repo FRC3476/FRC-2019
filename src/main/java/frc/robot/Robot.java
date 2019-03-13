@@ -78,7 +78,7 @@ public class Robot extends IterativeRobot {
 		scheduler.schedule(turret, executor);
     scheduler.schedule(collisionManager, executor);
     //scheduler.schedule(manipulator, executor);
-    scheduler.schedule(hatchIntake, executor);
+    //scheduler.schedule(hatchIntake, executor);
     
 
     turret.homeTurret();
@@ -297,19 +297,6 @@ public class Robot extends IterativeRobot {
       if(buttonPanel.getRawButton(10)) turret.homeTurret();
       //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 9\n";
     
-      /*
-      if(Math.abs(xbox.getRawAxis(1)) > 0.1) {
-        elevatorManual = true;
-        elevator.manualControl(-xbox.getRawAxis(1) * 0.6);
-        //Elevator.setWonkavator()
-      }
-      if(elevatorManual == true && xbox.getRawAxis(1) < 0.3) {
-        //elevatorManual = false;
-        //elevator.setHeight(elevator.getHeight());
-      }*/
-
-      //if(Timer.getFPGATimestamp() - teleopStarttime > 0.02) System.out.println("overrun 2: " + (Timer.getFPGATimestamp() - teleopStarttime));
-
 
       //teleopStarttime = Timer.getFPGATimestamp();
       if(buttonPanel.getPOV() != -1) {
@@ -320,19 +307,12 @@ public class Robot extends IterativeRobot {
           elevator.manualControl(-0.2);
         //Elevator.setWonkavator()
       }
-      //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 10\n";
-      
-      //teleopStarttime = Timer.getFPGATimestamp();
+     
       if(elevatorManual == true && buttonPanel.getPOV() == -1) {
         elevatorManual = false;
         elevator.setHeight(elevator.getHeight());
       }
-      //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 11\n";
       
-      //if(Timer.getFPGATimestamp() - teleopStarttime > 0.02) System.out.println("overrun 3: " + (Timer.getFPGATimestamp() - teleopStarttime));
-
-
-      //teleopStarttime = Timer.getFPGATimestamp();
       //ball mode
       if(ballMode) { 
         //wheeled intake

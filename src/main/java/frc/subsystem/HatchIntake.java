@@ -66,24 +66,58 @@ public class HatchIntake extends Threaded {
 			switch (deployState) {
 				case STOW:
 					setAngle(Constants.HatchStowAngle);
-					telemetryServer.sendString("sIH1", "stow");
 					break;
 				case HANDOFF:
 					setAngle(Constants.HatchHandoffAngle);
-					telemetryServer.sendString("sIH1", "handoff");
 					break;
 				case INTAKE:
 					setAngle(Constants.HatchIntakeAngle);
-					telemetryServer.sendString("sIH1", "intake");
 					break;
 			} 
 		}
+
+		switch (deployState) {
+			case STOW:
+				telemetryServer.sendString("sIH1", "stow");
+				break;
+			case HANDOFF:
+				telemetryServer.sendString("sIH1", "handoff");
+				break;
+			case INTAKE:
+				telemetryServer.sendString("sIH1", "intake");
+				break;
+		}
+
+
 	}
 	
 	// Set the state of the intake
 	public void setIntakeState(IntakeState intakeState) {
 		synchronized (this) {
 			this.intakeState = intakeState;
+			
+			switch (intakeState) {
+				case INTAKE:
+					intakeMotor.set(ControlMode.PercentOutput, Constants.HatchIntakeMotorPower);
+					break;
+				case EJECT:
+					intakeMotor.set(ControlMode.PercentOutput, -Constants.HatchIntakeMotorPower);
+					break;
+				case OFF:
+					intakeMotor.set(ControlMode.PercentOutput, 0);
+					break;
+			}
+		}
+		switch (intakeState) {
+			case INTAKE:
+				telemetryServer.sendString("sIH2", "intake");
+				break;
+			case EJECT:
+				telemetryServer.sendString("sIH2", "eject");
+				break;
+			case OFF:
+				telemetryServer.sendString("sIH2", "off");
+				break;
 		}
 		
 	}
@@ -118,27 +152,7 @@ public class HatchIntake extends Threaded {
 	@Override
 	public void update() { 
 		
-		IntakeState intake;
-		DeployState deploy;
-		synchronized (this) {
-			intake = intakeState;
-			deploy = deployState;
-		}
-		
-		switch (intake) {
-			case INTAKE:
-				intakeMotor.set(ControlMode.PercentOutput, Constants.HatchIntakeMotorPower);
-				telemetryServer.sendString("sIH2", "intake");
-				break;
-			case EJECT:
-				intakeMotor.set(ControlMode.PercentOutput, -Constants.HatchIntakeMotorPower);
-				telemetryServer.sendString("sIH2", "eject");
-				break;
-			case OFF:
-				intakeMotor.set(ControlMode.PercentOutput, 0);
-				telemetryServer.sendString("sIH2", "off");
-				break;
-		}
+	
 /*
 		switch (deploy) {
 			case STOW:

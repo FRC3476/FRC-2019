@@ -59,11 +59,11 @@ public class Manipulator extends Threaded {
 		}
 		switch (state) {
 			case HATCH:
-				manipulatorSolenoid.set(false);
+				//manipulatorSolenoid.set(false);
 				telemetryServer.sendString("sMnM", "hatch");
 				break;
 			case BALL:
-				manipulatorSolenoid.set(true);
+				//manipulatorSolenoid.set(true);
 				telemetryServer.sendString("sMnM", "ball");
 				break;
 		} 
@@ -98,7 +98,15 @@ public class Manipulator extends Threaded {
 	}
 
 	private void changeManipulator() {
-		switch (state) {
+		ManipulatorState manipulator;
+		ManipulatorIntakeState intake;
+	
+		synchronized (this) {
+			manipulator = state;
+			intake = intakeState;
+		}
+
+		switch (manipulator) {
 			case HATCH:
 				manipulatorSolenoid.set(false);
 				//telemetryServer.sendString("sMnM", "hatch");
@@ -109,12 +117,6 @@ public class Manipulator extends Threaded {
 				break;
 		} 
 
-		ManipulatorState manipulator;
-		ManipulatorIntakeState intake;
-		synchronized (this) {
-			manipulator = state;
-			intake = intakeState;
-		}
 
 		if (intake == ManipulatorIntakeState.OFF) {
 			leftTalon.set(ControlMode.PercentOutput, 0);

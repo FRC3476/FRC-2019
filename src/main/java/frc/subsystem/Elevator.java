@@ -81,7 +81,7 @@ public class Elevator extends Threaded {
 	
 	
 	// Sets the height of the elevator
-	public void setHeight(double position) {
+	synchronized public void setHeight(double position) {
 		/*
 		if (position < Constants.ElevatorIntakeSafe &&
 		 ballIntake.getDeployState() != DeployState.DEPLOY && 

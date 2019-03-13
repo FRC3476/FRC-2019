@@ -125,6 +125,7 @@ public final class Constants {
 	public static final long IntakeDeployTime = 0;
 	//public static final int RollerMotorId = 25;
 	public static final int BallIntakeMasterId = 25;
+	public static final double BallIntakeDeployTime = 1.0;
 
 	// Hatch Intake
 	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
@@ -170,7 +171,7 @@ public final class Constants {
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.3;
 	
-	public static final double ElevatorIntakeSafe = 0;
+	public static final double ElevatorIntakeSafe = 5.8;
 	public static final double ElevatorDeployingSafe = 0;
 	public static final double ElevatorSafetyError = 0;
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);
