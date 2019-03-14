@@ -158,7 +158,8 @@ public final class Constants {
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
-	public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);
+	//public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);//orange string, no screw
+	public static final double ElevatorTicksPerInch = 57378/(64.25-4.375);//black string, screw spool
 	public static final int ElevatorSensorPidIdx = 0;
 	public static final double ElevatorTargetError = 2;
 	
@@ -171,7 +172,7 @@ public final class Constants {
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.3;
 	
-	public static final double ElevatorIntakeSafe = 5.8;
+	public static final double ElevatorIntakeSafe = 7;
 	public static final double ElevatorDeployingSafe = 0;
 	public static final double ElevatorSafetyError = 0;
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);
@@ -185,13 +186,14 @@ public final class Constants {
 
 
 	//setpoints
-	public static final double BallElevHigh = 55.18;
-	public static final double BallElevMid = 31.02;
+	public static final double BallElevHigh = 60.8;
+	public static final double BallElevMid = 33.6;
 	public static final double BallElevLow = 5.8;
 	public static final double BallElevCargo = 5.8;
+	public static final double BallElevCargoGroundIntake = 0;
 
-	public static final double HatchElevHigh = 51.6;
-	public static final double HatchElevMid = 26.4;
+	public static final double HatchElevHigh = 56.8;
+	public static final double HatchElevMid = 29.7;
 	public static final double HatchElevLow = 1.8;
 	public static final double HatchElevCargo = 4.5;
 

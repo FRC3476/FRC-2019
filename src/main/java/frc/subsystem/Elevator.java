@@ -173,6 +173,7 @@ public class Elevator extends Threaded {
 			//If is in setpoint mode
 			case SETPOINT:
 				if(safetyEngage) setHeight(requested);
+				//System.out.println("Elevator current: " + getPulledCurrent());
 				//if(elevMaster.getOutputCurrent())
 				//System.out.println("moving elevator");
 				//elevator on triggers

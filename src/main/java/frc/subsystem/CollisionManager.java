@@ -33,6 +33,9 @@ public class CollisionManager extends Threaded {
     boolean extendingBallIntake = false;
     boolean retractingBallIntake = false;
     int ballIntakeStage = 0;
+
+    boolean ballIntakeOut = false;
+    boolean hatchIntakeOut = false;
     private static final CollisionManager cm = new CollisionManager();
 
     public static CollisionManager getInstance() {
@@ -45,7 +48,9 @@ public class CollisionManager extends Threaded {
 
     synchronized public void groundHatchIntake() {
         //System.out.println("groundHatchIntake");
+        if(ballIntakeOut) return;//do not do this sequence while the other is out
         intakingHatch = true;
+        hatchIntakeOut = true;
         elevator.setHeight(7);
     }
 
@@ -74,17 +79,31 @@ public class CollisionManager extends Threaded {
         return (handoffHatch || intakingHatch) || (extendingBallIntake) || (retractingBallIntake);
     }
 
+    synchronized public boolean isBallIntakeOut() {
+        return ballIntakeOut;
+    }
+
+    synchronized public boolean isHatchIntakeOut() {
+        return hatchIntakeOut;
+    }
+
+    synchronized public boolean isInControl() {
+        return ballIntakeOut || hatchIntakeOut;
+    }
+
     synchronized public void extendBallIntake() {
+        if(hatchIntakeOut) return;//do not do this sequence while the other is out
         extendingBallIntake = true;
+        ballIntakeOut = true;
         elevator.setHeight(Constants.ElevatorIntakeSafe);
-       // turret.setDesired(0, false);
+        turret.setDesired(180, false);
         ballIntakeStage = 0;
     }
 
     synchronized public void retractBallIntake() {
         retractingBallIntake = true;
         if(elevator.getHeight() < Constants.ElevatorIntakeSafe) elevator.setHeight(Constants.ElevatorIntakeSafe);
-        //turret.setDesired(0, false);
+        turret.setDesired(180, false);
         ballIntakeStage = 0;
     }
 
@@ -120,7 +139,7 @@ public class CollisionManager extends Threaded {
                     if(ballIntake.isFinished()) ballIntakeStage++;
                     break;                
                 case 3:
-                    elevator.setHeight(Constants.HatchElevLow);
+                    elevator.setHeight(Constants.BallElevCargoGroundIntake);
                     combinedIntake.setManipulatorState(ManipulatorState.BALL);
                     combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
                     //turret.setDesired(0, true);
@@ -141,6 +160,11 @@ public class CollisionManager extends Threaded {
                     break;
                 case 2:
                     if(ballIntake.isFinished()) {
+                        elevator.setHeight(Constants.BallElevLow);
+                        //reset turret to field centric
+                        turret.setDesired(180, true);
+                        turret.restoreSetpoint();
+                        ballIntakeOut = false;
                         retractingBallIntake = false;
                         System.out.println("Retracted ball intake");
                     }
@@ -212,7 +236,7 @@ public class CollisionManager extends Threaded {
                     //reset turret to field centric
                     turret.setDesired(0, true);
                     turret.restoreSetpoint();
-
+                    hatchIntakeOut = false;
                     handoffHatch = false;
                     break;
             }

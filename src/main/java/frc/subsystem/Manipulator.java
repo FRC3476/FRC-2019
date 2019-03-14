@@ -57,6 +57,7 @@ public class Manipulator extends Threaded {
 			this.state = state;
 			changeManipulator();
 		}
+		//System.out.println("change state to: " + state);
 		switch (state) {
 			case HATCH:
 				//manipulatorSolenoid.set(false);
@@ -79,7 +80,7 @@ public class Manipulator extends Threaded {
 			changeManipulator();
 
 		}
-
+		
 		
 		switch (intakeState) {
 			case INTAKE:
