@@ -22,7 +22,7 @@ public class Arm {
 		return instance;
 	}
 	
-	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
+	private TelemetryServer telemetryServer = TelemetryServer.getInstance(); //
 	private Solenoid armSolenoid;
 	private ArmState lastState = ArmState.RETRACT;
 	

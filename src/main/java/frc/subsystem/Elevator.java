@@ -158,6 +158,7 @@ public class Elevator extends Threaded {
 					elevMaster.setSelectedSensorPosition(0, Constants.ElevatorSensorPidIdx, 
 					Constants.TimeoutMs);
 					elevState = ElevatorState.SETPOINT;
+					setHeight(Constants.HatchElevLow);
 					//System.out.println("Elevator homing succeeded");
 					}
 				} else{

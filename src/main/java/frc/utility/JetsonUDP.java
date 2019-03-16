@@ -11,6 +11,7 @@ import frc.robot.Constants;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.time.Duration;
 
 public class JetsonUDP extends Threaded {
 
@@ -34,6 +35,7 @@ public class JetsonUDP extends Threaded {
       System.out.println("Failed to intialize UDP socket with Jetson");
     }
     //start();
+    setPeriod(Duration.ofMillis(20));
   }
 
   synchronized public VisionTarget[] getTargets() {

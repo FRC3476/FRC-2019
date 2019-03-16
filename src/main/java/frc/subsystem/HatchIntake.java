@@ -46,7 +46,7 @@ public class HatchIntake extends Threaded {
 		deployMotor.config_kI(0, Constants.kHatchI, Constants.TimeoutMs);
 		deployMotor.config_kD(0, Constants.kHatchD, Constants.TimeoutMs);
 		intakeMotor.setInverted(true);
-
+		//deployMotor.configClosedLoopPeakOutput(slotIdx, percentOut)
 		setPeriod(Duration.ofMillis(20));
 	}
 

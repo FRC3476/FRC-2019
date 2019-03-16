@@ -155,6 +155,9 @@ public final class Constants {
 	public static final double kTurretI = 0.00;
 	public static final double kTurretD = 1.0;
 
+	public static final double kTurretManual = 1.5;
+
+
 	// Elevator
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
@@ -183,6 +186,7 @@ public final class Constants {
 	public static final double ElevatorMaxHeight = 70;//in number for now
 	public static final double ElevatorIntakeHeight = 10;//For now
 
+	public static final double kElevatorManual = 1;
 
 
 	//setpoints
@@ -191,11 +195,13 @@ public final class Constants {
 	public static final double BallElevLow = 5.8;
 	public static final double BallElevCargo = 5.8;
 	public static final double BallElevCargoGroundIntake = 0;
+	public static final double BallHP = 20.85;
 
 	public static final double HatchElevHigh = 56.8;
 	public static final double HatchElevMid = 29.7;
-	public static final double HatchElevLow = 1.8;
-	public static final double HatchElevCargo = 4.5;
+	public static final double HatchElevLow = 2.2;
+	public static final double HatchHP = 1.2;
+	
 
 	// Manipulator
 	public static final double ManipulatorNormalPower = 0.40;

@@ -79,6 +79,7 @@ public class Robot extends IterativeRobot {
 		scheduler.schedule(elevator, executor);
 		scheduler.schedule(turret, executor);
     scheduler.schedule(collisionManager, executor);
+    scheduler.schedule(jetsonUDP, executor);
     //scheduler.schedule(manipulator, executor);
     //scheduler.schedule(hatchIntake, executor);
     
@@ -183,6 +184,8 @@ public class Robot extends IterativeRobot {
 
   boolean hatchOutake = false;
 
+  boolean elevReturn = false;
+
   
   /**
    * This function is called periodically during operator control.
@@ -195,6 +198,9 @@ public class Robot extends IterativeRobot {
      
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
+
+      if(xbox.getRawButton(4)) drive.setShiftState(true); 
+      else drive.setShiftState(false);
     
       //teleopStarttime = Timer.getFPGATimestamp();
       if(xbox.getRisingEdge(1)) {
@@ -250,19 +256,19 @@ public class Robot extends IterativeRobot {
       //Drive control
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
      // System.out.println(!collisionManager.isInControl());
-      //if(!collisionManager.isInControl()) {
+      if(!collisionManager.isInControl()) {
         //set turret to vision vs setpoint
         if(buttonPanel.getRawButton(4)) turret.setState(TurretState.VISION);
         else {
           turret.setState(TurretState.SETPOINT);
           //turret.restoreSetpoint();
-       // }
+        }
 
         //Turret control
         if(Math.abs(stick.getY()) > 0.5 || Math.abs(stick.getX()) > 0.5) {
           turret.setDesired(Math.toDegrees((Math.atan2(-stick.getY(), stick.getX()))) - 90, true);
         } else if(Math.abs(stick.getZ()) >= 0.3) {
-          turret.addDesired(-stick.getZ()*1.5);
+          turret.addDesired(-stick.getZ()*Constants.kTurretManual);
         }
         //Ball vs Turret Mode
         if(stick.getRawButton(3)) ballMode = true;
@@ -288,10 +294,12 @@ public class Robot extends IterativeRobot {
         //teleopStarttime = Timer.getFPGATimestamp();
         if(buttonPanel.getPOV() != -1) {
           elevatorManual = true;
-          if(buttonPanel.getPOV() == 90)
-            elevator.manualControl(0.2);
-          else if (buttonPanel.getPOV() == 270) 
-            elevator.manualControl(-0.2);
+          if(buttonPanel.getPOV() == 0)
+            elevator.setHeight(elevator.getHeight()+Constants.kElevatorManual);
+            //elevator.manualControl(0.2);
+          else if (buttonPanel.getPOV() == 180) 
+            elevator.setHeight(elevator.getHeight()-Constants.kElevatorManual);
+            //elevator.manualControl(-0.2);
           //Elevator.setWonkavator()
         }
       
@@ -303,8 +311,8 @@ public class Robot extends IterativeRobot {
         //ball mode
         if(ballMode) { 
           //wheeled intake
-          if(collisionManager.isWorking() || collisionManager.isBallIntakeOut())
-          {}//don't do anything because collision manager is doing things
+          if(collisionManager.isWorking() || collisionManager.isBallIntakeOut()) {}
+          //don't do anything because collision manager is doing things
           else if(stick.getRawButton(1) && yeet == false)  {
             yeet = true;
             yeetTime =  System.currentTimeMillis();
@@ -345,7 +353,7 @@ public class Robot extends IterativeRobot {
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.BallElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.BallElevMid);
           else if(buttonPanel.getRawButton(6)) elevator.setHeight(Constants.BallElevLow);
-          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.BallElevCargo);
+          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.BallHP);
 
 
         } else { //hatch mode
@@ -370,11 +378,19 @@ public class Robot extends IterativeRobot {
             else {
               manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
               arm.setState(ArmState.EXTEND);
+              if(elevator.getHeight() <= 3) {
+                elevator.setHeight(Constants.HatchHP);
+                elevReturn = true;
+              }
               intakeAttempted = true;
               intakeAttemptedTime = System.currentTimeMillis();
             }
           }  
           else {  //attempting to hold otherwise
+            if(elevReturn) {
+              elevReturn = false;
+              elevator.setHeight(Constants.HatchElevLow);
+            }
             if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else  manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
             arm.setState(ArmState.RETRACT);
@@ -388,9 +404,11 @@ public class Robot extends IterativeRobot {
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.HatchElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.HatchElevMid);
           else if(buttonPanel.getRawButton(6)) elevator.setHeight(Constants.HatchElevLow);
-          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.HatchElevCargo);
+          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.HatchHP);
         }
       }
+      
+      
       //btn2Edge = xbox.getRawButton(2);
       //btn1Edge = xbox.getRawButton(1);
       if(stick.getFallingEdge(2)) hatchOutake = false;
