@@ -218,7 +218,7 @@ public class Turret extends Threaded {
 				restoreSetpoint();
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
-				System.out.println("amunt of targets" + targets.length);
+				//System.out.println("amunt of targets" + targets.length);
 				if(targets.length == 0 || targets == null) {
 					if(reacquire) {
 						//turretState = turretState.SETPOINT;
@@ -234,7 +234,7 @@ public class Turret extends Threaded {
 					reacquire = false;
 					lastDeltaX = lastX - targets[0].x; 
 			  		double d = targets[0].distance;
-			  		double f = Math.toRadians((targets[0].x/640.0 - 0.5) * (59.7/2));
+			  		double f = Math.toRadians((targets[0].x/640.0 - 0.5) * (148.16/2));
 			  		double corrected = Math.atan2(Math.cos(f) * d + Constants.cameraYOffset, Math.sin(f) * d +  Constants.cameraXOffset);
 					corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 

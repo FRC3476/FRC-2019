@@ -203,18 +203,23 @@ public class Robot extends IterativeRobot {
       else drive.setShiftState(false);
     
       //teleopStarttime = Timer.getFPGATimestamp();
+      //hatch
       if(xbox.getRisingEdge(1)) {
         ballMode = false;
-        if(!hatchIn) collisionManager.handoffHatch();
+        if(collisionManager.isHatchIntakeOut()) {
+          collisionManager.handoffHatch();
+          
+        }
         else collisionManager.groundHatchIntake(); 
-        hatchIn = !hatchIn;
+        //hatchIn = !
       }
 
+      //ball
       if(xbox.getRisingEdge(2)) {
         ballMode = true;
-        if(!ballIntakeIn) collisionManager.retractBallIntake();
+        if(collisionManager.isBallIntakeOut()) collisionManager.retractBallIntake();
         else collisionManager.extendBallIntake();
-        ballIntakeIn = !ballIntakeIn;
+        //ballIntakeIn = !collisionManager.isBallIntakeOut();
       }
 
       //ballIntake.setSpeed(xbox.getRawAxis(3) - xbox.getRawAxis(2));
@@ -237,13 +242,19 @@ public class Robot extends IterativeRobot {
       //System.out.println("hi");
 
       //teleopStarttime = Timer.getFPGATimestamp();
-      if(xbox.getRawAxis(3) > 0.5) {
-        ballIntake.setIntakeState(BallIntake.IntakeState.INTAKE);
-      } else if(xbox.getRawAxis(2) > 0.5) {
-        ballIntake.setIntakeState(BallIntake.IntakeState.EJECT);
-      } else {
+      if(collisionManager.isBallIntakeOut()) {
+        if(xbox.getRawAxis(3) > 0.5) {
+          ballIntake.setIntakeState(BallIntake.IntakeState.INTAKE);
+        } else if(xbox.getRawAxis(2) > 0.5) {
+          ballIntake.setIntakeState(BallIntake.IntakeState.EJECT);
+        } else {
+          ballIntake.setIntakeState(BallIntake.IntakeState.OFF);
+        }
+      }
+      else {
         ballIntake.setIntakeState(BallIntake.IntakeState.OFF);
       }
+      
       //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 4\n";
 
 
@@ -265,8 +276,11 @@ public class Robot extends IterativeRobot {
         }
 
         //Turret control
-        if(Math.abs(stick.getY()) > 0.5 || Math.abs(stick.getX()) > 0.5) {
-          turret.setDesired(Math.toDegrees((Math.atan2(-stick.getY(), stick.getX()))) - 90, true);
+        //axis 0 is x, 1 is y, 2 is yaw
+        //System.out.println("x: " + stick.getRawAxis(0) + " y: " + stick.getRawAxis(1));
+        if(Math.abs(stick.getRawAxis(1)) > 0.5 || Math.abs(stick.getRawAxis(0)) > 0.5) {
+          //System.out.println("x: " + stick.getY() + " y: " + stick.getX() + "ang: " + (Math.toDegrees((Math.atan2(-stick.getY(), stick.getX()))) - 90));
+          turret.setDesired(Math.toDegrees((Math.atan2(-stick.getRawAxis(1), stick.getRawAxis(0)))) - 90, true);
         } else if(Math.abs(stick.getZ()) >= 0.3) {
           turret.addDesired(-stick.getZ()*Constants.kTurretManual);
         }
@@ -385,13 +399,16 @@ public class Robot extends IterativeRobot {
               intakeAttempted = true;
               intakeAttemptedTime = System.currentTimeMillis();
             }
-          }  
+          } 
           else {  //attempting to hold otherwise
+           
+
             if(elevReturn) {
               elevReturn = false;
               elevator.setHeight(Constants.HatchElevLow);
             }
             if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+            else if(buttonPanel.getRawButton(3)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else  manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
             arm.setState(ArmState.RETRACT);
             if(System.currentTimeMillis() - intakeAttemptedTime > 350) {

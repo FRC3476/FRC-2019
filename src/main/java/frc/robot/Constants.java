@@ -4,7 +4,7 @@ package frc.robot;
 
 public final class Constants {
 	// Networking
-	public static final int TelemetryPort = 5801;
+	public static final int TelemetryPort = 5810;
 	public static final String DriverStationIPv4 = "10.34.76.60"; // Temporary
 	public static final int JetsonPort = 5001;
 	public static final String JetsonIPv4 = "10.34.76.57";
@@ -125,7 +125,7 @@ public final class Constants {
 	public static final long IntakeDeployTime = 0;
 	//public static final int RollerMotorId = 25;
 	public static final int BallIntakeMasterId = 25;
-	public static final double BallIntakeDeployTime = 1.0;
+	public static final double BallIntakeDeployTime = 0.75;
 
 	// Hatch Intake
 	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
@@ -175,7 +175,7 @@ public final class Constants {
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.3;
 	
-	public static final double ElevatorIntakeSafe = 7;
+	public static final double ElevatorIntakeSafe = 9;
 	public static final double ElevatorDeployingSafe = 0;
 	public static final double ElevatorSafetyError = 0;
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);

@@ -145,7 +145,6 @@ public class CollisionManager extends Threaded {
                     //turret.setDesired(0, true);
                     //turret.restoreSetpoint();
                     extendingBallIntake = false;
-                    ballIntakeOut = true;
                     System.out.println("extended ball intake");
                     break;
             }
@@ -184,7 +183,6 @@ public class CollisionManager extends Threaded {
                 if(groundHatch.isFinished()) {
                     intakingHatch = false;
                     elevator.setHeight(3);
-                    hatchIntakeOut = true;
                     //turret.setDesired(0, true);
                     //turret.restoreSetpoint();
                     groundHatch.setIntakeState(IntakeState.INTAKE);

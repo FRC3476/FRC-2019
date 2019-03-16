@@ -148,7 +148,7 @@ public class Controller extends Joystick {
 
 	@Override
 	public double getRawAxis(int axis) {
-		if (axis <= axisCount && axis > 0) {
+		if (axis <= axisCount && axis >= 0) {
 			return currentAxis[axis];
 		}
 		return 0;
