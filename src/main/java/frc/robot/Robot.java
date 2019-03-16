@@ -15,6 +15,7 @@ import frc.subsystem.Manipulator.ManipulatorState;
 import frc.subsystem.Turret.TurretState;
 //import frc.robot.subsystem.Drive;
 import frc.utility.math.*;
+import frc.utility.telemetry.TelemetryServer;
 import frc.utility.control.motion.Path;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -39,8 +40,9 @@ public class Robot extends IterativeRobot {
   CollisionManager collisionManager = CollisionManager.getInstance();
   public static Controller xbox = new Controller(0);
   //public static Joystick xbox = new Joystick(0);
-  public static Joystick stick = new Joystick(1);
+  public static Controller stick = new Controller(1);
   public static Joystick buttonPanel = new Joystick(2);
+  TelemetryServer telemetryServer = TelemetryServer.getInstance();
   Turret turret = Turret.getInstance();
   Elevator elevator = Elevator.getInstance();
   Manipulator manipulator = Manipulator.getInstance();
@@ -179,6 +181,8 @@ public class Robot extends IterativeRobot {
   boolean hatchIn = true;
   boolean ballIntakeIn = true;
 
+  boolean hatchOutake = false;
+
   
   /**
    * This function is called periodically during operator control.
@@ -187,7 +191,7 @@ public class Robot extends IterativeRobot {
   public void teleopPeriodic() {
     
       xbox.update();
-      
+      stick.update();
      
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
@@ -245,14 +249,14 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
-      
-      if(!collisionManager.isInControl()) {
+     // System.out.println(!collisionManager.isInControl());
+      //if(!collisionManager.isInControl()) {
         //set turret to vision vs setpoint
         if(buttonPanel.getRawButton(4)) turret.setState(TurretState.VISION);
         else {
           turret.setState(TurretState.SETPOINT);
           //turret.restoreSetpoint();
-        }
+       // }
 
         //Turret control
         if(Math.abs(stick.getY()) > 0.5 || Math.abs(stick.getX()) > 0.5) {
@@ -354,14 +358,21 @@ public class Robot extends IterativeRobot {
           if(collisionManager.isWorking() || collisionManager.isBallIntakeOut())
           {}//don't do anything because collision manager is doing things
           else if(stick.getRawButton(1)){ //attempting to outake
+            hatchOutake = true;
             arm.setState(ArmState.EXTEND);
             manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
             if(stick.getRawButton(2)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
           }else if(stick.getRawButton(2)) { //attempting to intake
-            manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
-            arm.setState(ArmState.EXTEND);
-            intakeAttempted = true;
-            intakeAttemptedTime = System.currentTimeMillis();
+            if(hatchOutake) {
+              arm.setState(ArmState.RETRACT);
+              manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
+            }
+            else {
+              manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+              arm.setState(ArmState.EXTEND);
+              intakeAttempted = true;
+              intakeAttemptedTime = System.currentTimeMillis();
+            }
           }  
           else {  //attempting to hold otherwise
             if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
@@ -382,6 +393,7 @@ public class Robot extends IterativeRobot {
       }
       //btn2Edge = xbox.getRawButton(2);
       //btn1Edge = xbox.getRawButton(1);
+      if(stick.getFallingEdge(2)) hatchOutake = false;
       firstTeleopRun = false;
   }
 

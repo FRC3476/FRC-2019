@@ -41,7 +41,7 @@ public class Climber extends Threaded {
 	
 	public void beginClimb() {
 		state = ClimberState.CLIMB;
-		telemetryServer.sendString("sClm", "climb");
+		//telemetryServer.sendString("sClm", "climb");
 		climberPID.setReference(Constants.ClimberMaxAngle, ControlType.kPosition);
 	}
 

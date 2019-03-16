@@ -24,21 +24,25 @@ public class Arm {
 	
 	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
 	private Solenoid armSolenoid;
+	private ArmState lastState = ArmState.RETRACT;
 	
 	private Arm() {
 		armSolenoid = new Solenoid(Constants.ArmSolenoidId);
 	}
 	
 	public void setState(ArmState state) {
-		switch (state) {
-			case RETRACT:
-				armSolenoid.set(false);
-				telemetryServer.sendString("sArm", "retract");
-				break;
-			case EXTEND:
-				armSolenoid.set(true);
-				telemetryServer.sendString("sArm", "extend");
-				break;
+		if (state != lastState) {
+			switch (state) {
+				case RETRACT:
+					armSolenoid.set(false);
+					telemetryServer.sendString("sArm", "retract");
+					break;
+				case EXTEND:
+					armSolenoid.set(true);
+					telemetryServer.sendString("sArm", "extend");
+					break;
+			}
 		}
+		lastState = state;
 	}
 }

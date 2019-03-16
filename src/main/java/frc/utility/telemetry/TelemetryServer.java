@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import frc.robot.Constants;
+import frc.utility.Threaded;
 
 /**
  * Handles rx/tx of telemetry data on robot side
@@ -24,7 +25,7 @@ public class TelemetryServer {
 
 	private static final TelemetryServer instance = new TelemetryServer(Constants.TelemetryPort);
 
-	private static final boolean disableSending = true;
+	private static final boolean disableSending = false;
 
 	public static TelemetryServer getInstance() {
 		return instance;
@@ -35,8 +36,9 @@ public class TelemetryServer {
 	private TelemetryServer(int port) {
 		try {
 			socket = new DatagramSocket(port);
+			System.out.println("Telemetry server socket opened on port " + port);
 		} catch (SocketException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 
@@ -46,6 +48,7 @@ public class TelemetryServer {
 	 * 		Message to log and send to dashboard
 	 */
 	public void log(String message) {
+		if (disableSending) return;
 		sendString("log ", message);
 	}
 
@@ -55,6 +58,7 @@ public class TelemetryServer {
 	 * 		Data point to send
 	 */
 	public void sendData(String k, double... v) {
+		if (disableSending) return;
 		double[] values = v;
 		ByteBuffer sendBuffer;
 		long timestamp = System.currentTimeMillis();
@@ -73,7 +77,7 @@ public class TelemetryServer {
 	 * 		String to send
 	 */
 	public void sendString(String k, String v) {
-		if(disableSending) return;
+		if (disableSending) return;
 		ByteBuffer sendBuffer;
 		long timestamp = System.currentTimeMillis();
 		sendBuffer = ByteBuffer.allocate(6 + 4 + v.length() + 1).order(ByteOrder.LITTLE_ENDIAN);
@@ -96,8 +100,9 @@ public class TelemetryServer {
 			DatagramPacket msg = new DatagramPacket(sendBuffer.array(), sendBuffer.position(), 
 				InetAddress.getByName(Constants.DriverStationIPv4), Constants.TelemetryPort);
 			socket.send(msg);
+			//System.out.println(new String(sendBuffer.array(), "ASCII"));
 		} catch (IOException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 }

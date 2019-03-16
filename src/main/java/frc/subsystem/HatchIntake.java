@@ -78,13 +78,13 @@ public class HatchIntake extends Threaded {
 
 		switch (deployState) {
 			case STOW:
-				telemetryServer.sendString("sIH1", "stow");
+				//telemetryServer.sendString("sIH1", "stow");
 				break;
 			case HANDOFF:
-				telemetryServer.sendString("sIH1", "handoff");
+				//telemetryServer.sendString("sIH1", "handoff");
 				break;
 			case INTAKE:
-				telemetryServer.sendString("sIH1", "intake");
+				//telemetryServer.sendString("sIH1", "intake");
 				break;
 		}
 
@@ -110,13 +110,13 @@ public class HatchIntake extends Threaded {
 		}
 		switch (intakeState) {
 			case INTAKE:
-				telemetryServer.sendString("sIH2", "intake");
+				//telemetryServer.sendString("sIH2", "intake");
 				break;
 			case EJECT:
-				telemetryServer.sendString("sIH2", "eject");
+				//telemetryServer.sendString("sIH2", "eject");
 				break;
 			case OFF:
-				telemetryServer.sendString("sIH2", "off");
+				//telemetryServer.sendString("sIH2", "off");
 				break;
 		}
 		

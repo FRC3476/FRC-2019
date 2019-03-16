@@ -59,11 +59,11 @@ public class BallIntake extends Threaded {
 		switch (deployState) {
 			case DEPLOY:
 				deploySolenoid.set(true);
-				telemetryServer.sendString("sIB1", "deploy");
+				//telemetryServer.sendString("sIB1", "deploy");
 				break;
 			case STOW:
 				deploySolenoid.set(false);
-				telemetryServer.sendString("sIB1", "stow");
+				//telemetryServer.sendString("sIB1", "stow");
 				break;
 		}
 	}
@@ -77,15 +77,15 @@ public class BallIntake extends Threaded {
 		switch (intakeState) {
 			case INTAKE:
 				intakeMotor.set(ControlMode.PercentOutput, -Constants.IntakeMotorPowerIntake);
-				telemetryServer.sendString("sIB2", "intake");
+				//telemetryServer.sendString("sIB2", "intake");
 				break;
 			case EJECT:
 				intakeMotor.set(ControlMode.PercentOutput, Constants.IntakeMotorPowerEject);
-				telemetryServer.sendString("sIB2", "eject");
+				//telemetryServer.sendString("sIB2", "eject");
 				break;
 			case OFF:
 				intakeMotor.set(ControlMode.PercentOutput, 0);
-				telemetryServer.sendString("sIB2", "off");
+				//telemetryServer.sendString("sIB2", "off");
 				break;
 		}
 	}

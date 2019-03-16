@@ -218,7 +218,7 @@ public class Turret extends Threaded {
 				restoreSetpoint();
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
-			
+				//System.out.println("amunt of targets" + targets.length);
 				if(targets.length == 0 || targets == null) {
 					if(reacquire) {
 						//turretState = turretState.SETPOINT;

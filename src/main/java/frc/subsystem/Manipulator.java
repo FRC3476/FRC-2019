@@ -61,11 +61,11 @@ public class Manipulator extends Threaded {
 		switch (state) {
 			case HATCH:
 				//manipulatorSolenoid.set(false);
-				telemetryServer.sendString("sMnM", "hatch");
+				//telemetryServer.sendString("sMnM", "hatch");
 				break;
 			case BALL:
 				//manipulatorSolenoid.set(true);
-				telemetryServer.sendString("sMnM", "ball");
+				//telemetryServer.sendString("sMnM", "ball");
 				break;
 		} 
 	
@@ -84,13 +84,13 @@ public class Manipulator extends Threaded {
 		
 		switch (intakeState) {
 			case INTAKE:
-				telemetryServer.sendString("sMnI", "intake");
+				//telemetryServer.sendString("sMnI", "intake");
 				break;
 			case EJECT:
-				telemetryServer.sendString("sMnI", "eject");
+				//telemetryServer.sendString("sMnI", "eject");
 				break;
 			case OFF:
-				telemetryServer.sendString("sMnI", "off");
+				//telemetryServer.sendString("sMnI", "off");
 				break;
 			
 		}

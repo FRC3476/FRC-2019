@@ -5,7 +5,7 @@ package frc.robot;
 public final class Constants {
 	// Networking
 	public static final int TelemetryPort = 5801;
-	public static final String DriverStationIPv4 = "10.34.76.5";
+	public static final String DriverStationIPv4 = "10.34.76.60"; // Temporary
 	public static final int JetsonPort = 5001;
 	public static final String JetsonIPv4 = "10.34.76.57";
 
