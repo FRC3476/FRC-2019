@@ -80,7 +80,7 @@ public class Elevator extends Threaded {
 	}
 	
 	
-	// Sets the height of the elevator
+	// Sets the height of the elevator in inches
 	synchronized public void setHeight(double position) {
 		/*
 		if (position < Constants.ElevatorIntakeSafe &&
