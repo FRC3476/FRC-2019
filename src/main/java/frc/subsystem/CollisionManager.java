@@ -36,6 +36,8 @@ public class CollisionManager extends Threaded {
 
     boolean ballIntakeOut = false;
     boolean hatchIntakeOut = false;
+
+    boolean retrieveHatch = false;
     private static final CollisionManager cm = new CollisionManager();
 
     public static CollisionManager getInstance() {
@@ -107,9 +109,27 @@ public class CollisionManager extends Threaded {
         ballIntakeStage = 0;
     }
 
+    synchronized public boolean isRetrieving() {
+        return retrieveHatch;
+    }
+
+    synchronized public void retrieveHatch() {
+        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+        holdingTime = Timer.getFPGATimestamp();
+        retrieveHatch = true;
+    }
+
     @Override
     synchronized public void update() {
         double starttime = Timer.getFPGATimestamp();
+
+        if(retrieveHatch) {
+            if(Timer.getFPGATimestamp() - holdingTime >= 1.2) {
+                holdingTime = 0;
+                retrieveHatch = false;
+                combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+            }
+        } 
         /*
         if(waitingOnElevator) {
             if(elevator.isSafe()) {

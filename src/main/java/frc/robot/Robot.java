@@ -406,8 +406,10 @@ public class Robot extends IterativeRobot {
             if(elevReturn) {
               elevReturn = false;
               elevator.setHeight(Constants.HatchElevLow);
+              collisionManager.retrieveHatch();
             }
-            if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+            if(collisionManager.isRetrieving());
+            else if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else if(buttonPanel.getRawButton(3)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else  manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
             arm.setState(ArmState.RETRACT);

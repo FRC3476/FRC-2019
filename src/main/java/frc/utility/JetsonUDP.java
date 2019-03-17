@@ -20,7 +20,7 @@ public class JetsonUDP extends Threaded {
   private DatagramSocket socket;
   private InetAddress address;
 
-  private VisionTarget[] target = new VisionTarget[12];
+  private VisionTarget[] target = null;
 
   public static JetsonUDP getInstance() {
     return instance;
@@ -35,11 +35,15 @@ public class JetsonUDP extends Threaded {
       System.out.println("Failed to intialize UDP socket with Jetson");
     }
     //start();
-    setPeriod(Duration.ofMillis(20));
+    setPeriod(Duration.ofMillis(10));
   }
 
   synchronized public VisionTarget[] getTargets() {
     return target;
+  }
+
+  synchronized public void popTargets() {
+    target = null;
   }
 
   private void recieve() {
