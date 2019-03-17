@@ -41,7 +41,7 @@ public class Robot extends IterativeRobot {
   public static Controller xbox = new Controller(0);
   //public static Joystick xbox = new Joystick(0);
   public static Controller stick = new Controller(1);
-  public static Joystick buttonPanel = new Joystick(2);
+  public static Controller buttonPanel = new Controller(2);
   TelemetryServer telemetryServer = TelemetryServer.getInstance();
   Turret turret = Turret.getInstance();
   Elevator elevator = Elevator.getInstance();
@@ -195,6 +195,7 @@ public class Robot extends IterativeRobot {
     
       xbox.update();
       stick.update();
+      buttonPanel.update();
      
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
@@ -266,10 +267,20 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
+
+      if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;
      // System.out.println(!collisionManager.isInControl());
       if(!collisionManager.isInControl()) {
         //set turret to vision vs setpoint
         if(buttonPanel.getRawButton(4)) turret.setState(TurretState.VISION);
+        else if(buttonPanel.getRawButton(1)) {
+          turret.setState(TurretState.VISION);
+
+          if(turret.isFinished() && turret.isInRange()) {
+            collisionManager.score();
+          }
+        } 
+        
         else {
           turret.setState(TurretState.SETPOINT);
           //turret.restoreSetpoint();
@@ -291,8 +302,8 @@ public class Robot extends IterativeRobot {
 
         //teleopStarttime = Timer.getFPGATimestamp();
         //Arm manual override
-        if(buttonPanel.getRawButton(1)) arm.setState(ArmState.EXTEND);
-        if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
+        //if(buttonPanel.getRawButton(1)) arm.setState(ArmState.EXTEND);
+        //if(buttonPanel.getRawButton(2)) arm.setState(ArmState.RETRACT);
         //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 7\n";
 
         //teleopStarttime = Timer.getFPGATimestamp();

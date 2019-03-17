@@ -146,6 +146,8 @@ public final class Constants {
 	public static final double turretHomingSpeed = 0.2;//Random percent for now
 	public static final int TurretMotorId = 7;
 //	public static final double kTurretP = 0.25;
+	public static final double TurretTargetError = 3;
+	public static final double AutoScoreDistance = 33;
 
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
 	public static final double TurretHomingPower = 0.4;//Random percent for now
@@ -213,7 +215,7 @@ public final class Constants {
 	
 	// Camera
 	public static final double cameraYOffset = 5.310 + 1.25;
-	public static final double cameraXOffset = -4.815+1.25;
+	public static final double cameraXOffset = -4.815 + 1.6 - 1.0;
 
 	private Constants() {
 	}

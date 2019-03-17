@@ -39,6 +39,7 @@ public class Turret extends Threaded {
 	private double lastDeltaX = 0;
 	private double lastX = 0 ;
 	private boolean reacquire = false;
+	private double lastDistance = Constants.AutoScoreDistance+10;
 
 	private double desired;
 	private boolean fieldRelative;
@@ -158,9 +159,18 @@ public class Turret extends Threaded {
 	}
 	
 	synchronized public boolean isFinished() {//NOT YET IMPLEMENTED
-		if(Math.abs(Math.abs(getAngle()) - Math.abs(requested)) < Constants.ElevatorTargetError) return true;
+		if(Math.abs(Math.abs(getAngle()) - Math.abs(requested)) < Constants.TurretTargetError) return true;
 		else return false;
 	}
+
+	synchronized public boolean isInRange() {
+		return lastDistance < Constants.AutoScoreDistance;
+	}
+
+	synchronized public void resetDistance() {
+		lastDistance = Constants.AutoScoreDistance + 10;
+	}
+
 
 
 	@Override
@@ -231,10 +241,19 @@ public class Turret extends Threaded {
 				}
 				else {
 					//lastTargetGyro = drive.getAngle();
+
 					reacquire = false;
 					lastDeltaX = lastX - targets[0].x; 
-			  		double d = targets[0].distance;
-			  		double f = Math.toRadians((targets[0].x/640.0 - 0.5) * (148.16/2));
+					double d = targets[0].distance;
+					synchronized(this) {
+						lastDistance = d;
+					}
+					double beta = Math.toDegrees(Math.atan(Math.cos(Math.atan(3/4))*Math.tan(170/2)));
+					double focallength = 640 / (2*Math.tan(170/2));
+					double angtotarget = Math.atan2((targets[0].x - 640/2), focallength);
+					
+					double f = Math.toRadians((targets[0].x/640.0 - 0.5) * 136/2);  //(148.16/2));
+					System.out.println("angtotarget: " + angtotarget + "f: " + f);
 			  		double corrected = Math.atan2(Math.cos(f) * d + Constants.cameraYOffset, Math.sin(f) * d +  Constants.cameraXOffset);
 					corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.utility.Threaded;
 import frc.subsystem.*;
+import frc.subsystem.Arm.ArmState;
 import frc.subsystem.HatchIntake.DeployState;
 import frc.subsystem.HatchIntake.IntakeState;
 import frc.subsystem.Manipulator.ManipulatorIntakeState;
@@ -39,6 +40,10 @@ public class CollisionManager extends Threaded {
 
     boolean retrieveHatch = false;
     private static final CollisionManager cm = new CollisionManager();
+
+    boolean scoring = false;
+    double scoreTime = 0;
+    int scoreStage = 0;
 
     public static CollisionManager getInstance() {
         return cm;
@@ -90,7 +95,7 @@ public class CollisionManager extends Threaded {
     }
 
     synchronized public boolean isInControl() {
-        return ballIntakeOut || hatchIntakeOut;
+        return ballIntakeOut || hatchIntakeOut || scoring;
     }
 
     synchronized public void extendBallIntake() {
@@ -113,6 +118,18 @@ public class CollisionManager extends Threaded {
         return retrieveHatch;
     }
 
+    synchronized public void score() {
+        scoring = true;
+        scoreStage = 0;
+        scoreTime = Timer.getFPGATimestamp();
+        arm.setState(ArmState.EXTEND);
+        
+    }
+
+    synchronized public boolean isScoring() {
+        return scoring;
+    }
+
     synchronized public void retrieveHatch() {
         combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         holdingTime = Timer.getFPGATimestamp();
@@ -122,6 +139,26 @@ public class CollisionManager extends Threaded {
     @Override
     synchronized public void update() {
         double starttime = Timer.getFPGATimestamp();
+
+        if(scoring) {
+            switch(scoreStage) {
+                case 0:
+                    arm.setState(ArmState.EXTEND);
+                    if(Timer.getFPGATimestamp()-scoreTime > 1) {
+                        scoreTime = Timer.getFPGATimestamp();
+                        scoreStage++;
+                    }
+                    break;
+
+                case 1:
+                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
+                    arm.setState(ArmState.RETRACT);
+                    if(Timer.getFPGATimestamp()-scoreTime > 1) scoring = false;
+                    break;
+                
+                
+            }
+        }
 
         if(retrieveHatch) {
             if(Timer.getFPGATimestamp() - holdingTime >= 1.2) {
