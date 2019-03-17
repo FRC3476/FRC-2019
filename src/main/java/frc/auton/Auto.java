@@ -31,57 +31,35 @@ public class Auto implements Runnable {
     @Override
     public void run() {
 
-        // Move forward to rocket while bringing elevator up to first position.
+        // Move forward to rocket while bringing elevator up to first position and rotatng turret.
         // Rocket position is 12 feet left, 19 feet 2 inches forward.
         Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(-30, 30), 40);
+        p1.addPoint(new Translation2D(-54, 120), 40);
         p1.addPoint(new Translation2D(-138, 234 - Constants.BumperWidth), 40);
         drive.setAutoPath(p1, false);
         while(!drive.isFinished()) {
-            if(p1.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
+            if(p1.getPercentage() > 0.5) {
+                elevator.setHeightState(Elevator.ElevatorHeight.TOP); 
+                turret.setAngle(-28.75);
+            }
         };
 
-        // Rotate turret to face rocket and place hatch
+        // Place hatch
+        hatchIntake.setIntakeState(HatchIntake.IntakeState.INTAKE);
+        while (!hatchIntake.isFinished());
 
-        // Move back to grab another hatch
+        // Move back to grab another hatch, rotating turret and moving elevator in the process
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(-138, Constants.BumperWidth), 40);
         drive.setAutoPath(p2, false);
         while(!drive.isFinished()) {
             if(p2.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
+            turret.setAngle(-180);
         };
 
-        // Rotate turret to wall and grab hatch
-
-        // Return to rocket
-        Path p3 = new Path(here());
-        p3.addPoint(new Translation2D(-138, 234 - Constants.BumperWidth), 40);
-        drive.setAutoPath(p3, false);
-        while(!drive.isFinished()) {
-            if(p3.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.MIDDLE); 
-        };
-
-        // Rotate turret to rocket and release hatch
-
-        // Return to hatch dropoff and grab another
-        Path p4 = new Path(here());
-        p4.addPoint(new Translation2D(-138, Constants.BumperWidth), 40);
-        drive.setAutoPath(p4, false);
-        while(!drive.isFinished()) {
-            if(p4.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
-        };
-
-        // Rotate turret and grab hatch
-
-        // Return to rocket
-        Path p5 = new Path(here());
-        p5.addPoint(new Translation2D(-138, 234 - Constants.BumperWidth), 40);
-        drive.setAutoPath(p5, false);
-        while(!drive.isFinished()) {
-            if(p5.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.TOP); 
-        };
-
-        // Rotate turret and release hatch
+        // Grab hatch
+        hatchIntake.setIntakeState(HatchIntake.IntakeState.EJECT);
+        while (!hatchIntake.isFinished());
     }
 
 }

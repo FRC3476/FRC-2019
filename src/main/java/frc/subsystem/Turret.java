@@ -68,6 +68,7 @@ public class Turret extends Threaded {
 		HOMING, SETPOINT, VISION
 	}
 	
+	// Sets angle relative to field
 	public void setAngle(double angle) {
 		if(turretState==TurretState.HOMING) return;
 

@@ -177,7 +177,7 @@ public final class Constants {
 	public static final double ElevatorIntakeSafe = 7;
 	public static final double ElevatorDeployingSafe = 0;
 	public static final double ElevatorSafetyError = 0;
-	public static final double ElevatorPositionDefault = 1 + (7 / 12);// Replace me
+	public static final double ElevatorPositionDefault = 19;
 	public static final double ElevatorPositionMiddle = 55.5;
 	public static final double ElevatorPositionHigh = 83;
 	public static final double ElevatorPositionLow = 27.5;
