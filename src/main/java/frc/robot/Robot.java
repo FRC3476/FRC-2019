@@ -50,6 +50,7 @@ public class Robot extends IterativeRobot {
   JetsonUDP jetsonUDP = JetsonUDP.getInstance();
   HatchIntake hatchIntake = HatchIntake.getInstance();
   BallIntake ballIntake = BallIntake.getInstance();
+  Auto auto;
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
   ThreadScheduler scheduler = new ThreadScheduler();
@@ -58,8 +59,8 @@ public class Robot extends IterativeRobot {
 
   
 
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String kDefaultAuto = "LeftAuto";
+  private static final String kRightAuto = "RightAuto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   
@@ -70,8 +71,8 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     drive.calibrateGyro();
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.setDefaultOption("Left Side Auto", kDefaultAuto);
+    m_chooser.addOption("Right Side Auto", kRightAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
     scheduler.schedule(drive, executor);
@@ -114,11 +115,13 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
     System.out.println("Auto selected: " + m_autoSelected);
-    new Auto(new Translation2D()).run();
+    auto = new Auto(new Translation2D());
+    if (m_autoSelected.equals(kRightAuto)) { 
+      auto.targetLeftRocket = false; 
+    }
     drive.stopMovement();
-    //scheduler.resume();
-    //turret.setAngle(90);
-    elevator.setHeight(10.0);
+    scheduler.resume();
+    //elevator.setHeight(10.0); // Just helps show that the code has been run
   }
 
   /**
@@ -126,18 +129,8 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void autonomousPeriodic() {
-  
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+    auto.run();
     //System.out.println(elevator.getHeight());
-  
   }
 
   @Override 
