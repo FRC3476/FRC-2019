@@ -32,12 +32,12 @@ public class Auto extends TemplateAuto implements Runnable {
                 elevator.setHeightState(Elevator.ElevatorHeight.TOP); 
                 turret.setAngle(28.75 * (targetLeftRocket ? 1 : -1));
             }
-            if (toRocket.getPercentage() > 0.999) {
+            if (toRocket.getPercentage() > 0.999 && turret.isFinished() && elevator.isFinished()) {
                 rerunPrevention1 = true;
             }
         } else if (rerunPrevention1 && !rerunPrevention2) {
             // Place hatch
-            hatchIntake.setIntakeState(HatchIntake.IntakeState.INTAKE);
+            hatchIntake.setIntakeState(HatchIntake.IntakeState.EJECT);
             if (hatchIntake.isFinished()) {
                 rerunPrevention1 = false;
                 rerunPrevention2 = true;
@@ -48,14 +48,14 @@ public class Auto extends TemplateAuto implements Runnable {
             toHatch.addPoint(new Translation2D(Constants.BumperWidth, 138 * (targetLeftRocket ? 1 : -1)), 40);
             drive.setAutoPath(toHatch, false);
             if (!drive.isFinished()) {
-                if(toHatch.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
+                elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
                 turret.setAngle(180);
-            } else {
+            } else if (turret.isFinished() && elevator.isFinished()) {
                 rerunPrevention1 = true;
             }
         } else {
             // Grab hatch
-            hatchIntake.setIntakeState(HatchIntake.IntakeState.EJECT);
+            hatchIntake.setIntakeState(HatchIntake.IntakeState.INTAKE);
             if (hatchIntake.isFinished()) {
                 // Done with autonomous run!
             }
