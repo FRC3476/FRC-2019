@@ -333,7 +333,7 @@ public class Robot extends IterativeRobot {
           } 
 
           // Comment out in competition robot code. This just makes the robot open up and look nice.
-          if(stick.getRawButton(1) && openAll == false)  { // Replace stick.getRawButton with the button that activates this
+          /*if(stick.getRawButton(1) && openAll == false)  { // Replace stick.getRawButton with the button that activates this
             openAll = true;
             openStartTime =  System.currentTimeMillis();
             arm.setState(ArmState.EXTEND);
@@ -349,7 +349,7 @@ public class Robot extends IterativeRobot {
               ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
               manipulator.setManipulatorState(Manipulator.ManipulatorState.BALL);
             }
-          }
+          }*/
           // End frivilous code
 
           //elev setpoints
