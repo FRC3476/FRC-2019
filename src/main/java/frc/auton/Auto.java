@@ -48,7 +48,7 @@ public class Auto extends TemplateAuto implements Runnable {
             toHatch.addPoint(new Translation2D(Constants.BumperWidth, 138 * (targetLeftRocket ? 1 : -1)), 40);
             drive.setAutoPath(toHatch, false);
             if (!drive.isFinished()) {
-                elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
+                elevator.setHeightState(Elevator.ElevatorHeight.LOWER); 
                 turret.setAngle(180);
             } else if (turret.isFinished() && elevator.isFinished()) {
                 rerunPrevention1 = true;

@@ -19,7 +19,7 @@ import frc.robot.*;
 public class Elevator extends Threaded {
 
 	public enum ElevatorHeight {
-		BASE, LOWER, MIDDLE, TOP
+		LOWER, MIDDLE, TOP
 	}
 
 	public enum ElevatorState{
@@ -125,17 +125,14 @@ public class Elevator extends Threaded {
 	
 	public void setHeightState(ElevatorHeight level) {
 		switch (level) {
-			case BASE:
-			setHeight(Constants.ElevatorPositionDefault);
-			break;
 			case LOWER:
-			setHeight(Constants.ElevatorPositionLow);
+			setHeight(Constants.HatchElevLow);
 			break;
 			case MIDDLE:
-			setHeight(Constants.ElevatorPositionMiddle);
+			setHeight(Constants.HatchElevMid);
 			break;
 			case TOP:
-			setHeight(Constants.ElevatorPositionHigh);
+			setHeight(Constants.HatchElevHigh);
 			break;
 		}
 	}
