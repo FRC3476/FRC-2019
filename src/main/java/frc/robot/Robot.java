@@ -13,6 +13,7 @@ import frc.subsystem.HatchIntake.DeployState;
 import frc.subsystem.Manipulator.ManipulatorIntakeState;
 import frc.subsystem.Manipulator.ManipulatorState;
 import frc.subsystem.Turret.TurretState;
+import frc.auton.Auto;
 //import frc.robot.subsystem.Drive;
 import frc.utility.math.*;
 import frc.utility.control.motion.Path;
@@ -113,7 +114,7 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
     System.out.println("Auto selected: " + m_autoSelected);
-    //new DriveForward().run();
+    new Auto(new Translation2D()).run();
     drive.stopMovement();
     //scheduler.resume();
     //turret.setAngle(90);
