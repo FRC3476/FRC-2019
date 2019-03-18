@@ -19,12 +19,12 @@ public class Auto extends TemplateAuto implements Runnable {
 
         // Move forward to rocket while bringing elevator up to first position and rotatng turret.
         // Rocket position is 12 feet left, 19 feet 2 inches forward.
-        Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(120, 54 * (targetLeftRocket ? 1 : -1)), 40);
-        p1.addPoint(new Translation2D(234 - Constants.BumperWidth, 138 * (targetLeftRocket ? 1 : -1)), 40);
-        drive.setAutoPath(p1, false);
+        Path toRocket = new Path(here());
+        toRocket.addPoint(new Translation2D(120, 54 * (targetLeftRocket ? 1 : -1)), 40);
+        toRocket.addPoint(new Translation2D(234 - Constants.BumperWidth, 138 * (targetLeftRocket ? 1 : -1)), 40);
+        drive.setAutoPath(toRocket, false);
         while(!drive.isFinished()) {
-            if(p1.getPercentage() > 0.5) {
+            if(toRocket.getPercentage() > 0.5) {
                 elevator.setHeightState(Elevator.ElevatorHeight.TOP); 
                 turret.setAngle(28.75 * (targetLeftRocket ? 1 : -1));
             }
@@ -35,11 +35,11 @@ public class Auto extends TemplateAuto implements Runnable {
         while (!hatchIntake.isFinished());
 
         // Move back to grab another hatch, rotating turret and moving elevator in the process
-        Path p2 = new Path(here());
-        p2.addPoint(new Translation2D(Constants.BumperWidth, 138 * (targetLeftRocket ? 1 : -1)), 40);
-        drive.setAutoPath(p2, false);
+        Path toHatch = new Path(here());
+        toHatch.addPoint(new Translation2D(Constants.BumperWidth, 138 * (targetLeftRocket ? 1 : -1)), 40);
+        drive.setAutoPath(toHatch, false);
         while(!drive.isFinished()) {
-            if(p2.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
+            if(toHatch.getPercentage() > 0.5) elevator.setHeightState(Elevator.ElevatorHeight.BASE); 
             turret.setAngle(180);
         };
 
