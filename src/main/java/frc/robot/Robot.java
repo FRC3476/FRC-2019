@@ -173,6 +173,9 @@ public class Robot extends IterativeRobot {
   boolean yeet = false;
   long yeetTime = 0;
 
+  boolean openAll = false;
+  long openStartTime = 0;
+
   boolean ballMode = false;
   boolean elevatorManual = false;
 
@@ -334,6 +337,26 @@ public class Robot extends IterativeRobot {
             manipulator.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);
             arm.setState(ArmState.RETRACT);
           } 
+
+          // Comment out in competition robot code. This just makes the robot open up and look nice.
+          if(stick.getRawButton(1) && openAll == false)  { // Replace stick.getRawButton with the button that activates this
+            openAll = true;
+            openStartTime =  System.currentTimeMillis();
+            arm.setState(ArmState.EXTEND);
+            elevator.setHeightState(Elevator.ElevatorHeight.MIDDLE);
+          }
+          else if(openAll) {
+            if(System.currentTimeMillis() - openStartTime > 2000) {
+              Manipulator.getInstance().setManipulatorIntakeState(ManipulatorIntakeState.OFF);
+              openAll = false;
+            }
+            else if(System.currentTimeMillis() - openStartTime > 1000) {
+              manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+              ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
+              manipulator.setManipulatorState(Manipulator.ManipulatorState.BALL);
+            }
+          }
+          // End frivilous code
 
           //elev setpoints
           if(collisionManager.isWorking() || collisionManager.isBallIntakeOut())
