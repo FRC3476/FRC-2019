@@ -47,10 +47,15 @@ public class Manipulator extends Threaded {
 		return state;
 	}
 
+
 	public ManipulatorIntakeState getManipulatorIntakeState() {
 		return intakeState;
 	}
 	
+	public double getCurrent() {
+		return leftTalon.getOutputCurrent();
+	}
+
 	// Set the deployment state of the intake
 	 public void setManipulatorState(ManipulatorState state) {
 		synchronized(this) {

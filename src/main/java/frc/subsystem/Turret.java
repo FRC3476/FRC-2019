@@ -171,6 +171,17 @@ public class Turret extends Threaded {
 		lastDistance = Constants.AutoScoreDistance + 10;
 	}
 
+	private static VisionTarget getNearestTarget(VisionTarget[] t) {
+		int nearIndex = 0;
+		double minValue = 0;
+		for(int i = 0; i < t.length; i++) {
+			if(t[i].getDistance() < minValue) {
+				minValue = t[i].getDistance();
+				nearIndex = i;
+			}
+		}
+		return t[nearIndex];
+	}
 
 
 	@Override
@@ -229,7 +240,8 @@ public class Turret extends Threaded {
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
 				//System.out.println("amunt of targets" + targets.length);
-				if(targets.length == 0 || targets == null) {
+				if(targets == null || targets.length <= 0) {
+					System.out.println("null");
 					if(reacquire) {
 						//turretState = turretState.SETPOINT;
 						//restoreSetpoint();
@@ -241,19 +253,20 @@ public class Turret extends Threaded {
 				}
 				else {
 					//lastTargetGyro = drive.getAngle();
-
+					System.out.println("turret");
+					VisionTarget selected = getNearestTarget(targets);
 					reacquire = false;
-					lastDeltaX = lastX - targets[0].x; 
+					lastDeltaX = lastX - selected.x; 
 					double d = targets[0].distance;
 					synchronized(this) {
 						lastDistance = d;
 					}
 					double beta = Math.toDegrees(Math.atan(Math.cos(Math.atan(3/4))*Math.tan(170/2)));
 					double focallength = 640 / (2*Math.tan(170/2));
-					double angtotarget = Math.atan2((targets[0].x - 640/2), focallength);
+					double angtotarget = Math.atan2((selected.x - 640/2), focallength);
 					
-					double f = Math.toRadians((targets[0].x/640.0 - 0.5) * 136/2);  //(148.16/2));
-					System.out.println("angtotarget: " + angtotarget + "f: " + f);
+					double f = Math.toRadians((selected.x/640.0 - 0.5) * 136/2);  //(148.16/2));
+					//System.out.println("angtotarget: " + angtotarget + "f: " + f);
 			  		double corrected = Math.atan2(Math.cos(f) * d + Constants.cameraYOffset, Math.sin(f) * d +  Constants.cameraXOffset);
 					corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 
@@ -261,7 +274,7 @@ public class Turret extends Threaded {
 			 		// desiredAngle = turret.getAngle() - f;
 					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 					setAngle(desiredAngle);          
-					lastX = targets[0].x;           
+					lastX = selected.x;           
 				}
 			
 			break;

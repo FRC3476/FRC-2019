@@ -19,6 +19,7 @@ import frc.utility.telemetry.TelemetryServer;
 import frc.utility.control.motion.Path;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import java.util.concurrent.*;
 import frc.utility.ThreadScheduler;
@@ -196,6 +197,15 @@ public class Robot extends IterativeRobot {
       xbox.update();
       stick.update();
       buttonPanel.update();
+
+      System.out.println("Elevator height: " + elevator.getHeight());
+      if(hatchIntake.getCurrent() > 3 || manipulator.getCurrent() > 3) {
+        //xbox.setRumble(RumbleType.kLeftRumble, 1.0);
+        xbox.setRumble(RumbleType.kRightRumble, 1.0);
+      } else {
+        //xbox.setRumble(RumbleType.kLeftRumble, 0);
+        xbox.setRumble(RumbleType.kRightRumble, 0);
+      }
      
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
@@ -330,7 +340,7 @@ public class Robot extends IterativeRobot {
       
         if(elevatorManual == true && buttonPanel.getPOV() == -1) {
           elevatorManual = false;
-          elevator.setHeight(elevator.getHeight());
+          //elevator.setHeight(elevator.getHeight());
         }
         
         //ball mode
@@ -373,7 +383,7 @@ public class Robot extends IterativeRobot {
           } 
 
           //elev setpoints
-          if(collisionManager.isWorking() || collisionManager.isBallIntakeOut())
+          if(collisionManager.isWorking() || collisionManager.isBallIntakeOut() || elevatorManual)
           {}//don't do anything because collision manager is doing things
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.BallElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.BallElevMid);
@@ -429,7 +439,7 @@ public class Robot extends IterativeRobot {
             }
           }
           //elev setpoints
-          if(collisionManager.isWorking() || collisionManager.isBallIntakeOut())
+          if(collisionManager.isWorking() || collisionManager.isBallIntakeOut() || elevatorManual)
           {}//don't do anything because collision manager is doing things
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.HatchElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.HatchElevMid);

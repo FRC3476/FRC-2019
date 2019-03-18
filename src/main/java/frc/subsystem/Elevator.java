@@ -93,7 +93,6 @@ public class Elevator extends Threaded {
 		} else safetyEngage = false;
 		*/
 		requested = position;
-		elevMaster.set(ControlMode.Position, position * Constants.ElevatorTicksPerInch);
 	}
 	
 	synchronized public double getPulledCurrent() {
@@ -144,7 +143,7 @@ public class Elevator extends Threaded {
 			started = true;
 		}
 
-		if(Math.abs(requested - getHeight()) < Constants.ElevatorTargetError) isFinished = true;
+		//if(Math.abs(requested - getHeight()) < Constants.ElevatorTargetError) isFinished = true;
 		switch(elevState){
 			//If is in homing mode
 			case HOMING:
@@ -173,7 +172,9 @@ public class Elevator extends Threaded {
 			
 			//If is in setpoint mode
 			case SETPOINT:
-				if(safetyEngage) setHeight(requested);
+				elevMaster.set(ControlMode.Position, (requested) * Constants.ElevatorTicksPerInch);
+
+				//if(safetyEngage) setHeight(requested);
 				//System.out.println("Elevator current: " + getPulledCurrent());
 				//if(elevMaster.getOutputCurrent())
 				//System.out.println("moving elevator");

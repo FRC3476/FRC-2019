@@ -39,7 +39,9 @@ public class JetsonUDP extends Threaded {
   }
 
   synchronized public VisionTarget[] getTargets() {
-    return target;
+    VisionTarget[] t = target;
+    popTargets();
+    return t;
   }
 
   synchronized public void popTargets() {
