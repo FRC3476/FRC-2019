@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.tables.ITable;
 import frc.auton.DriveForward;
+import frc.auton.Lvl2ShipFront;
 import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
 import frc.subsystem.HatchIntake.DeployState;
@@ -120,7 +121,7 @@ public class Robot extends IterativeRobot {
   @Override
   public void autonomousInit() {
     scheduler.resume();
-    auto = new Thread(new DriveForward());
+    auto = new Thread(new Lvl2ShipFront());
     auto.start();
     
   }

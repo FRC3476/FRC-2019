@@ -240,8 +240,8 @@ public class Drive extends Threaded {
 		leftMotorSpeed = moveValue + rotateValue;
 		rightMotorSpeed = moveValue - rotateValue;
 		if (drivePercentVbus) {
-			System.out.println("left " + getLeftSpeed() + " power: " + leftMotorSpeed);
-			System.out.println("right " + getRightSpeed() + " power: " + rightMotorSpeed);
+			//System.out.println("left " + getLeftSpeed() + " power: " + leftMotorSpeed);
+			//System.out.println("right " + getRightSpeed() + " power: " + rightMotorSpeed);
 
 			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		} else {
@@ -249,8 +249,8 @@ public class Drive extends Threaded {
 			leftMotorSpeed *= Constants.DriveHighSpeed;
 			rightMotorSpeed *= Constants.DriveHighSpeed;
 
-			System.out.println("left " + (leftMotorSpeed - getLeftSpeed() ));
-			System.out.println("right " + (rightMotorSpeed - getRightSpeed() ));
+		//	System.out.println("left " + (leftMotorSpeed - getLeftSpeed() ));
+			//System.out.println("right " + (rightMotorSpeed - getRightSpeed() ));
 
 			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		}
