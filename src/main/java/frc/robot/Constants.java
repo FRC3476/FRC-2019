@@ -76,44 +76,52 @@ public final class Constants {
 	public static final int TimeoutMs = 10;
 	
 	// Drive
+	public static final double kDriveInchesPerSecPerRPM = 2 * Math.PI/60d * Constants.WheelDiameter/2d
+	* 22d / 62d / 3d;
 	public static final double maxTurnError = 2;
 	public static final double maxPIDStopSpeed = 8;
-	public static final double DriveHighSpeed = 215;
+	public static final double DriveHighSpeed = 190;
 	public static final double DriveLowSpeed = 95;
 	
-	public static final double kDriveRightHighP = 0.02;
-	public static final double kDriveRightHighD = 0;
-	public static final double kDriveRightHighF = 0.035;
+	public static final double kDriveRightAutoP = 4*0.0005263 * kDriveInchesPerSecPerRPM; //0.00065
+	public static final double kDriveRightAutoD = 0.000; 
+	public static final double kDriveRightAutoF = 1/193.12283370478679  * kDriveInchesPerSecPerRPM; //0.055
+	public static final double kDriveLeftAutoP = 4*0.0005263 * kDriveInchesPerSecPerRPM;
+	public static final double kDriveLeftAutoD = 0.000; //0.0001
+	public static final double kDriveLeftAutoF = 1/203.7763632654868 * kDriveInchesPerSecPerRPM ; //0.0005 too high
+
+	public static final double kDriveRightHighP = kDriveRightAutoP;
+	public static final double kDriveRightHighD = kDriveRightAutoD;
+	public static final double kDriveRightHighF = kDriveRightAutoF;
 	public static final double kDriveRightHighFIntercept = 0;
 	public static final double kDriveRightHighA = 0;
-	public static final double kDriveRightLowP = 0.1;
-	public static final double kDriveRightLowD = 0.1;
-	public static final double kDriveRightLowF = 0.05763730970902943999708309631717;
+	public static final double kDriveRightLowP = 0;
+	public static final double kDriveRightLowD = 0;
+	public static final double kDriveRightLowF = 0;
 	public static final double kDriveRightLowFIntercept = 0;
 	public static final double kDriveRightLowA = 0;
 	
-	public static final double kDriveLeftHighP = 0.0;
-	public static final double kDriveLeftHighD = 0;
-	public static final double kDriveLeftHighF = 0.035;
+	public static final double kDriveLeftHighP = kDriveLeftAutoP;
+	public static final double kDriveLeftHighD = kDriveLeftAutoD;
+	public static final double kDriveLeftHighF = kDriveLeftAutoF;
 	public static final double kDriveLeftHighFIntercept = 0;
 	public static final double kDriveLeftHighA = 0;
-	public static final double kDriveLeftLowP = 0.1;
+	public static final double kDriveLeftLowP = 0;
 	public static final double kDriveLeftLowD = 0;
-	public static final double kDriveLeftLowF = 0.05763730970902943999708309631717;
+	public static final double kDriveLeftLowF = 0;
 	public static final double kDriveLeftLowFIntercept = 0;
 	public static final double kDriveLeftLowA = 0;
+
 	
-	public static final double kDriveRightAutoP = 0.00065; //0.15
-	public static final double kDriveRightAutoD = 0.0001; //0.7
-	public static final double kDriveRightAutoF = 0.0000; //0.055
-	public static final double kDriveLeftAutoP = 0.00065;
-	public static final double kDriveLeftAutoD = 0.0001;
-	public static final double kDriveLeftAutoF = 0.0000; //0.0005 too high
+	
+	
+
 	public static final double DriveTeleopAccLimit = 120;
 	public static final double DriveTeleopJerkLimit = 2000;
 	public static final double DriveExpectedCurrent = 1.5;
 	public static final double DriveExpectedRPM = 0;
 	public static final double DriveExpectedPosition = 0;
+
 
 	// Superstructure
 

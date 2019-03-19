@@ -58,7 +58,7 @@ public class RobotTracker extends Threaded {
 	public void update() {
 		double leftDist = driveBase.getLeftDistance();
 		double rightDist = driveBase.getRightDistance();
-		//System.out.println(leftDist);
+		//System.out.println("ashwin says: " + leftDist);
 
 		/*
 		 * Solve problem where Talon returns 0 for distance due to an error This

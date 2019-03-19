@@ -148,6 +148,10 @@ public class HatchIntake extends Threaded {
 	public double getAngle() {
 		return deployMotor.getSelectedSensorPosition() * Constants.DegreesPerEncoderTick;
 	}
+
+	public void setEnc(int pos) {
+		deployMotor.setSelectedSensorPosition(pos, 0, 10);
+	}
 	
 	@Override
 	public void update() { 

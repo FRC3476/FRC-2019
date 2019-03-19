@@ -45,6 +45,7 @@ public class Turret extends Threaded {
 	private boolean fieldRelative;
 
 	private double requested;
+	public int twistDir = 1;
 
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 	Drive drive = Drive.getInstance();
@@ -195,6 +196,8 @@ public class Turret extends Threaded {
 		// synchronized(this) {
 		// 	snapDesired 
 		// }
+		if(getAngle() < 0) twistDir = -1;
+		else twistDir = 1;
 
 		switch(turretState){
 	

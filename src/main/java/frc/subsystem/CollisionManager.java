@@ -45,12 +45,29 @@ public class CollisionManager extends Threaded {
     double scoreTime = 0;
     int scoreStage = 0;
 
+    boolean abortHatch = false;
+    int abortHatchStage = 0;
+    double abortHatchTime = 0;
+
     public static CollisionManager getInstance() {
         return cm;
     }    
     
     public CollisionManager() {
         setPeriod(Duration.ofMillis(20));
+    }
+
+    synchronized public void abortGroundHatch() {
+        if(ballIntakeOut) return;//do not do this sequence while the other is out
+        intakingHatch = false;
+        handoffHatch = false;
+        retrieveHatch = false;
+        abortHatch = true;
+        abortHatchStage = 0;
+        abortHatchTime = Timer.getFPGATimestamp();
+        groundHatch.setIntakeState(IntakeState.EJECT);
+        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+        elevator.setHeight(7);
     }
 
     synchronized public void groundHatchIntake() {
@@ -69,6 +86,7 @@ public class CollisionManager extends Threaded {
     
     synchronized public void handoffHatch() {
         //System.out.println("handoffHatch");
+        if(ballIntakeOut) return;//do not do this sequence while the other is out
         handoffHatch = true;
         elevator.setHeight(3);
         handoffStage = 0;
@@ -132,6 +150,7 @@ public class CollisionManager extends Threaded {
 
     synchronized public void retrieveHatch() {
         combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+
         holdingTime = Timer.getFPGATimestamp();
         retrieveHatch = true;
     }
@@ -139,6 +158,36 @@ public class CollisionManager extends Threaded {
     @Override
     synchronized public void update() {
         double starttime = Timer.getFPGATimestamp();
+
+        if(abortHatch) {
+            switch(abortHatchStage) {
+                case 0:
+                    if(elevator.isFinished()) {
+                        abortHatchStage++;
+                        abortHatchTime = starttime;
+                    }
+                    break;
+                case 1: 
+                    groundHatch.setDeploySpeed(-0.15);
+                    if(starttime - abortHatchTime >= 2) abortHatchStage++;
+                    break;
+                case 2:
+                    groundHatch.setDeploySpeed(0);
+                    groundHatch.setEnc(0);
+                    abortHatchStage++;
+                    break;
+                case 3:
+                    groundHatch.setDeployState(DeployState.STOW);
+                    if(groundHatch.isFinished()) {
+                        abortHatch = false;
+                        hatchIntakeOut = false;
+                        groundHatch.setIntakeState(IntakeState.OFF);
+                        elevator.setHeight(Constants.HatchElevLow);
+                    }
+                    break;
+                    
+            }
+        }
 
         if(scoring) {
             switch(scoreStage) {

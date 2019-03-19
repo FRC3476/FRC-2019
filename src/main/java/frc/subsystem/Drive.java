@@ -143,7 +143,8 @@ public class Drive extends Threaded {
 		moveProfiler = new RateLimiter(Constants.DriveTeleopAccLimit);
 		turnProfiler = new RateLimiter(100);
 
-		configHigh();
+		//configHigh();
+		configAuto();
 	}
 
 	public void debug() {
@@ -177,13 +178,13 @@ public class Drive extends Threaded {
 		//System.out.println(rightTalon.)
 		rightSparkPID.setP(Constants.kDriveRightAutoP, 0);
 		rightSparkPID.setD(Constants.kDriveRightAutoD, 0);
-		rightSparkPID.setFF(Constants.kDriveRightAutoF);
+		rightSparkPID.setFF(Constants.kDriveRightAutoF,0);
 		rightSparkPID.setOutputRange(-1, 1);
 
 
 		leftSparkPID.setP(Constants.kDriveLeftAutoP, 0);
 		leftSparkPID.setD(Constants.kDriveLeftAutoD, 0);
-		leftSparkPID.setFF(Constants.kDriveLeftAutoF);
+		leftSparkPID.setFF(Constants.kDriveLeftAutoF,0);
 		leftSparkPID.setOutputRange(-1, 1);
 		
 
@@ -239,10 +240,18 @@ public class Drive extends Threaded {
 		leftMotorSpeed = moveValue + rotateValue;
 		rightMotorSpeed = moveValue - rotateValue;
 		if (drivePercentVbus) {
+			System.out.println("left " + getLeftSpeed() + " power: " + leftMotorSpeed);
+			System.out.println("right " + getRightSpeed() + " power: " + rightMotorSpeed);
+
 			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		} else {
+			
 			leftMotorSpeed *= Constants.DriveHighSpeed;
 			rightMotorSpeed *= Constants.DriveHighSpeed;
+
+			System.out.println("left " + (leftMotorSpeed - getLeftSpeed() ));
+			System.out.println("right " + (rightMotorSpeed - getRightSpeed() ));
+
 			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		}
 		//System.out.println("left motor speed " + leftMotorSpeed + " right motor speed " + rightMotorSpeed);

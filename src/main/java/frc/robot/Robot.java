@@ -52,10 +52,12 @@ public class Robot extends IterativeRobot {
   JetsonUDP jetsonUDP = JetsonUDP.getInstance();
   HatchIntake hatchIntake = HatchIntake.getInstance();
   BallIntake ballIntake = BallIntake.getInstance();
+  RobotTracker robotTracker = RobotTracker.getInstance();
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
   ThreadScheduler scheduler = new ThreadScheduler();
-  
+  Thread auto;
+
   boolean firstTeleopRun = true;
 
   
@@ -81,12 +83,14 @@ public class Robot extends IterativeRobot {
 		scheduler.schedule(turret, executor);
     scheduler.schedule(collisionManager, executor);
     scheduler.schedule(jetsonUDP, executor);
+    scheduler.schedule(robotTracker, executor);
     //scheduler.schedule(manipulator, executor);
     //scheduler.schedule(hatchIntake, executor);
     
 
     turret.homeTurret();
     elevator.elevHome();
+    drive.setSimpleDrive(false);
     
   }
 
@@ -115,13 +119,10 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    System.out.println("Auto selected: " + m_autoSelected);
-    //new DriveForward().run();
-    drive.stopMovement();
-    //scheduler.resume();
-    //turret.setAngle(90);
-    elevator.setHeight(10.0);
+    scheduler.resume();
+    auto = new Thread(new DriveForward());
+    auto.start();
+    
   }
 
   /**
@@ -130,21 +131,14 @@ public class Robot extends IterativeRobot {
   @Override
   public void autonomousPeriodic() {
   
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
+  
     //System.out.println(elevator.getHeight());
   
-  }
+  } 
 
   @Override 
   public void teleopInit() {
+    if(auto != null) auto.interrupt();
     drive.stopMovement();
     scheduler.resume();
     //elevator.setHeight(Constants.HatchElevLow);
@@ -198,7 +192,7 @@ public class Robot extends IterativeRobot {
       stick.update();
       buttonPanel.update();
 
-      System.out.println("Elevator height: " + elevator.getHeight());
+      
       if(hatchIntake.getCurrent() > 3 || manipulator.getCurrent() > 3) {
         //xbox.setRumble(RumbleType.kLeftRumble, 1.0);
         xbox.setRumble(RumbleType.kRightRumble, 1.0);
@@ -212,6 +206,8 @@ public class Robot extends IterativeRobot {
 
       if(xbox.getRawButton(4)) drive.setShiftState(true); 
       else drive.setShiftState(false);
+
+      if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
     
       //teleopStarttime = Timer.getFPGATimestamp();
       //hatch
@@ -304,6 +300,8 @@ public class Robot extends IterativeRobot {
           turret.setDesired(Math.toDegrees((Math.atan2(-stick.getRawAxis(1), stick.getRawAxis(0)))) - 90, true);
         } else if(Math.abs(stick.getZ()) >= 0.3) {
           turret.addDesired(-stick.getZ()*Constants.kTurretManual);
+        } else if(stick.getPOV() != -1) {
+          turret.setDesired(stick.getPOV(), false);
         }
         //Ball vs Turret Mode
         if(stick.getRawButton(3)) ballMode = true;
@@ -471,6 +469,15 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void disabledInit() {
+    switch(turret.twistDir) {
+      case 1:
+        System.out.println("Turret: ccw");
+        break;
+      case -1:
+        System.out.println("Turret: cw");
+        break;
+    }
+    
     scheduler.pause();
   }
   
