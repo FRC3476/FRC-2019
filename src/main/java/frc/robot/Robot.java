@@ -7,7 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.tables.ITable;
 import frc.auton.DriveForward;
-import frc.auton.Lvl2ShipFront;
+import frc.auton.Lvl2Ship1;
+import frc.auton.*;
 import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
 import frc.subsystem.HatchIntake.DeployState;
@@ -118,10 +119,13 @@ public class Robot extends IterativeRobot {
    * the switch structure below with additional strings. If using the
    * SendableChooser make sure to add them to the chooser code above as well.
    */
+  boolean autoDone;
+
   @Override
   public void autonomousInit() {
+    autoDone = false;
     scheduler.resume();
-    auto = new Thread(new Lvl2ShipFront());
+    auto = new Thread(new Lvl1Rocket(1));
     auto.start();
     
   }
@@ -131,15 +135,34 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void autonomousPeriodic() {
-  
-  
+    buttonPanel.update();
+    if(!autoDone) {
+    for(int i = 1; i < 8; i++) {
+      if(buttonPanel.getRawButton(i)) {
+        autoDone = true;
+        teleopInit();
+      }
+    }
+    }
+    if(autoDone) {
+      teleopPeriodic();
+    }
     //System.out.println(elevator.getHeight());
   
   } 
 
+  public void killAuto() {
+    if(auto != null) {
+      turret.setDesired(0, true);
+      turret.restoreSetpoint();
+      elevator.setHeight(Math.max(elevator.getHeight(), Constants.HatchElevLow));
+      auto.interrupt();
+    }
+  }
+
   @Override 
   public void teleopInit() {
-    if(auto != null) auto.interrupt();
+    killAuto();
     drive.stopMovement();
     scheduler.resume();
     //elevator.setHeight(Constants.HatchElevLow);

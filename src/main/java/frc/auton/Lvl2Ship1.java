@@ -11,11 +11,10 @@ import frc.utility.math.*;
 import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 
-public class Lvl2ShipFront extends TemplateAuto implements Runnable {
-
-    public Lvl2ShipFront() { 
-        //Start position
-        super(new Translation2D(48+18, 46));
+public class Lvl2Ship1 extends TemplateAuto implements Runnable {
+    public Lvl2Ship1(int side) { 
+        
+        super(new Translation2D(18+19, side*46), side);
     }
 
     public void moveToRocket(boolean raiseElevator, int dir) {
@@ -34,25 +33,15 @@ public class Lvl2ShipFront extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         
         Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(8*12+18, 46), 60);
-        p1.addPoint(new Translation2D(168+12*4, 3*12+18+2), 60);
-        p1.addPoint(new Translation2D(212+12*4+12, 3*12+18+2), 60);
+        p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
+        p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+2)), 60);
+        p1.addPoint(new Translation2D(212+12*4+12, this.side*(3*12+18+2)), 60);
         drive.setAutoPath(p1, false);
-        turret.setDesired(-100, true);
+        turret.setDesired(this.side*-100, true);
         elevator.setHeight(Constants.HatchElevLow);
+        turretFinishTime = Timer.getFPGATimestamp();
         while(!drive.isFinished()) {
-            switch(stage) {
-                case 0:
-                    if(turret.isFinished()) {
-                        turretFinishTime = Timer.getFPGATimestamp();
-                        stage++;
-                    }
-                    break;
-                case 1:
-                    if(Timer.getFPGATimestamp() - turretFinishTime > 0.5) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-                    break;
-            }
-            manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+            if(Timer.getFPGATimestamp() - turretFinishTime > 2) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
            // System.out.println(robotTracker.getOdometry().translationMat.getX() + " , " +robotTracker.getOdometry().translationMat.getY());
         }; 
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
@@ -63,8 +52,13 @@ public class Lvl2ShipFront extends TemplateAuto implements Runnable {
         }
 
         collisionManager.score();
-        //while(collisionManager.isScoring());
-        
+        while(collisionManager.isScoring());
+        manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+
+        Path p2 = new Path(here());
+        p2.addPoint(new Translation2D(40, this.side*135), 60);
+        drive.setAutoPath(p2, true);
+
         /*
         //Drive forward whilst moving elevator, non blocking
         Path p2 = new Path(here());
