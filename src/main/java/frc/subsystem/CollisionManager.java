@@ -202,7 +202,7 @@ public class CollisionManager extends Threaded {
                 case 1:
                     combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
                     arm.setState(ArmState.RETRACT);
-                    if(Timer.getFPGATimestamp()-scoreTime > 1) scoring = false;
+                    if(Timer.getFPGATimestamp()-scoreTime > 0.4) scoring = false;
                     break;
                 
                 

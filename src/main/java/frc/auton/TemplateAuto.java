@@ -17,9 +17,15 @@ public class TemplateAuto implements Runnable {
     HatchIntake hatchIntake = HatchIntake.getInstance();
     Manipulator manipulator = Manipulator.getInstance();
     Turret turret = Turret.getInstance();
+    int side = 1;
 
     public TemplateAuto(Translation2D start) {
         RobotTracker.getInstance().setInitialTranslation(start);
+    }
+
+    public TemplateAuto(Translation2D start, int side) {
+        RobotTracker.getInstance().setInitialTranslation(start);
+        this.side = side;
     }
 
     public Translation2D here() {

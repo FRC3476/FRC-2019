@@ -44,7 +44,7 @@ public class Turret extends Threaded {
 	private double desired;
 	private boolean fieldRelative;
 
-	private double requested;
+	private double requested = 0;
 	public int twistDir = 1;
 
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
@@ -70,7 +70,7 @@ public class Turret extends Threaded {
 		HOMING, SETPOINT, VISION
 	}
 	
-	public void setAngle(double angle) {
+	private void setAngle(double angle) {
 		if(turretState==TurretState.HOMING) return;
 
 		//normalize requested angle on [-180,180]
@@ -160,7 +160,8 @@ public class Turret extends Threaded {
 	}
 	
 	synchronized public boolean isFinished() {//NOT YET IMPLEMENTED
-		if(Math.abs(Math.abs(getAngle()) - Math.abs(requested)) < Constants.TurretTargetError) return true;
+		if(turretState == TurretState.HOMING) return false;
+		if(Math.abs(getAngle() - requested) < Constants.TurretTargetError) return true;
 		else return false;
 	}
 
