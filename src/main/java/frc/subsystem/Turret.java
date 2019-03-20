@@ -16,6 +16,7 @@ import java.time.Duration;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.robot.Robot;
+import frc.utility.control.RateLimiter;
 
 public class Turret extends Threaded {
 	
@@ -50,6 +51,8 @@ public class Turret extends Threaded {
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 	Drive drive = Drive.getInstance();
 
+	private RateLimiter limiter;
+
 	private Turret() {
 		turretMotor = new LazyTalonSRX(Constants.TurretMotorId);
 		turretMotor.setSensorPhase(false);
@@ -62,7 +65,7 @@ public class Turret extends Threaded {
 		//homeTurret();
 		turretState = TurretState.SETPOINT;
 		this.fieldRelative = true;
-
+		limiter = new RateLimiter(5000, 800);
 		setPeriod(Duration.ofMillis(20));
 	}
 
@@ -98,13 +101,16 @@ public class Turret extends Threaded {
 		}
 		//System.out.println("setpoint translated: " +setpoint + " speed " + turretMotor.getSelectedSensorVelocity());
 		//set talon SRX setpoint between [-180, 180]
+		
+		synchronized(this) {
+			requested = setpoint;
+		}
+		setpoint = limiter.update(setpoint);
 		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
 			//System.out.println("setpoint error");
 			setpoint = 0;
 		}
-		synchronized(this) {
-			requested = setpoint;
-		}
+
 		turretMotor.set(ControlMode.Position, -setpoint * Constants.EncoderTicksPerDegree*10.6);
 	}
 	
@@ -169,8 +175,13 @@ public class Turret extends Threaded {
 		return lastDistance < Constants.AutoScoreDistance;
 	}
 
+	synchronized public boolean isInBallRange() {
+		return lastDistance < Constants.AutoScoreDistanceBall;
+	}
+
+
 	synchronized public void resetDistance() {
-		lastDistance = Constants.AutoScoreDistance + 10;
+		lastDistance = Constants.AutoScoreDistanceBall + 10;
 	}
 
 	private static VisionTarget getNearestTarget(VisionTarget[] t) {
@@ -234,8 +245,14 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
-				if(this.fieldRelative) setAngle(desired + drive.getAngle());
-				else setAngle(desired);
+				if(this.fieldRelative) {
+					//double setpoint = limiter.update(desired + drive.getAngle());    
+					setAngle(desired + drive.getAngle());
+				}
+				else {
+					//double setpoint = limiter.update(desired);
+					setAngle(desired);          
+				}
 			break;
 
 			case VISION:
@@ -245,7 +262,7 @@ public class Turret extends Threaded {
 				VisionTarget[] targets = jetsonUDP.getTargets();
 				//System.out.println("amunt of targets" + targets.length);
 				if(targets == null || targets.length <= 0) {
-					System.out.println("null");
+					//System.out.println("null");
 					if(reacquire) {
 						//turretState = turretState.SETPOINT;
 						//restoreSetpoint();
@@ -257,7 +274,7 @@ public class Turret extends Threaded {
 				}
 				else {
 					//lastTargetGyro = drive.getAngle();
-					System.out.println("turret");
+					//System.out.println("turret");
 					VisionTarget selected = getNearestTarget(targets);
 					reacquire = false;
 					lastDeltaX = lastX - selected.x; 
@@ -277,6 +294,7 @@ public class Turret extends Threaded {
 					desiredAngle = getAngle() - corrected;
 			 		// desiredAngle = turret.getAngle() - f;
 					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
+					//double setpoint = limiter.update(desiredAngle);
 					setAngle(desiredAngle);          
 					lastX = selected.x;           
 				}

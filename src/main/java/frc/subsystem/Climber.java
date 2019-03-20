@@ -12,6 +12,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.Solenoid;
+
 public class Climber extends Threaded {
 
 	public enum ClimberState {
@@ -29,13 +32,18 @@ public class Climber extends Threaded {
 	private CANSparkMax climberSlave;
 	private CANPIDController climberPID;
 	private CANEncoder climberEncoder;
+	private Solenoid deploySolenoid;
 	private ClimberState state = ClimberState.OFF;
+	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 360, 30);
 	
 	private Climber() {
 		climberMaster = new CANSparkMax(Constants.ClimberMasterId, MotorType.kBrushless);
 		climberSlave = new CANSparkMax(Constants.ClimberSlaveId, MotorType.kBrushless);
+		deploySolenoid = new Solenoid(Constants.ClimberSolenoidID);
+
 		climberPID = climberMaster.getPIDController();
 		climberEncoder = climberMaster.getEncoder();
+		climberSlave.setInverted(true);
 		climberSlave.follow(climberMaster, true);
 	}
 	
@@ -45,8 +53,21 @@ public class Climber extends Threaded {
 		climberPID.setReference(Constants.ClimberMaxAngle, ControlType.kPosition);
 	}
 
+	public void setPower(double p) {
+		if(deploySolenoid.get() != false) return; 
+		if(pot.get() < Constants.ClimberMaxAngle && pot.get() > Constants.ClimberMinAngle) climberMaster.set(p);
+		else climberMaster.set(0);
+	}
+
+	public void setDeploySolenoid(boolean state) {
+		deploySolenoid.set(state);
+	}
+
 	@Override
 	public void update() {
+		System.out.println("Potentiometer: " + pot.get());
+		System.out.println("Current: " + climberMaster.getOutputCurrent());
+
 		// TODO: Set state and turn off motor when done
 	}
 }

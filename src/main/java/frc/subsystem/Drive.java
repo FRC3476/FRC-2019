@@ -326,6 +326,12 @@ public class Drive extends Threaded {
 		}
 	}
 
+	public void hold() {
+		leftSparkPID.setReference(leftSparkEncoder.getPosition(), ControlType.kPosition);
+		rightSparkPID.setReference(leftSparkEncoder.getPosition(), ControlType.kPosition);
+
+	}
+
 	public void orangeDrive(double moveValue, double rotateValue, boolean isQuickTurn) {
 		synchronized (this) {
 			driveState = DriveState.TELEOP;

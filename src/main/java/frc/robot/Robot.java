@@ -6,8 +6,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.tables.ITable;
-import frc.auton.DriveForward;
-import frc.auton.Lvl2Ship1;
 import frc.auton.*;
 import frc.subsystem.*;
 import frc.subsystem.Arm.ArmState;
@@ -20,6 +18,7 @@ import frc.utility.math.*;
 import frc.utility.telemetry.TelemetryServer;
 import frc.utility.control.motion.Path;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
@@ -55,6 +54,7 @@ public class Robot extends IterativeRobot {
   HatchIntake hatchIntake = HatchIntake.getInstance();
   BallIntake ballIntake = BallIntake.getInstance();
   RobotTracker robotTracker = RobotTracker.getInstance();
+  Climber climber = Climber.getInstance();
 
   ExecutorService executor = Executors.newFixedThreadPool(4);
   ThreadScheduler scheduler = new ThreadScheduler();
@@ -64,11 +64,11 @@ public class Robot extends IterativeRobot {
 
   
 
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  
+  private final SendableChooser<String> m_chooser = new SendableChooser<String>();
+  private final SendableChooser<String> dir_chooser = new SendableChooser<String>();
+  private final SendableChooser<String> goodbad = new SendableChooser<String>();
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -76,9 +76,21 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     drive.calibrateGyro();
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
+    m_chooser.setDefaultOption("Lv1 Cargo Hatch", "Lv1 Cargo Hatch");
+    m_chooser.addOption("Lv2 Cargo Hatch", "Lv2 Cargo Hatch");
+    m_chooser.addOption("2 Hatch Rocket", "2 Hatch Rocket");
+    SmartDashboard.putData("Autonomous Mode", m_chooser);
+
+    dir_chooser.setDefaultOption("Left", "Left");
+    dir_chooser.addOption("Right", "Right");
+    SmartDashboard.putData("Starting Side", dir_chooser);
+
+    goodbad.addDefault("good", "good");
+    goodbad.addOption("bad","bad");
+    goodbad.addOption("mindBuisness", "mindBuisness");
+    goodbad.addOption("mInDbUiSnEsS", "mInDbUiSnEsS");
+    SmartDashboard.putData("Good or Bad? To be or Not to Be?", goodbad);
+
 
     scheduler.schedule(drive, executor);
 		scheduler.schedule(elevator, executor);
@@ -86,8 +98,7 @@ public class Robot extends IterativeRobot {
     scheduler.schedule(collisionManager, executor);
     scheduler.schedule(jetsonUDP, executor);
     scheduler.schedule(robotTracker, executor);
-    //scheduler.schedule(manipulator, executor);
-    //scheduler.schedule(hatchIntake, executor);
+    //scheduler.schedule(climber, executor);
     
 
     turret.homeTurret();
@@ -125,7 +136,18 @@ public class Robot extends IterativeRobot {
   public void autonomousInit() {
     autoDone = false;
     scheduler.resume();
-    auto = new Thread(new Lvl1Rocket(1));
+
+    int autoDir = 1;
+    TemplateAuto option;
+
+    if(dir_chooser.getSelected().equals("Right")) autoDir = -1;
+    else autoDir = 1;
+
+    if(m_chooser.getSelected().equals("Lv1 Cargo Hatch")) option = new Lvl1Ship1(autoDir);
+    else if(m_chooser.getSelected().equals("Lv2 Cargo Hatch")) option = new Lvl2Ship1(autoDir);
+    else option = new Lvl1Rocket(autoDir);
+
+    Thread auto = new Thread(option);
     auto.start();
     
   }
@@ -216,8 +238,14 @@ public class Robot extends IterativeRobot {
       stick.update();
       buttonPanel.update();
 
-      
-      if(hatchIntake.getCurrent() > 3 || manipulator.getCurrent() > 3) {
+      if(stick.getRisingEdge(9)) climber.setDeploySolenoid(true);
+      else if(stick.getRisingEdge(10)) climber.setDeploySolenoid(false);
+
+      double climberPower = stick.getRawAxis(3)+1;
+      if(climberPower < 0.1) climberPower = 0;
+      climber.setPower(climberPower);
+
+      if(hatchIntake.getCurrent() > 3 /*|| manipulator.getCurrent() > 3*/) {
         //xbox.setRumble(RumbleType.kLeftRumble, 1.0);
         xbox.setRumble(RumbleType.kRightRumble, 1.0);
       } else {
@@ -297,6 +325,7 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
+      if(xbox.getRawButton(4))
 
       if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;
      // System.out.println(!collisionManager.isInControl());
@@ -306,8 +335,9 @@ public class Robot extends IterativeRobot {
         else if(buttonPanel.getRawButton(1)) {
           turret.setState(TurretState.VISION);
 
-          if(turret.isFinished() && turret.isInRange()) {
-            collisionManager.score();
+          if(turret.isFinished()) {
+            if(ballMode && turret.isInBallRange()) collisionManager.scoreBall();
+            else if(!ballMode && turret.isInRange()) collisionManager.score();
           }
         } 
         
@@ -391,7 +421,7 @@ public class Robot extends IterativeRobot {
               manipulator.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);
             }
           }
-          else if(stick.getRawButton(2)) {
+          else if(stick.getRawButton(2) || buttonPanel.getRawButton(3)) {
             //System.out.println("2");
             manipulator.setManipulatorState(ManipulatorState.BALL);
             manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL INTAKE

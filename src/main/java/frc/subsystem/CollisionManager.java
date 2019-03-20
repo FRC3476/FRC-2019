@@ -45,6 +45,10 @@ public class CollisionManager extends Threaded {
     double scoreTime = 0;
     int scoreStage = 0;
 
+    boolean scoringBall = false;
+    double scoreTimeBall = 0;
+    int scoreStageBall = 0;
+
     boolean abortHatch = false;
     int abortHatchStage = 0;
     double abortHatchTime = 0;
@@ -113,7 +117,7 @@ public class CollisionManager extends Threaded {
     }
 
     synchronized public boolean isInControl() {
-        return ballIntakeOut || hatchIntakeOut || scoring;
+        return ballIntakeOut || hatchIntakeOut || scoring || scoringBall;
     }
 
     synchronized public void extendBallIntake() {
@@ -143,6 +147,15 @@ public class CollisionManager extends Threaded {
         arm.setState(ArmState.EXTEND);
         
     }
+
+    synchronized public void scoreBall() {
+        scoringBall = true;
+        scoreStage = 0;
+        scoreTimeBall = Timer.getFPGATimestamp();
+        arm.setState(ArmState.RETRACT);
+        
+    }
+
 
     synchronized public boolean isScoring() {
         return scoring;
@@ -203,6 +216,26 @@ public class CollisionManager extends Threaded {
                     combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
                     arm.setState(ArmState.RETRACT);
                     if(Timer.getFPGATimestamp()-scoreTime > 0.4) scoring = false;
+                    break;
+                
+                
+            }
+        }
+
+        if(scoringBall) {
+            switch(scoreStageBall) {
+                case 0:
+                    arm.setState(ArmState.RETRACT);
+                    if(Timer.getFPGATimestamp()-scoreTime > 0.5) {
+                        scoreTimeBall = Timer.getFPGATimestamp();
+                        scoreStageBall++;
+                    }
+                    break;
+
+                case 1:
+                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+                    arm.setState(ArmState.RETRACT);
+                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.4) scoringBall = false;
                     break;
                 
                 

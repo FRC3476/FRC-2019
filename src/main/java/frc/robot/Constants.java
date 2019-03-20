@@ -156,6 +156,8 @@ public final class Constants {
 //	public static final double kTurretP = 0.25;
 	public static final double TurretTargetError = 3;
 	public static final double AutoScoreDistance = 36;
+	public static final double AutoScoreDistanceBall = 45;
+
 
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
 	public static final double TurretHomingPower = 0.4;//Random percent for now
@@ -219,7 +221,11 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 90;//Just a random number for now
+	public static final double ClimberMaxAngle = 500;//Just a random number for now
+	public static final double ClimberMinAngle = 0;//Just a random number for now
+
+	public static final int ClimberSolenoidID = 1;
+	
 	
 	// Camera
 	public static final double cameraYOffset = 5.310 + 1.25;
