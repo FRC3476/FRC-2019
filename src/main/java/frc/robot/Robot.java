@@ -98,7 +98,7 @@ public class Robot extends IterativeRobot {
     scheduler.schedule(collisionManager, executor);
     scheduler.schedule(jetsonUDP, executor);
     scheduler.schedule(robotTracker, executor);
-    //scheduler.schedule(climber, executor);
+    scheduler.schedule(climber, executor);
     
 
     turret.homeTurret();
@@ -134,6 +134,7 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void autonomousInit() {
+    climber.setDeploySolenoid(false);
     autoDone = false;
     scheduler.resume();
 
@@ -159,12 +160,12 @@ public class Robot extends IterativeRobot {
   public void autonomousPeriodic() {
     buttonPanel.update();
     if(!autoDone) {
-    for(int i = 1; i < 8; i++) {
-      if(buttonPanel.getRawButton(i)) {
+    //for(int i = 1; i < 8; i++) {
+      if(buttonPanel.getRawButton(2)) {
         autoDone = true;
         teleopInit();
       }
-    }
+    //}
     }
     if(autoDone) {
       teleopPeriodic();
@@ -184,6 +185,7 @@ public class Robot extends IterativeRobot {
 
   @Override 
   public void teleopInit() {
+    climber.setDeploySolenoid(false);
     killAuto();
     drive.stopMovement();
     scheduler.resume();
@@ -238,11 +240,13 @@ public class Robot extends IterativeRobot {
       stick.update();
       buttonPanel.update();
 
-      if(stick.getRisingEdge(9)) climber.setDeploySolenoid(true);
-      else if(stick.getRisingEdge(10)) climber.setDeploySolenoid(false);
+      if(stick.getRawButton(9) && stick.getRawButton(10)) climber.setDeploySolenoid(true);
 
-      double climberPower = stick.getRawAxis(3)+1;
-      if(climberPower < 0.1) climberPower = 0;
+      double climberPower = (stick.getRawAxis(3)+1)/2.0;
+      System.out.println("climber power: " + climberPower);
+      if(!stick.getRawButton(8)) climberPower = 0;
+      else if(stick.getRawAxis(3) > 0) climberPower = -0.15;
+      else climberPower = 0.50;
       climber.setPower(climberPower);
 
       if(hatchIntake.getCurrent() > 3 /*|| manipulator.getCurrent() > 3*/) {

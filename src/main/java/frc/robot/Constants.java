@@ -28,8 +28,8 @@ public final class Constants {
 	public static final int ManipulatorMotor1Id = 31;
 	public static final int ManipulatorMotor2Id = 32;
 	
-	public static final int ClimberMasterId = 21;
-	public static final int ClimberSlaveId = 26;
+	public static final int ClimberMasterId = 15;
+	public static final int ClimberSlaveId = 16;
 	
 	// PCM IDs
 	public static final int DriveShifterSolenoidId = 4;
@@ -221,10 +221,10 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 500;//Just a random number for now
-	public static final double ClimberMinAngle = 0;//Just a random number for now
+	public static final double ClimberMaxAngle = 120;//Just a random number for now
+	public static final double ClimberMinAngle = 30;//Just a random number for now
 
-	public static final int ClimberSolenoidID = 1;
+	public static final int ClimberSolenoidID = 3;
 	
 	
 	// Camera

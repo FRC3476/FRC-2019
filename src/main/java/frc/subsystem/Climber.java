@@ -6,6 +6,8 @@ import frc.robot.Constants;
 import frc.utility.Threaded;
 import frc.utility.telemetry.TelemetryServer;
 
+import java.time.Duration;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -34,8 +36,9 @@ public class Climber extends Threaded {
 	private CANEncoder climberEncoder;
 	private Solenoid deploySolenoid;
 	private ClimberState state = ClimberState.OFF;
-	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 360, 30);
-	
+	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 3600, -1750);
+	//private boolean 
+
 	private Climber() {
 		climberMaster = new CANSparkMax(Constants.ClimberMasterId, MotorType.kBrushless);
 		climberSlave = new CANSparkMax(Constants.ClimberSlaveId, MotorType.kBrushless);
@@ -43,8 +46,11 @@ public class Climber extends Threaded {
 
 		climberPID = climberMaster.getPIDController();
 		climberEncoder = climberMaster.getEncoder();
-		climberSlave.setInverted(true);
+		climberMaster.setInverted(true);
+		climberSlave.setInverted(false);
+
 		climberSlave.follow(climberMaster, true);
+		setPeriod(Duration.ofMillis(50));
 	}
 	
 	public void beginClimb() {
@@ -54,9 +60,13 @@ public class Climber extends Threaded {
 	}
 
 	public void setPower(double p) {
-		if(deploySolenoid.get() != false) return; 
-		if(pot.get() < Constants.ClimberMaxAngle && pot.get() > Constants.ClimberMinAngle) climberMaster.set(p);
-		else climberMaster.set(0);
+		if(deploySolenoid.get() != true) {
+			climberMaster.set(0);
+			return; 
+		}
+		if(pot.get() >= Constants.ClimberMaxAngle && p > 0) climberMaster.set(0);
+		else if(pot.get() <= Constants.ClimberMinAngle && p < 0) climberMaster.set(0);
+		else climberMaster.set(p);
 	}
 
 	public void setDeploySolenoid(boolean state) {
