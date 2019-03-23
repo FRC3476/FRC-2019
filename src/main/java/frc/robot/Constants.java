@@ -33,9 +33,9 @@ public final class Constants {
 	
 	// PCM IDs
 	public static final int DriveShifterSolenoidId = 4;
-	public static final int BallIntakeSolenoidId = 5;
-	public static final int ArmSolenoidId = 6;
-	public static final int ManipulatorSolenoidId = 7;
+	public static final int BallIntakeSolenoidId = 7;
+	public static final int ArmSolenoidId = 5;
+	public static final int ManipulatorSolenoidId = 6;
 
 	// IO IDs
 	public static final int TurretLimitId = 0;
@@ -65,7 +65,7 @@ public final class Constants {
 	
 	// Autonomous Driving
 	public static final double TrackRadius = -12;
-	public static final double WheelDiameter = 6;
+	public static final double WheelDiameter = 6; //expiermental
 	public static final double MinTurningRadius = 40;
 	public static final double MinPathSpeed = 20;
 	public static final double MaxPathSpeed = 120;
@@ -174,7 +174,7 @@ public final class Constants {
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	//public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);//orange string, no screw
-	public static final double ElevatorTicksPerInch = 57378/(64.25-4.375);//black string, screw spool
+	public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
 	public static final int ElevatorSensorPidIdx = 0;
 	public static final double ElevatorTargetError = 2;
 	
@@ -202,14 +202,14 @@ public final class Constants {
 
 
 	//setpoints
-	public static final double BallElevHigh = 60.8;
+	public static final double BallElevHigh = 60.8; //60.8
 	public static final double BallElevMid = 33.6;
 	public static final double BallElevLow = 5.8;
 	public static final double BallElevCargo = 5.8;
 	public static final double BallElevCargoGroundIntake = 0;
 	public static final double BallHP = 20.85;
 
-	public static final double HatchElevHigh = 56.8;
+	public static final double HatchElevHigh = 56.8; //56.8
 	public static final double HatchElevMid = 29.7;
 	public static final double HatchElevLow = 2.2;
 	public static final double HatchHP = 1.2;
@@ -221,7 +221,7 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 120;//Just a random number for now
+	public static final double ClimberMaxAngle = 152;//Just a random number for now
 	public static final double ClimberMinAngle = 30;//Just a random number for now
 
 	public static final int ClimberSolenoidID = 3;

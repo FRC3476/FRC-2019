@@ -173,7 +173,7 @@ public class Elevator extends Threaded {
 			//If is in setpoint mode
 			case SETPOINT:
 				elevMaster.set(ControlMode.Position, (requested) * Constants.ElevatorTicksPerInch);
-
+				//System.out.println(elevMaster.getSelectedSensorPosition());
 				//if(safetyEngage) setHeight(requested);
 				//System.out.println("Elevator current: " + getPulledCurrent());
 				//if(elevMaster.getOutputCurrent())

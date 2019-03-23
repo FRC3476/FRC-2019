@@ -170,7 +170,7 @@ public class Robot extends IterativeRobot {
     if(autoDone) {
       teleopPeriodic();
     }
-    //System.out.println(elevator.getHeight());
+    
   
   } 
 
@@ -243,10 +243,10 @@ public class Robot extends IterativeRobot {
       if(stick.getRawButton(9) && stick.getRawButton(10)) climber.setDeploySolenoid(true);
 
       double climberPower = (stick.getRawAxis(3)+1)/2.0;
-      System.out.println("climber power: " + climberPower);
-      if(!stick.getRawButton(8)) climberPower = 0;
+      //System.out.println("climber power: " + climberPower);
+      if(!stick.getRawButton(5)) climberPower = 0;
       else if(stick.getRawAxis(3) > 0) climberPower = -0.15;
-      else climberPower = 0.50;
+      else climberPower = 0.75;
       climber.setPower(climberPower);
 
       if(hatchIntake.getCurrent() > 3 /*|| manipulator.getCurrent() > 3*/) {
@@ -256,26 +256,28 @@ public class Robot extends IterativeRobot {
         //xbox.setRumble(RumbleType.kLeftRumble, 0);
         xbox.setRumble(RumbleType.kRightRumble, 0);
       }
-     
+     //System.out.println(manipulator.getCurrent());
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
 
       if(xbox.getRawButton(4)) drive.setShiftState(true); 
       else drive.setShiftState(false);
 
-      if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
+     // if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
     
       //teleopStarttime = Timer.getFPGATimestamp();
       //hatch
+      /*
       if(xbox.getRisingEdge(1)) {
         ballMode = false;
+        
         if(collisionManager.isHatchIntakeOut()) {
           collisionManager.handoffHatch();
           
         }
         else collisionManager.groundHatchIntake(); 
         //hatchIn = !
-      }
+      } */
 
       //ball
       if(xbox.getRisingEdge(2)) {

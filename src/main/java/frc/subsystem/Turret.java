@@ -105,10 +105,14 @@ public class Turret extends Threaded {
 		synchronized(this) {
 			requested = setpoint;
 		}
+		
+
 		setpoint = limiter.update(setpoint);
+		
 		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
-			//System.out.println("setpoint error");
-			setpoint = 0;
+			System.out.println("setpoint error");
+			if(setpoint > 180 + Constants.maxTurretOverTravel) setpoint = 180 + Constants.maxTurretOverTravel;
+			else setpoint = -180 -Constants.maxTurretOverTravel;
 		}
 
 		turretMotor.set(ControlMode.Position, -setpoint * Constants.EncoderTicksPerDegree*10.6);
@@ -210,6 +214,8 @@ public class Turret extends Threaded {
 		// }
 		if(getAngle() < 0) twistDir = -1;
 		else twistDir = 1;
+
+		//System.out.println(turretState);
 
 		switch(turretState){
 	

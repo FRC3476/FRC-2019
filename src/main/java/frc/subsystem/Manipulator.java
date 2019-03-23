@@ -135,14 +135,14 @@ public class Manipulator extends Threaded {
 			rightTalon.set(ControlMode.PercentOutput, -1D *basePower * Constants.ManipulatorNormalPower);
 		} else {
 			if(intake == ManipulatorIntakeState.HATCH_HOLD) {
-				leftTalon.set(ControlMode.PercentOutput, 0.1);
-				rightTalon.set(ControlMode.PercentOutput, -0.1);
+				leftTalon.set(ControlMode.PercentOutput, 0.15);
+				rightTalon.set(ControlMode.PercentOutput, -0.15);
 				//leftTalon.set(ControlMode.Current, 1);
 				//leftTalon.set(ControlMode.Current, -1);
 
 			} else {
-				leftTalon.set(ControlMode.PercentOutput, -0.1);
-				rightTalon.set(ControlMode.PercentOutput, 0.1);
+				leftTalon.set(ControlMode.PercentOutput, -0.15);
+				rightTalon.set(ControlMode.PercentOutput, 0.15);
 				//leftTalon.set(ControlMode.Current, -1);
 				//leftTalon.set(ControlMode.Current, 1);
 			}

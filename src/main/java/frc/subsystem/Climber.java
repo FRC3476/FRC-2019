@@ -64,8 +64,15 @@ public class Climber extends Threaded {
 			climberMaster.set(0);
 			return; 
 		}
+		if(p != 0) {
+			//System.out.println("Current: " + climberMaster.getOutputCurrent());
+			System.out.println("Pot: " + pot.get());
+
+		}
+
 		if(pot.get() >= Constants.ClimberMaxAngle && p > 0) climberMaster.set(0);
 		else if(pot.get() <= Constants.ClimberMinAngle && p < 0) climberMaster.set(0);
+		else if(pot.get() >= Constants.ClimberMaxAngle-10 && climberMaster.getOutputCurrent()>20) climberMaster.set(0);
 		else climberMaster.set(p);
 	}
 
@@ -75,8 +82,7 @@ public class Climber extends Threaded {
 
 	@Override
 	public void update() {
-		System.out.println("Potentiometer: " + pot.get());
-		System.out.println("Current: " + climberMaster.getOutputCurrent());
+		//System.out.println("Potentiometer: " + pot.get());
 
 		// TODO: Set state and turn off motor when done
 	}

@@ -34,7 +34,7 @@ public class Lvl1Rocket extends TemplateAuto implements Runnable {
         Path p1 = new Path(here());
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
         p1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
-        p1.addPoint(new Translation2D(169+48*2+5, this.side*(113+26+2)), 160);
+        p1.addPoint(new Translation2D(169+48*2+5, this.side*(113+26+2-3)), 160);
         drive.setAutoPath(p1, false);
         turret.setDesired(this.side*160, true);
         elevator.setHeight(Constants.HatchElevMid);
