@@ -167,7 +167,7 @@ public final class Constants {
 	public static final double kTurretI = 0.00;
 	public static final double kTurretD = 1.0;
 
-	public static final double kTurretManual = 1.5;
+	public static final double kTurretManual = 3.0;
 
 
 	// Elevator
@@ -202,10 +202,10 @@ public final class Constants {
 
 
 	//setpoints
-	public static final double BallElevHigh = 60.8; //60.8
-	public static final double BallElevMid = 33.6;
-	public static final double BallElevLow = 5.8;
-	public static final double BallElevCargo = 5.8;
+	public static final double BallElevHigh = 60.8-1.0; //60.8
+	public static final double BallElevMid = 33.6-0.5;
+	public static final double BallElevLow = 5.8-0.5;
+	public static final double BallElevCargo = 5.8-0.5;
 	public static final double BallElevCargoGroundIntake = 0;
 	public static final double BallHP = 20.85;
 

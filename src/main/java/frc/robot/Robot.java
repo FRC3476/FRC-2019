@@ -76,9 +76,9 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     drive.calibrateGyro();
-    m_chooser.setDefaultOption("Lv1 Cargo Hatch", "Lv1 Cargo Hatch");
+    m_chooser.addOption("Lv1 Cargo Hatch", "Lv1 Cargo Hatch");
     m_chooser.addOption("Lv2 Cargo Hatch", "Lv2 Cargo Hatch");
-    m_chooser.addOption("2 Hatch Rocket", "2 Hatch Rocket");
+    m_chooser.setDefaultOption("2 Hatch Rocket", "2 Hatch Rocket");
     SmartDashboard.putData("Autonomous Mode", m_chooser);
 
     dir_chooser.setDefaultOption("Left", "Left");
@@ -229,6 +229,8 @@ public class Robot extends IterativeRobot {
 
   boolean elevReturn = false;
 
+  boolean autoScoreAllow = true;
+
   
   /**
    * This function is called periodically during operator control.
@@ -249,7 +251,7 @@ public class Robot extends IterativeRobot {
       else climberPower = 0.75;
       climber.setPower(climberPower);
 
-      if(hatchIntake.getCurrent() > 3 /*|| manipulator.getCurrent() > 3*/) {
+      if(hatchIntake.getCurrent() > 3 || manipulator.getCurrent() > 50 || collisionManager.isManipulatorStalled()) {
         //xbox.setRumble(RumbleType.kLeftRumble, 1.0);
         xbox.setRumble(RumbleType.kRightRumble, 1.0);
       } else {
@@ -326,7 +328,7 @@ public class Robot extends IterativeRobot {
       ////teleopStarttime = Timer.getFPGATimestamp();
 
       //teleopStarttime = Timer.getFPGATimestamp();
-      
+      //System.out.println(autoScoreAllow);
 
      // System.out.println(elevator.getHeight());
       //Drive control
@@ -343,7 +345,10 @@ public class Robot extends IterativeRobot {
 
           if(turret.isFinished()) {
             if(ballMode && turret.isInBallRange()) collisionManager.scoreBall();
-            else if(!ballMode && turret.isInRange()) collisionManager.score();
+            else if((!ballMode && turret.isInRange()) && autoScoreAllow) {
+              collisionManager.score();
+              autoScoreAllow = false;
+            }
           }
         } 
         
@@ -351,6 +356,8 @@ public class Robot extends IterativeRobot {
           turret.setState(TurretState.SETPOINT);
           //turret.restoreSetpoint();
         }
+
+        if(buttonPanel.getFallingEdge(1)) autoScoreAllow = true;
 
         //Turret control
         //axis 0 is x, 1 is y, 2 is yaw
@@ -432,7 +439,11 @@ public class Robot extends IterativeRobot {
             manipulator.setManipulatorState(ManipulatorState.BALL);
             manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL INTAKE
             arm.setState(ArmState.RETRACT);
-          } 
+          } else if(buttonPanel.getRawButton(2)) { //test
+            manipulator.setManipulatorState(ManipulatorState.HATCH);
+            manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //BALL EJECT
+            arm.setState(ArmState.RETRACT);
+          }
           else {
             //System.out.println("3");
             manipulator.setManipulatorState(ManipulatorState.HATCH);

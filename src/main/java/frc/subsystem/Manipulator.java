@@ -53,7 +53,7 @@ public class Manipulator extends Threaded {
 	}
 	
 	public double getCurrent() {
-		return leftTalon.getOutputCurrent();
+		return leftTalon.getOutputCurrent() + rightTalon.getOutputCurrent();
 	}
 
 	// Set the deployment state of the intake
