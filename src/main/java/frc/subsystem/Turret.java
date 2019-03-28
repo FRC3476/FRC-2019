@@ -190,7 +190,7 @@ public class Turret extends Threaded {
 
 	private static VisionTarget getNearestTarget(VisionTarget[] t) {
 		int nearIndex = 0;
-		double minValue = 0;
+		double minValue = Double.POSITIVE_INFINITY;
 		for(int i = 0; i < t.length; i++) {
 			if(t[i].getDistance() < minValue) {
 				minValue = t[i].getDistance();

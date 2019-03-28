@@ -174,7 +174,8 @@ public final class Constants {
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	//public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);//orange string, no screw
-	public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
+	//public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
+	public static final double ElevatorTicksPerInch = 57378/(64.25-4.375);
 	public static final int ElevatorSensorPidIdx = 0;
 	public static final double ElevatorTargetError = 2;
 	

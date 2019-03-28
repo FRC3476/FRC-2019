@@ -269,7 +269,8 @@ public class Robot extends IterativeRobot {
     
       //teleopStarttime = Timer.getFPGATimestamp();
       //hatch
-      /*
+      
+
       if(xbox.getRisingEdge(1)) {
         ballMode = false;
         
@@ -279,7 +280,7 @@ public class Robot extends IterativeRobot {
         }
         else collisionManager.groundHatchIntake(); 
         //hatchIn = !
-      } */
+      } 
 
       //ball
       if(xbox.getRisingEdge(2)) {
@@ -344,7 +345,7 @@ public class Robot extends IterativeRobot {
           turret.setState(TurretState.VISION);
 
           if(turret.isFinished()) {
-            if(ballMode && turret.isInBallRange()) collisionManager.scoreBall();
+            if(ballMode && turret.isInBallRange()) collisionManager.scoreBall(true);
             else if((!ballMode && turret.isInRange()) && autoScoreAllow) {
               collisionManager.score();
               autoScoreAllow = false;

@@ -7,6 +7,7 @@ import frc.subsystem.BallIntake.DeployState;
 import frc.utility.LazyTalonSRX;
 import frc.utility.OrangeUtility;
 import frc.utility.Threaded;
+import frc.utility.control.RateLimiter;
 
 import java.time.Duration;
 
@@ -42,6 +43,10 @@ public class Elevator extends Threaded {
 	private double startTime;
 	private ElevatorState elevState;
 	private boolean isFinished;
+	private RateLimiter rateLimiter = new RateLimiter(60, 160);
+	private double prevHeight = 0; //temp
+	private double prevTime = 0;
+	private double maxRate = 0;
 	// Elevator constructor to setup the elevator (zero it in the future with current measurement)
 	private Elevator() {
 		elevSlave.follow(elevMaster);
@@ -172,7 +177,13 @@ public class Elevator extends Threaded {
 			
 			//If is in setpoint mode
 			case SETPOINT:
-				elevMaster.set(ControlMode.Position, (requested) * Constants.ElevatorTicksPerInch);
+				double setpoint = rateLimiter.update(requested);
+				elevMaster.set(ControlMode.Position, setpoint * Constants.ElevatorTicksPerInch);
+				double rate = (getHeight() - prevHeight)/(Timer.getFPGATimestamp() - prevTime);
+				prevTime = Timer.getFPGATimestamp();
+				prevHeight = getHeight();
+				if(rate >= maxRate) maxRate = rate;
+				System.out.println("elev max rate: " + maxRate); 
 				//System.out.println(elevMaster.getSelectedSensorPosition());
 				//if(safetyEngage) setHeight(requested);
 				//System.out.println("Elevator current: " + getPulledCurrent());
@@ -181,7 +192,7 @@ public class Elevator extends Threaded {
 				//elevator on triggers
 				//if(Robot.j.getRawAxis(2) > 0.1) setHeight(getHeight() - 10*Robot.j.getRawAxis(2));
 				//else  setHeight(getHeight() + 10* Robot.j.getRawAxis(3));
-
+				
 				break;
 		}
 	}

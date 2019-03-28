@@ -150,11 +150,12 @@ public class CollisionManager extends Threaded {
         
     }
 
-    synchronized public void scoreBall() {
+    synchronized public void scoreBall(boolean extend) {
         scoringBall = true;
-        scoreStage = 0;
+        if(extend) scoreStage = 1; 
+        else scoreStage = 0;
         scoreTimeBall = Timer.getFPGATimestamp();
-        arm.setState(ArmState.RETRACT);
+        //arm.setState(ArmState.RETRACT);
         
     }
 
@@ -234,11 +235,17 @@ public class CollisionManager extends Threaded {
                     arm.setState(ArmState.RETRACT);
                     if(Timer.getFPGATimestamp()-scoreTime > 0.5) {
                         scoreTimeBall = Timer.getFPGATimestamp();
+                        scoreStageBall+=2;
+                    }
+                    break;
+                case 1:
+                    arm.setState(ArmState.EXTEND);
+                    if(Timer.getFPGATimestamp()-scoreTime > 0.5) {
+                        scoreTimeBall = Timer.getFPGATimestamp();
                         scoreStageBall++;
                     }
                     break;
-
-                case 1:
+                case 2:
                     combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
                     arm.setState(ArmState.RETRACT);
                     if(Timer.getFPGATimestamp()-scoreTimeBall > 0.4) scoringBall = false;
