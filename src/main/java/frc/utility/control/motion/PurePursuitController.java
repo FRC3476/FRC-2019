@@ -26,7 +26,7 @@ public class PurePursuitController {
 	public PurePursuitController(Path robotPath, boolean isReversed) {
 		this.robotPath = robotPath;
 		this.isReversed = isReversed;
-		speedProfiler = new RateLimiter(100, 1000);
+		speedProfiler = new RateLimiter(120, 1000); //100, 10000
 		if (robotPath.isEmpty()) {
 		}
 	}

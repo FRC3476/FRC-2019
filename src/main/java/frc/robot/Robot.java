@@ -78,7 +78,8 @@ public class Robot extends IterativeRobot {
     drive.calibrateGyro();
     m_chooser.addOption("Lv1 Cargo Hatch", "Lv1 Cargo Hatch");
     m_chooser.addOption("Lv2 Cargo Hatch", "Lv2 Cargo Hatch");
-    m_chooser.setDefaultOption("2 Hatch Rocket", "2 Hatch Rocket");
+    m_chooser.addOption("Lv2 Rocket", "Lv2 Rocket");
+    m_chooser.setDefaultOption("Lv1 Rocket", "Lv1 Rocket");
     SmartDashboard.putData("Autonomous Mode", m_chooser);
 
     dir_chooser.setDefaultOption("Left", "Left");
@@ -145,6 +146,7 @@ public class Robot extends IterativeRobot {
     else autoDir = 1;
 
     if(m_chooser.getSelected().equals("Lv1 Cargo Hatch")) option = new Lvl1Ship1(autoDir);
+    else if(m_chooser.getSelected().equals("Lv2 Rocket")) option = new Lvl2Rocket(autoDir);
     else if(m_chooser.getSelected().equals("Lv2 Cargo Hatch")) option = new Lvl2Ship1(autoDir);
     else option = new Lvl1Rocket(autoDir);
 
@@ -237,7 +239,7 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void teleopPeriodic() {
-    
+      //System.out.println("turret " + turret.getAngle());
       xbox.update();
       stick.update();
       buttonPanel.update();
@@ -354,7 +356,7 @@ public class Robot extends IterativeRobot {
               collisionManager.scoreBall(false);
               autoScoreAllow = false;
             } 
-            else if((!ballMode && turret.isInRange()) && autoScoreAllow) {
+            else if((!ballMode && turret.isInRange()) && (autoScoreAllow && turret.getVelocity() < 3)) {
               collisionManager.score();
               autoScoreAllow = false;
             }

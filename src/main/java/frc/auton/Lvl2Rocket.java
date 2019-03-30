@@ -12,11 +12,11 @@ import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class Lvl1Rocket extends TemplateAuto implements Runnable {
+public class Lvl2Rocket extends TemplateAuto implements Runnable {
 
-    public Lvl1Rocket(int side) { 
+    public Lvl2Rocket(int side) { 
         //Start position
-        super(new Translation2D(48+18, side*46), side);
+        super(new Translation2D(18+19, side*46), side);
     }
 
 
@@ -27,7 +27,6 @@ public class Lvl1Rocket extends TemplateAuto implements Runnable {
     public void run() {
         
         //Drive forward, blocking
-        
         manipulator.setManipulatorState(ManipulatorState.HATCH);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         

@@ -49,6 +49,12 @@ public class Turret extends Threaded {
 	private double requested = 0;
 	public int twistDir = 1;
 
+	private double prevAngle = 0;
+	private double prevTime = 0;
+	private double velocity = 0;
+
+	private TurretState prevState = TurretState.SETPOINT;
+
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 	Drive drive = Drive.getInstance();
 
@@ -171,7 +177,8 @@ public class Turret extends Threaded {
 		else this.desired = getAngle();
 	}
 	
-	synchronized public boolean isFinished() {//NOT YET IMPLEMENTED
+	synchronized public boolean isFinished() {
+		if(turretState != prevState) return false;
 		if(turretState == TurretState.HOMING) return false;
 		if(Math.abs(getAngle() - requested) < Constants.TurretTargetError) return true;
 		else return false;
@@ -206,6 +213,10 @@ public class Turret extends Threaded {
 		return t[nearIndex];
 	}
 
+	public double getVelocity() {
+		return this.velocity;
+	}
+
 
 	@Override
 	synchronized public void update() {
@@ -218,10 +229,14 @@ public class Turret extends Threaded {
 		// synchronized(this) {
 		// 	snapDesired 
 		// }
+		velocity = (getAngle() - prevAngle)/(Timer.getFPGATimestamp()- prevTime);
+		prevAngle = getAngle();
+		prevTime = Timer.getFPGATimestamp();
+
 		if(getAngle() < 0) twistDir = -1;
 		else twistDir = 1;
 
-		System.out.println(turretState);
+		//System.out.println(turretState);
 
 		switch(turretState){
 			//If it is in homing mode
@@ -296,10 +311,10 @@ public class Turret extends Threaded {
 					synchronized(this) {
 						lastDistance = d;
 					}
-					double beta = Math.toDegrees(Math.atan(Math.cos(Math.atan(3/4))*Math.tan(170/2)));
-					double focallength = 640 / (2*Math.tan(170/2));
-					double angtotarget = Math.atan2((selected.x - 640/2), focallength);
-					
+					//double beta = Math.toDegrees(Math.atan(Math.cos(Math.atan(3/4))*Math.tan(170/2)));
+					//double focallength = 640 / (2*Math.tan(170/2));
+					//double angtotarget = Math.atan2((selected.x - 640/2), focallength);
+					//136
 					double f = Math.toRadians((selected.x/640.0 - 0.5) * 136/2);  //(148.16/2));
 					//System.out.println("angtotarget: " + angtotarget + "f: " + f);
 					double y = Math.cos(f) * d + Constants.cameraYOffset;
@@ -323,7 +338,9 @@ public class Turret extends Threaded {
 			break;
 			
 		}
-
+		
+		prevState = turretState;
+		
 		/*telemetryServer.sendData(
 			"trtL", 
 			getTargetAngle(), 

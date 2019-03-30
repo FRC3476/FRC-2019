@@ -527,8 +527,8 @@ public class Drive extends Threaded {
 		//rightTalon.set(ControlMode.Velocity, rightSetpoint);
 		leftSparkPID.setReference(leftSetpoint, ControlType.kVelocity);
 		rightSparkPID.setReference(rightSetpoint, ControlType.kVelocity);
-		//System.out.println("left rpm: " +leftSetpoint + " right rpm: " + rightSetpoint);
-		
+		//System.out.println("desired left rpm: " +setVelocity.leftVelocity + "desired right rpm: " + setVelocity.rightVelocity);
+		//System.out.println("actual left rpm: " + getLeftSpeed() + " actual right rpm: " + getRightSpeed());
 	}
 
 	public synchronized void setSimpleDrive(boolean setting) {

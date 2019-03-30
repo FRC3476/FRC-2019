@@ -68,7 +68,7 @@ public final class Constants {
 	public static final double WheelDiameter = 6; //expiermental
 	public static final double MinTurningRadius = 40;
 	public static final double MinPathSpeed = 20;
-	public static final double MaxPathSpeed = 120;
+	public static final double MaxPathSpeed = 160; //120
 	public static final double MinLookAheadDistance = 14;
 	public static final double MaxLookAheadDistance = 30;
 	
@@ -241,8 +241,8 @@ public final class Constants {
 	
 	
 	// Camera
-	public static final double cameraYOffset = 5.310 + 1.25;
-	public static final double cameraXOffset = -4.815 + 1.6 - 1.0;
+	public static final double cameraYOffset = 5.310 + 1.25;//-7.875+7;//5.310 + 1.25;
+	public static final double cameraXOffset = -4.815 + 1.6 - 1.0 - 1;
 
 	private Constants() {
 	}
