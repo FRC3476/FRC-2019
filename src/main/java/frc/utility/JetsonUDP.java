@@ -20,6 +20,8 @@ public class JetsonUDP extends Threaded {
   private DatagramSocket socket;
   private InetAddress address;
 
+  private final int packetSize = 16;
+
   private VisionTarget[] target = null;
 
   public static JetsonUDP getInstance() {
@@ -59,9 +61,9 @@ public class JetsonUDP extends Threaded {
     //System.out.println(packet.getLength());
     //String received = new String(packet.getData(), 0, packet.getLength());
     synchronized(this) {
-      target = new VisionTarget[(int)(packet.getLength()/16)];
+      target = new VisionTarget[(int)(packet.getLength()/packetSize)];
     
-    for(int i = 0; i < packet.getLength(); i+=16) 
+    for(int i = 0; i < packet.getLength(); i+=packetSize) 
     {
       byte[] to_be_parsed1 = Arrays.copyOfRange(packet.getData(), i, i+4);
       byte[] to_be_parsed2 = Arrays.copyOfRange(packet.getData(), i+4, i+8);
@@ -73,7 +75,7 @@ public class JetsonUDP extends Threaded {
       float f3 = ByteBuffer.wrap(to_be_parsed3).order(ByteOrder.LITTLE_ENDIAN).getFloat();
       float f4 = ByteBuffer.wrap(to_be_parsed4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
 
-      target[(int)(i/12)] = new VisionTarget(f1, f2, f3, f4);
+      target[(int)(i/packetSize)] = new VisionTarget(f1, f2, f3, f4);
      // System.out.println(f1);
     }
   }

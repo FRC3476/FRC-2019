@@ -11,6 +11,7 @@ import frc.subsystem.HatchIntake.DeployState;
 import frc.subsystem.HatchIntake.IntakeState;
 import frc.subsystem.Manipulator.ManipulatorIntakeState;
 import frc.subsystem.Manipulator.ManipulatorState;
+import frc.subsystem.Turret.TurretState;
 
 public class CollisionManager extends Threaded { 
     Turret turret = Turret.getInstance();
@@ -39,6 +40,8 @@ public class CollisionManager extends Threaded {
     boolean hatchIntakeOut = false;
 
     boolean retrieveHatch = false;
+    int retrieveHatchStage = 0;
+    double retractTime = 0;
     private static final CollisionManager cm = new CollisionManager();
 
     boolean scoring = false;
@@ -81,7 +84,9 @@ public class CollisionManager extends Threaded {
         if(ballIntakeOut) return;//do not do this sequence while the other is out
         intakingHatch = true;
         hatchIntakeOut = true;
-        elevator.setHeight(7);
+        elevator.setHeight(Constants.ElevClearance);
+        arm.setState(ArmState.RETRACT);
+        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
     }
 
     // synchronized public void returningHatchIntake() {
@@ -126,14 +131,17 @@ public class CollisionManager extends Threaded {
         if(hatchIntakeOut) return;//do not do this sequence while the other is out
         extendingBallIntake = true;
         ballIntakeOut = true;
+        arm.setState(ArmState.RETRACT);
         elevator.setHeight(Constants.ElevatorIntakeSafe);
+        turret.setState(TurretState.SETPOINT);
         turret.setDesired(180, false);
         ballIntakeStage = 0;
     }
 
     synchronized public void retractBallIntake() {
         retractingBallIntake = true;
-        if(elevator.getHeight() < Constants.ElevatorIntakeSafe) elevator.setHeight(Constants.ElevatorIntakeSafe);
+        elevator.setHeight(Constants.ElevatorIntakeSafe);
+        turret.setState(TurretState.SETPOINT);
         turret.setDesired(180, false);
         ballIntakeStage = 0;
     }
@@ -152,8 +160,8 @@ public class CollisionManager extends Threaded {
 
     synchronized public void scoreBall(boolean extend) {
         scoringBall = true;
-        if(extend) scoreStage = 1; 
-        else scoreStage = 0;
+        if(extend) scoreStageBall = 1; 
+        else scoreStageBall = 0;
         scoreTimeBall = Timer.getFPGATimestamp();
         //arm.setState(ArmState.RETRACT);
         
@@ -170,9 +178,11 @@ public class CollisionManager extends Threaded {
 
     synchronized public void retrieveHatch() {
         combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
-
+        elevator.setHeight(Constants.HatchElevLow + 4);
+        //arm.setState(ArmState.RETRACT);
         holdingTime = Timer.getFPGATimestamp();
         retrieveHatch = true;
+        retrieveHatchStage = 0;
     }
 
     @Override
@@ -228,25 +238,25 @@ public class CollisionManager extends Threaded {
                 
             }
         }
-
         if(scoringBall) {
+            System.out.println(scoreStageBall);
             switch(scoreStageBall) {
-                case 0:
+                case 0: //close
                     arm.setState(ArmState.RETRACT);
-                    if(Timer.getFPGATimestamp()-scoreTime > 0.5) {
+                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.5) {
                         scoreTimeBall = Timer.getFPGATimestamp();
                         scoreStageBall+=2;
                     }
                     break;
-                case 1:
+                case 1: //far
                     arm.setState(ArmState.EXTEND);
-                    if(Timer.getFPGATimestamp()-scoreTime > 0.5) {
+                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.5) {
                         scoreTimeBall = Timer.getFPGATimestamp();
                         scoreStageBall++;
                     }
                     break;
                 case 2:
-                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE); //this is whack, this actually spits out because we are in hatch mode
                     arm.setState(ArmState.RETRACT);
                     if(Timer.getFPGATimestamp()-scoreTimeBall > 0.4) scoringBall = false;
                     break;
@@ -256,11 +266,52 @@ public class CollisionManager extends Threaded {
         }
 
         if(retrieveHatch) {
-            if(Timer.getFPGATimestamp() - holdingTime >= 1.2) {
-                holdingTime = 0;
-                retrieveHatch = false;
-                combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-            }
+            switch(retrieveHatchStage) {
+                /*
+                case 0:
+                    if(elevator.isFinished()){
+                        retrieveHatchStage++;
+                        elevator.setHeight(Constants.HatchElevLow);
+                    } 
+                    break;
+                case 1:
+                    
+                    if(Timer.getFPGATimestamp() - holdingTime >= 1.2) {
+                       // holdingTime = 0;
+                       
+                        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+                    }
+                    if(Timer.getFPGATimestamp() - holdingTime >= 1.2 && elevator.isFinished()) {
+                        holdingTime = 0;
+                        retrieveHatch = false;
+                    }
+                    break;
+                */
+                case 0:
+                    if(elevator.isFinished()){
+                        retrieveHatchStage++;
+                        arm.setState(ArmState.RETRACT);
+                        retractTime = Timer.getFPGATimestamp();
+                    } 
+                    break;
+                case 1:
+                    if(Timer.getFPGATimestamp() - retractTime >= 0.75) {
+                        elevator.setHeight(Constants.HatchElevLow);
+                        retrieveHatchStage++;
+                    }
+                    break;
+                case 2:
+                    if(Timer.getFPGATimestamp() - holdingTime >= 1.2) {
+                    // holdingTime = 0;
+                    
+                        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+                    }
+                    if(Timer.getFPGATimestamp() - holdingTime >= 1.2 && elevator.isFinished()) {
+                        holdingTime = 0;
+                        retrieveHatch = false;
+                    }
+                break;
+            } 
         } 
         /*
         if(waitingOnElevator) {
@@ -281,7 +332,7 @@ public class CollisionManager extends Threaded {
         if(extendingBallIntake) {
             switch(ballIntakeStage) {
                 case 0: 
-                    if(elevator.isFinished()) ballIntakeStage++;
+                    if(elevator.isFinishedOrHigher()) ballIntakeStage++;
                     break;
                 case 1:
                     ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
@@ -328,7 +379,7 @@ public class CollisionManager extends Threaded {
         
         if(isBallIntakeOut()) {
         
-            if(combinedIntake.getCurrent() > 25) {
+            if(combinedIntake.getCurrent() > 30) {
                 combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);    
                 combinedIntake.setManipulatorState(ManipulatorState.HATCH);
                 manipulatorStall = true;

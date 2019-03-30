@@ -262,10 +262,10 @@ public class Robot extends IterativeRobot {
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
 
-      if(xbox.getRawButton(4)) drive.setShiftState(true); 
+      if(xbox.getRawButton(4)) drive.setShiftState(true);
       else drive.setShiftState(false);
 
-     // if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
+      if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
     
       //teleopStarttime = Timer.getFPGATimestamp();
       //hatch
@@ -333,6 +333,7 @@ public class Robot extends IterativeRobot {
 
      // System.out.println(elevator.getHeight());
       //Drive control
+      //System.out.println("range: " + turret.isInBallRange());
       drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
       if(xbox.getRawButton(4))
 
@@ -345,7 +346,14 @@ public class Robot extends IterativeRobot {
           turret.setState(TurretState.VISION);
 
           if(turret.isFinished()) {
-            if(ballMode && turret.isInBallRange()) collisionManager.scoreBall(true);
+            if(ballMode && turret.isInBallRange() == 1 && autoScoreAllow) {
+              collisionManager.scoreBall(true);
+              autoScoreAllow = false;
+            } 
+            else if(ballMode && turret.isInBallRange() == 0 && autoScoreAllow) {
+              collisionManager.scoreBall(false);
+              autoScoreAllow = false;
+            } 
             else if((!ballMode && turret.isInRange()) && autoScoreAllow) {
               collisionManager.score();
               autoScoreAllow = false;
@@ -358,7 +366,7 @@ public class Robot extends IterativeRobot {
           //turret.restoreSetpoint();
         }
 
-        if(buttonPanel.getFallingEdge(1)) autoScoreAllow = true;
+        if(!buttonPanel.getRawButton(1)) autoScoreAllow = true;
 
         //Turret control
         //axis 0 is x, 1 is y, 2 is yaw
@@ -458,7 +466,7 @@ public class Robot extends IterativeRobot {
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.BallElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.BallElevMid);
           else if(buttonPanel.getRawButton(6)) elevator.setHeight(Constants.BallElevLow);
-          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.BallHP);
+          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.BallElevCargo);
 
 
         } else { //hatch mode
@@ -480,7 +488,7 @@ public class Robot extends IterativeRobot {
               arm.setState(ArmState.RETRACT);
               manipulator.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
             }
-            else {
+            else { //HATCH INTAKE FROM LOADER
               manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
               arm.setState(ArmState.EXTEND);
               if(elevator.getHeight() <= 3) {
@@ -496,14 +504,14 @@ public class Robot extends IterativeRobot {
 
             if(elevReturn) {
               elevReturn = false;
-              elevator.setHeight(Constants.HatchElevLow);
+              
               collisionManager.retrieveHatch();
             }
             if(collisionManager.isRetrieving());
             else if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else if(buttonPanel.getRawButton(3)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else  manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-            arm.setState(ArmState.RETRACT);
+            if(!collisionManager.isRetrieving()) arm.setState(ArmState.RETRACT);
             if(System.currentTimeMillis() - intakeAttemptedTime > 350) {
               intakeAttempted = false;
             }
@@ -514,7 +522,7 @@ public class Robot extends IterativeRobot {
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.HatchElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.HatchElevMid);
           else if(buttonPanel.getRawButton(6)) elevator.setHeight(Constants.HatchElevLow);
-          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.HatchHP);
+          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.HatchElevLow);
         }
       }
       

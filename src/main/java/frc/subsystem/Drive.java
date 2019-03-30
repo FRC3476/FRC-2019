@@ -245,7 +245,8 @@ public class Drive extends Threaded {
 
 			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		} else {
-			
+			leftMotorSpeed = moveValue + rotateValue*0.5;
+			rightMotorSpeed = moveValue - rotateValue*0.5;
 			leftMotorSpeed *= Constants.DriveHighSpeed;
 			rightMotorSpeed *= Constants.DriveHighSpeed;
 

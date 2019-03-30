@@ -113,6 +113,10 @@ public class Elevator extends Threaded {
 		else return false;
 	}
 
+	synchronized public boolean isFinishedOrHigher() {
+		return (getHeight() > requested) || isFinished();
+	}
+
 	synchronized public boolean isSafe() {
 		if(Math.abs(safeHeight - getHeight()) < Constants.ElevatorSafetyError) return true;
 		else return false;
@@ -178,12 +182,13 @@ public class Elevator extends Threaded {
 			//If is in setpoint mode
 			case SETPOINT:
 				double setpoint = rateLimiter.update(requested);
+				//System.out.println("elev " + setpoint);
 				elevMaster.set(ControlMode.Position, setpoint * Constants.ElevatorTicksPerInch);
 				double rate = (getHeight() - prevHeight)/(Timer.getFPGATimestamp() - prevTime);
 				prevTime = Timer.getFPGATimestamp();
 				prevHeight = getHeight();
 				if(rate >= maxRate) maxRate = rate;
-				System.out.println("elev max rate: " + maxRate); 
+				//System.out.println("elev max rate: " + maxRate); 
 				//System.out.println(elevMaster.getSelectedSensorPosition());
 				//if(safetyEngage) setHeight(requested);
 				//System.out.println("Elevator current: " + getPulledCurrent());

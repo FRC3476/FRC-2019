@@ -156,7 +156,9 @@ public final class Constants {
 //	public static final double kTurretP = 0.25;
 	public static final double TurretTargetError = 3;
 	public static final double AutoScoreDistance = 36;
-	public static final double AutoScoreDistanceBall = 45;
+	public static final double AutoScoreDistanceBallClose = 36;
+	public static final double AutoScoreDistanceBallFar = 45;
+
 
 
 	public static final int TurretMaxHomingAngle = 45;//Random degrees for now
@@ -202,11 +204,19 @@ public final class Constants {
 	public static final double kElevatorManual = 1;
 
 
-	//setpoints
+	//setpoints comp
+	/*
 	public static final double BallElevHigh = 60.8-1.0; //60.8
 	public static final double BallElevMid = 33.6-0.5;
 	public static final double BallElevLow = 5.8-0.5;
-	public static final double BallElevCargo = 5.8-0.5;
+	public static final double BallElevCargo = 27;
+	public static final double BallElevCargoGroundIntake = 0;
+	public static final double BallHP = 20.85; */
+
+	public static final double BallElevHigh = 62.13; //60.8
+	public static final double BallElevMid = 36.1;
+	public static final double BallElevLow = 5.8-0.5;
+	public static final double BallElevCargo = 27;
 	public static final double BallElevCargoGroundIntake = 0;
 	public static final double BallHP = 20.85;
 
@@ -214,6 +224,8 @@ public final class Constants {
 	public static final double HatchElevMid = 29.7;
 	public static final double HatchElevLow = 2.2;
 	public static final double HatchHP = 1.2;
+
+	public static final double ElevClearance = 7;
 	
 
 	// Manipulator

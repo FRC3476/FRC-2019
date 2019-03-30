@@ -44,6 +44,7 @@ public class Turret extends Threaded {
 
 	private double desired;
 	private boolean fieldRelative;
+	private double targetDistance;
 
 	private double requested = 0;
 	public int twistDir = 1;
@@ -66,6 +67,7 @@ public class Turret extends Threaded {
 		turretState = TurretState.SETPOINT;
 		this.fieldRelative = true;
 		limiter = new RateLimiter(5000, 800);
+		resetDistance();
 		setPeriod(Duration.ofMillis(20));
 	}
 
@@ -179,13 +181,16 @@ public class Turret extends Threaded {
 		return lastDistance < Constants.AutoScoreDistance;
 	}
 
-	synchronized public boolean isInBallRange() {
-		return lastDistance < Constants.AutoScoreDistanceBall;
+	synchronized public int isInBallRange() {
+		if(targetDistance < Constants.AutoScoreDistanceBallClose) return 0;
+		else if(targetDistance < Constants.AutoScoreDistanceBallFar) return 1;
+		else return 2;
 	}
 
 
 	synchronized public void resetDistance() {
-		lastDistance = Constants.AutoScoreDistanceBall + 10;
+		lastDistance = Constants.AutoScoreDistanceBallFar + 10;
+		targetDistance = Constants.AutoScoreDistanceBallFar + 10;
 	}
 
 	private static VisionTarget getNearestTarget(VisionTarget[] t) {
@@ -196,6 +201,7 @@ public class Turret extends Threaded {
 				minValue = t[i].getDistance();
 				nearIndex = i;
 			}
+
 		}
 		return t[nearIndex];
 	}
@@ -215,10 +221,9 @@ public class Turret extends Threaded {
 		if(getAngle() < 0) twistDir = -1;
 		else twistDir = 1;
 
-		//System.out.println(turretState);
+		System.out.println(turretState);
 
 		switch(turretState){
-	
 			//If it is in homing mode
 			case HOMING:
 				//System.out.println("homing now");
@@ -228,17 +233,17 @@ public class Turret extends Threaded {
 				if(turretHallEffect.get()){
 					turretMotor.set(ControlMode.PercentOutput, Constants.TurretHomingPower * dir);
 					
-					if (Math.abs(getAngle()) >= Constants.TurretMaxHomingAngle && switchFlag == false) {
+					if (getAngle() <= -Constants.TurretMaxHomingAngle && switchFlag == false) {
 						dir *= -1; // Switch direction
 						switchFlag = true;
 					}
 					//Failed
-					/*
-					if(Math.abs(getAngle()) <= Constants.TurretMaxHomingAngle){
+					
+					else if(getAngle() >= Constants.TurretMaxHomingAngle){
 						turretState = TurretState.SETPOINT;
-						turretMotor.setSelectedSensorPosition(0,0,10);
+						//turretMotor.setSelectedSensorPosition(0,0,10);
 						System.out.println("Homing failed");
-					}*/
+					}
 
 				} else {
 						//Success
@@ -251,13 +256,14 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
+
 				if(this.fieldRelative) {
 					//double setpoint = limiter.update(desired + drive.getAngle());    
 					setAngle(desired + drive.getAngle());
 				}
 				else {
 					//double setpoint = limiter.update(desired);
-					setAngle(desired);          
+					setAngle(desired);      
 				}
 			break;
 
@@ -266,6 +272,7 @@ public class Turret extends Threaded {
 				restoreSetpoint();
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
+
 				//System.out.println("amunt of targets" + targets.length);
 				if(targets == null || targets.length <= 0) {
 					//System.out.println("null");
@@ -285,6 +292,7 @@ public class Turret extends Threaded {
 					reacquire = false;
 					lastDeltaX = lastX - selected.x; 
 					double d = targets[0].distance;
+
 					synchronized(this) {
 						lastDistance = d;
 					}
@@ -294,10 +302,17 @@ public class Turret extends Threaded {
 					
 					double f = Math.toRadians((selected.x/640.0 - 0.5) * 136/2);  //(148.16/2));
 					//System.out.println("angtotarget: " + angtotarget + "f: " + f);
-			  		double corrected = Math.atan2(Math.cos(f) * d + Constants.cameraYOffset, Math.sin(f) * d +  Constants.cameraXOffset);
+					double y = Math.cos(f) * d + Constants.cameraYOffset;
+					double x = Math.sin(f) * d + Constants.cameraXOffset;
+			  		double corrected = Math.atan2(y, x);
 					corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 
 					desiredAngle = getAngle() - corrected;
+					synchronized(this) {
+						targetDistance = Math.sqrt(x*x + y*y);
+					}
+					//System.out.println("memez y: " + y + " memez x: " + x);
+					//System.out.println("distance " + Math.sqrt(x*x + y*y));
 			 		// desiredAngle = turret.getAngle() - f;
 					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 					//double setpoint = limiter.update(desiredAngle);
