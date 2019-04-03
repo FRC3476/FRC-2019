@@ -114,13 +114,17 @@ public class Turret extends Threaded {
 			requested = setpoint;
 		}
 		
-
+		//double before_limiter = setpoint;
+		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
+			System.out.println("before limiter setpoint error, setpoint = " + setpoint);
+		}
 		setpoint = limiter.update(setpoint);
 		
 		if(setpoint > 180 + Constants.maxTurretOverTravel || setpoint < -180-Constants.maxTurretOverTravel) {
-			System.out.println("setpoint error");
-			if(setpoint > 180 + Constants.maxTurretOverTravel) setpoint = 180 + Constants.maxTurretOverTravel;
-			else setpoint = -180 -Constants.maxTurretOverTravel;
+			System.out.println("setpoint error, setpoint = " + setpoint);
+			if(setpoint > 180 + Constants.maxTurretOverTravel) setpoint = 180;// + Constants.maxTurretOverTravel;
+			else setpoint = -180;// -Constants.maxTurretOverTravel;
+			limiter.reset();//out of range, panic
 		}
 
 		turretMotor.set(ControlMode.Position, -setpoint * Constants.EncoderTicksPerDegree*10.6);
@@ -194,6 +198,10 @@ public class Turret extends Threaded {
 		else return 2;
 	}
 
+	synchronized public void resetDT() {
+		limiter.resetTime();
+	}
+
 
 	synchronized public void resetDistance() {
 		lastDistance = Constants.AutoScoreDistanceBallFar + 10;
@@ -201,11 +209,18 @@ public class Turret extends Threaded {
 	}
 
 	private static VisionTarget getNearestTarget(VisionTarget[] t) {
+		
 		int nearIndex = 0;
 		double minValue = Double.POSITIVE_INFINITY;
 		for(int i = 0; i < t.length; i++) {
-			if(t[i].getDistance() < minValue) {
-				minValue = t[i].getDistance();
+			double f = Math.toRadians((t[i].x/640.0 - 0.5) * 136/2);  
+			double y = Math.cos(f) * t[i].distance + Constants.cameraYOffset;
+			double x = Math.sin(f) * t[i].distance + Constants.cameraXOffset;
+			t[i].setLoc(x, y);
+			t[i].setTurretRelativeDistance( Math.sqrt(x * x + y * y) );
+
+			if(t[i].getTurretDistance() < minValue) {
+				minValue = t[i].getTurretDistance();
 				nearIndex = i;
 			}
 
@@ -315,16 +330,16 @@ public class Turret extends Threaded {
 					//double focallength = 640 / (2*Math.tan(170/2));
 					//double angtotarget = Math.atan2((selected.x - 640/2), focallength);
 					//136
-					double f = Math.toRadians((selected.x/640.0 - 0.5) * 136/2);  //(148.16/2));
+					//double f = Math.toRadians((selected.x/640.0 - 0.5) * 136/2);  //(148.16/2));
 					//System.out.println("angtotarget: " + angtotarget + "f: " + f);
-					double y = Math.cos(f) * d + Constants.cameraYOffset;
-					double x = Math.sin(f) * d + Constants.cameraXOffset;
-			  		double corrected = Math.atan2(y, x);
+					//double y = Math.cos(f) * d + Constants.cameraYOffset;
+					//double x = Math.sin(f) * d + Constants.cameraXOffset;
+			  		double corrected = Math.atan2(selected.loc_y, selected.loc_x);
 					corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 
 					desiredAngle = getAngle() - corrected;
 					synchronized(this) {
-						targetDistance = Math.sqrt(x*x + y*y);
+						targetDistance = selected.getTurretDistance();
 					}
 					//System.out.println("memez y: " + y + " memez x: " + x);
 					//System.out.println("distance " + Math.sqrt(x*x + y*y));

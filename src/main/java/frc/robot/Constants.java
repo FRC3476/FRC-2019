@@ -68,7 +68,7 @@ public final class Constants {
 	public static final double WheelDiameter = 6; //expiermental
 	public static final double MinTurningRadius = 40;
 	public static final double MinPathSpeed = 20;
-	public static final double MaxPathSpeed = 160; //120
+	public static final double MaxPathSpeed = 120; //120
 	public static final double MinLookAheadDistance = 14;
 	public static final double MaxLookAheadDistance = 30;
 	
@@ -111,6 +111,7 @@ public final class Constants {
 	public static final double kDriveLeftLowF = 0;
 	public static final double kDriveLeftLowFIntercept = 0;
 	public static final double kDriveLeftLowA = 0;
+	public static final double kHoldP = 4;
 
 	
 	
@@ -156,7 +157,7 @@ public final class Constants {
 //	public static final double kTurretP = 0.25;
 	public static final double TurretTargetError = 3;
 	public static final double AutoScoreDistance = 36;
-	public static final double AutoScoreDistanceBallClose = 36;
+	public static final double AutoScoreDistanceBallClose = 34.5;
 	public static final double AutoScoreDistanceBallFar = 45;
 
 
@@ -234,9 +235,9 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 152;//Just a random number for now
-	public static final double ClimberMinAngle = 30;//Just a random number for now
-
+	public static final double ClimberMaxAngle = 135;
+	public static final double ClimberMinAngle = 4;
+	public static final double ClimberStartAngle = 2; //no
 	public static final int ClimberSolenoidID = 3;
 	
 	

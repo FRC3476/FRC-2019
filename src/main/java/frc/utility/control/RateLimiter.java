@@ -44,6 +44,8 @@ public class RateLimiter {
 		// Calculate delta T
 		double dt = Timer.getFPGATimestamp() - lastTime;
 		lastTime = Timer.getFPGATimestamp();
+
+		if(dt > 0.1) System.out.println("limiter update took too long (" + setpoint + "," + dt + "," + latestValue + ")");
 		
 		double dInput = setpoint - latestValue; // Expected deltaV
 		if (dInput == 0) return latestValue;

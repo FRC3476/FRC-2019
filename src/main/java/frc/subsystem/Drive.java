@@ -30,7 +30,7 @@ import frc.utility.LazyCANSparkMax;
 public class Drive extends Threaded {
 
 	public enum DriveState {
-		TELEOP, PUREPURSUIT, TURN, DONE
+		TELEOP, PUREPURSUIT, TURN, HOLD, DONE
 	}
 
 	public static class DriveSignal {
@@ -84,9 +84,13 @@ public class Drive extends Threaded {
 	private Rotation2D wantedHeading;
 	private volatile double driveMultiplier;
 
+	double prevPositionL = 0;
+	double prevPositionR = 0;
+
 	public LazyCANSparkMax leftSpark, rightSpark, leftSparkSlave, rightSparkSlave, leftSparkSlave2, rightSparkSlave2;
   	private CANPIDController leftSparkPID, rightSparkPID;
-  	private CANEncoder leftSparkEncoder, rightSparkEncoder;
+	  private CANEncoder leftSparkEncoder, rightSparkEncoder;
+	  
 
 	private Drive() {
 
@@ -104,7 +108,7 @@ public class Drive extends Threaded {
 		rightSparkSlave.setInverted(false);
 
 
-
+		
 
 		leftSparkPID = leftSpark.getPIDController();
 		rightSparkPID = rightSpark.getPIDController();
@@ -220,7 +224,9 @@ public class Drive extends Threaded {
 	public void arcadeDrive(double moveValue, double rotateValue) {
 		//String toPrint="";
 		//double time = Timer.getFPGATimestamp();
-		
+		synchronized(this) {
+			driveState = DriveState.TELEOP;
+		}
 		moveValue = scaleJoystickValues(moveValue);
 		rotateValue = scaleJoystickValues(rotateValue);
 		//double t = Timer.getFPGATimestamp() - time;
@@ -267,6 +273,17 @@ public class Drive extends Threaded {
 
 	public void printCurrent() {
 		System.out.println(leftSpark);
+	}
+
+	public void startHold() {
+		prevPositionL = getLeftDistance();
+		prevPositionR = getRightDistance();
+		driveState = DriveState.HOLD;
+		setShiftState(true);
+	}
+
+	public void endHold() {
+		driveState = DriveState.TELEOP;
 	}
 
 	public void cheesyDrive(double moveValue, double rotateValue, boolean isQuickTurn) {
@@ -328,9 +345,15 @@ public class Drive extends Threaded {
 	}
 
 	public void hold() {
-		leftSparkPID.setReference(leftSparkEncoder.getPosition(), ControlType.kPosition);
-		rightSparkPID.setReference(leftSparkEncoder.getPosition(), ControlType.kPosition);
+		//leftSparkPID.setReference(leftSparkEncoder.getPosition(), ControlType.kPosition);
+		//rightSparkPID.setReference(leftSparkEncoder.getPosition(), ControlType.kPosition);
+		//driveState = DriveState.HOLD;
+		double errorL = prevPositionL - getLeftDistance();
+		double errorR = prevPositionR - getRightDistance();
+		setWheelVelocity(new DriveSignal(errorL * Constants.kHoldP , errorR* Constants.kHoldP));
 
+
+		
 	}
 
 	public void orangeDrive(double moveValue, double rotateValue, boolean isQuickTurn) {
@@ -470,6 +493,7 @@ public class Drive extends Threaded {
 		autonomousDriver = new PurePursuitController(autoPath, isReversed);
 		autonomousDriver.resetTime();
 		configAuto();
+		//System.out.println("even more bad");
 		updatePurePursuit();
 	}
 
@@ -539,7 +563,8 @@ public class Drive extends Threaded {
 	public void update() {
 	//	System.out.println("L speed " + getLeftSpeed() + " position x " + RobotTracker.getInstance().getOdometry().translationMat.getX());
 	//	System.out.println("R speed " + getRightSpeed() + " position y " + RobotTracker.getInstance().getOdometry().translationMat.getY());
-		DriveState snapDriveState;
+	//System.out.println(driveState);	
+	DriveState snapDriveState;
 		synchronized (this) {
 			snapDriveState = driveState;
 		}
@@ -547,10 +572,14 @@ public class Drive extends Threaded {
 			case TELEOP:
 				break;
 			case PUREPURSUIT:
+				//System.out.println("bad!");
 				updatePurePursuit();
 				break;
 			case TURN:
 				updateTurn();
+				break;
+			case HOLD:
+				hold();
 				break;
 		}
 		
@@ -592,6 +621,7 @@ public class Drive extends Threaded {
 	}
 
 	private void updatePurePursuit() {
+	//	System.out.println("updating pure presuit");
 		AutoDriveSignal signal = autonomousDriver.calculate(RobotTracker.getInstance().getOdometry());
 		if (signal.isDone) {
 			synchronized (this) {
@@ -623,11 +653,18 @@ public class Drive extends Threaded {
 		//return success;
 	}
 
-	public void stopMovement() {
+	synchronized public void stopMovement() {
 		//leftTalon.set(ControlMode.PercentOutput, 0);
 		//rightTalon.set(ControlMode.PercentOutput, 0);
-		
+		leftSpark.set(0);
+		//leftSpark.set(ControlMode.Current, 3);
+		rightSpark.set(0);
+		leftSparkPID.setReference(0, ControlType.kDutyCycle);
+		rightSparkPID.setReference(0, ControlType.kDutyCycle);
+		setWheelVelocity(new DriveSignal(0,0));
+
 		driveState = DriveState.TELEOP;
+		resetMotionProfile();
 	}
 
 	synchronized public boolean isFinished() {

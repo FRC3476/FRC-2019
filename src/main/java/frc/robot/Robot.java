@@ -182,6 +182,8 @@ public class Robot extends IterativeRobot {
       turret.restoreSetpoint();
       elevator.setHeight(Math.max(elevator.getHeight(), Constants.HatchElevLow));
       auto.interrupt();
+      drive.stopMovement();
+      drive.setTeleop();
     }
   }
 
@@ -189,14 +191,20 @@ public class Robot extends IterativeRobot {
   public void teleopInit() {
     climber.setDeploySolenoid(false);
     killAuto();
-    drive.stopMovement();
+    System.out.println("teleop init!");
+    //drive.stopMovement();
+
+    turret.resetDT();
+    elevator.resetDT();
     scheduler.resume();
     //elevator.setHeight(Constants.HatchElevLow);
    // turret.homeTurret();
     //elevator.elevHome();
     //manipulator.setManipulatorIntakeState(Manipulator.ManipulatorIntakeState.OFF);
     firstTeleopRun = true;
-    drive.setTeleop();
+    //drive.setTeleop();
+    
+    
   }
   /*
   float angle = 0;
@@ -233,7 +241,11 @@ public class Robot extends IterativeRobot {
 
   boolean autoScoreAllow = true;
 
-  
+  boolean cargoMode = false;
+
+  boolean climberDisable = false;
+
+  double climberPower = 0;
   /**
    * This function is called periodically during operator control.
    */
@@ -244,14 +256,29 @@ public class Robot extends IterativeRobot {
       stick.update();
       buttonPanel.update();
 
-      if(stick.getRawButton(9) && stick.getRawButton(10)) climber.setDeploySolenoid(true);
+      if(stick.getRawButton(9) && stick.getRawButton(10)) {
+        climber.setDeploySolenoid(true);
+        climberPower = 0.75;
+      }
 
-      double climberPower = (stick.getRawAxis(3)+1)/2.0;
+      
       //System.out.println("climber power: " + climberPower);
+      /*
       if(!stick.getRawButton(5)) climberPower = 0;
       else if(stick.getRawAxis(3) > 0) climberPower = -0.15;
       else climberPower = 0.75;
       climber.setPower(climberPower);
+    */
+      
+        if(stick.getRawButton(5) && stick.getRawAxis(3) < 0 /*&& !climberDisable*/) climberPower = 0.75;
+        else if(stick.getRawButton(5) /*&& !climberDisable*/) climberPower = -0.15;
+        if(stick.getRawButton(6)) {
+           //climberDisable = true;
+           climberPower = 0;
+        }
+        climber.setPower(climberPower);
+        
+      
 
       if(hatchIntake.getCurrent() > 3 || manipulator.getCurrent() > 50 || collisionManager.isManipulatorStalled()) {
         //xbox.setRumble(RumbleType.kLeftRumble, 1.0);
@@ -290,6 +317,10 @@ public class Robot extends IterativeRobot {
         if(collisionManager.isBallIntakeOut()) collisionManager.retractBallIntake();
         else collisionManager.extendBallIntake();
         //ballIntakeIn = !collisionManager.isBallIntakeOut();
+      } else if(stick.getRisingEdge(8)) {
+        ballMode = true;
+        collisionManager.abortBall();
+
       }
 
       //ballIntake.setSpeed(xbox.getRawAxis(3) - xbox.getRawAxis(2));
@@ -312,7 +343,7 @@ public class Robot extends IterativeRobot {
       //System.out.println("hi");
 
       //teleopStarttime = Timer.getFPGATimestamp();
-      if(collisionManager.isBallIntakeOut()) {
+      if(collisionManager.isBallIntakeOut() && !collisionManager.isWorking()) {
         if(xbox.getRawAxis(3) > 0.5) {
           ballIntake.setIntakeState(BallIntake.IntakeState.INTAKE);
         } else if(xbox.getRawAxis(2) > 0.5) {
@@ -336,9 +367,11 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       //System.out.println("range: " + turret.isInBallRange());
-      drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4) );
-      if(xbox.getRawButton(4))
+      if(xbox.getRisingEdge(8)) drive.startHold();
+      if(xbox.getFallingEdge(8)) drive.endHold();
+      if(!xbox.getRawButton(8)) drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
 
+      
       if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;
      // System.out.println(!collisionManager.isInControl());
       if(!collisionManager.isInControl()) {
@@ -348,12 +381,15 @@ public class Robot extends IterativeRobot {
           turret.setState(TurretState.VISION);
 
           if(turret.isFinished()) {
+            if(elevator.getRequested() == Constants.BallElevCargo) cargoMode = true;
+            else cargoMode = false;
+
             if(ballMode && turret.isInBallRange() == 1 && autoScoreAllow) {
-              collisionManager.scoreBall(true);
+              collisionManager.scoreBall(true, cargoMode);
               autoScoreAllow = false;
             } 
             else if(ballMode && turret.isInBallRange() == 0 && autoScoreAllow) {
-              collisionManager.scoreBall(false);
+              collisionManager.scoreBall(false, cargoMode);
               autoScoreAllow = false;
             } 
             else if((!ballMode && turret.isInRange()) && (autoScoreAllow && turret.getVelocity() < 3)) {
@@ -468,7 +504,11 @@ public class Robot extends IterativeRobot {
           else if(buttonPanel.getRawButton(8)) elevator.setHeight(Constants.BallElevHigh);
           else if(buttonPanel.getRawButton(7)) elevator.setHeight(Constants.BallElevMid);
           else if(buttonPanel.getRawButton(6)) elevator.setHeight(Constants.BallElevLow);
-          else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.BallElevCargo);
+          else if(buttonPanel.getRawButton(5)) {
+            elevator.setHeight(Constants.BallElevCargo);
+          }
+
+          
 
 
         } else { //hatch mode
@@ -551,6 +591,7 @@ public class Robot extends IterativeRobot {
 
   @Override
   public void disabledInit() {
+    killAuto();
     switch(turret.twistDir) {
       case 1:
         System.out.println("Turret: ccw");

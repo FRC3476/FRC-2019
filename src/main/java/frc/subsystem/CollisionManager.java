@@ -57,7 +57,10 @@ public class CollisionManager extends Threaded {
     double abortHatchTime = 0;
 
     boolean manipulatorStall = false;
+    boolean cargoShipAutoScore = false;
 
+    boolean abortBall = false;
+    int abortBallStage = 0;
     public static CollisionManager getInstance() {
         return cm;
     }    
@@ -102,6 +105,16 @@ public class CollisionManager extends Threaded {
         elevator.setHeight(3);
         handoffStage = 0;
     } 
+
+    synchronized public void abortBall() {
+        abortBall = true;
+        abortBallStage = 0;
+        ballIntakeOut = true;
+        arm.setState(ArmState.RETRACT);
+        elevator.setHeight(Constants.HatchElevMid);
+        turret.setState(TurretState.SETPOINT);
+        turret.setDesired(180, false);
+    }
     
 
     synchronized public void setIntakeState(BallIntake.DeployState state) {
@@ -158,7 +171,8 @@ public class CollisionManager extends Threaded {
         
     }
 
-    synchronized public void scoreBall(boolean extend) {
+    synchronized public void scoreBall(boolean extend, boolean cargoShip) {
+        cargoShipAutoScore = cargoShip;
         scoringBall = true;
         if(extend) scoreStageBall = 1; 
         else scoreStageBall = 0;
@@ -239,8 +253,13 @@ public class CollisionManager extends Threaded {
             }
         }
         if(scoringBall) {
-            System.out.println(scoreStageBall);
+            if(cargoShipAutoScore) {
+                turret.setState(TurretState.SETPOINT);
+                elevator.setHeight(Constants.BallElevCargo-6);
+            }
+            //System.out.println(scoreStageBall);
             switch(scoreStageBall) {
+               
                 case 0: //close
                     arm.setState(ArmState.RETRACT);
                     if(Timer.getFPGATimestamp()-scoreTimeBall > 0.5) {
@@ -336,6 +355,8 @@ public class CollisionManager extends Threaded {
                     break;
                 case 1:
                     ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
+                    combinedIntake.setManipulatorState(ManipulatorState.BALL);
+                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
                     ballIntakeStage++;
                     break;
                 case 2:
@@ -343,8 +364,6 @@ public class CollisionManager extends Threaded {
                     break;                
                 case 3:
                     elevator.setHeight(Constants.BallElevCargoGroundIntake);
-                    combinedIntake.setManipulatorState(ManipulatorState.BALL);
-                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
                     //turret.setDesired(0, true);
                     //turret.restoreSetpoint();
                     extendingBallIntake = false;
@@ -374,10 +393,33 @@ public class CollisionManager extends Threaded {
                     }
                     break;
                 }
-            }
+            } else if(abortBall) {
+                switch(abortBallStage) {
+                    case 0: 
+                        if(elevator.isFinished()) abortBallStage++;
+                        break;
+                    case 1:
+                        ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
+                        abortBallStage++;
+                        break;
+                    case 2:
+                        if(ballIntake.isFinished()) abortBallStage++;
+                        break;                
+                    case 3:
+                       
+                        combinedIntake.setManipulatorState(ManipulatorState.BALL);
+                        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+                        //turret.setDesired(0, true);
+                        //turret.restoreSetpoint();
+                        extendingBallIntake = false;
+                        abortBall = false;
+                        System.out.println("extended ball intake");
+                        break;
+                }
+            } 
         
         
-        if(isBallIntakeOut()) {
+        if(isBallIntakeOut() && extendingBallIntake != true) {
         
             if(combinedIntake.getCurrent() > 30) {
                 combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);    
@@ -385,7 +427,7 @@ public class CollisionManager extends Threaded {
                 manipulatorStall = true;
             }
         }
-        //System.out.println(combinedIntake.getCurrent());
+        //System.out.println("combined intake current: " + combinedIntake.getCurrent());
         
         if(intakingHatch) {
             turret.setDesired(0, false);

@@ -117,6 +117,10 @@ public class Elevator extends Threaded {
 		return (getHeight() > requested) || isFinished();
 	}
 
+	synchronized public void resetDT() {
+		rateLimiter.resetTime();
+	}
+
 	synchronized public boolean isSafe() {
 		if(Math.abs(safeHeight - getHeight()) < Constants.ElevatorSafetyError) return true;
 		else return false;

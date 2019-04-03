@@ -3,6 +3,7 @@
 package frc.subsystem;
 
 import frc.robot.Constants;
+import frc.utility.LazyCANSparkMax;
 import frc.utility.Threaded;
 import frc.utility.telemetry.TelemetryServer;
 
@@ -15,6 +16,7 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class Climber extends Threaded {
@@ -30,18 +32,20 @@ public class Climber extends Threaded {
 	}
 
 	private TelemetryServer telemetryServer = TelemetryServer.getInstance();
-	private CANSparkMax climberMaster;
-	private CANSparkMax climberSlave;
+	private LazyCANSparkMax climberMaster;
+	private LazyCANSparkMax climberSlave;
 	private CANPIDController climberPID;
 	private CANEncoder climberEncoder;
 	private Solenoid deploySolenoid;
 	private ClimberState state = ClimberState.OFF;
-	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 3600, -1750);
+	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 360, -125);
+	private DigitalInput reedSwitchF = new DigitalInput(1);
+	private DigitalInput reedSwitchB = new DigitalInput(2);
 	//private boolean 
 
 	private Climber() {
-		climberMaster = new CANSparkMax(Constants.ClimberMasterId, MotorType.kBrushless);
-		climberSlave = new CANSparkMax(Constants.ClimberSlaveId, MotorType.kBrushless);
+		climberMaster = new LazyCANSparkMax(Constants.ClimberMasterId, MotorType.kBrushless);
+		climberSlave = new LazyCANSparkMax(Constants.ClimberSlaveId, MotorType.kBrushless);
 		deploySolenoid = new Solenoid(Constants.ClimberSolenoidID);
 
 		climberPID = climberMaster.getPIDController();
@@ -60,15 +64,17 @@ public class Climber extends Threaded {
 	}
 
 	public void setPower(double p) {
-		if(deploySolenoid.get() != true) {
-			climberMaster.set(0);
+		//System.out.println("Pot: " + pot.get());
+		if(deploySolenoid.get() != true || reedSwitchF.get() == true || reedSwitchB.get() == true) {// || pot.get() < Constants.ClimberStartAngle) {
+		    climberMaster.set(0);
 			return; 
 		}
 		if(p != 0) {
 			//System.out.println("Current: " + climberMaster.getOutputCurrent());
-			System.out.println("Pot: " + pot.get());
+			
 
 		}
+		
 
 		if(pot.get() >= Constants.ClimberMaxAngle && p > 0) climberMaster.set(0);
 		else if(pot.get() <= Constants.ClimberMinAngle && p < 0) climberMaster.set(0);
@@ -82,7 +88,11 @@ public class Climber extends Threaded {
 
 	@Override
 	public void update() {
+
 		//System.out.println("Potentiometer: " + pot.get());
+
+		//System.out.println("reed switch L: " + reedSwitchF.get());
+		//System.out.println("reed switch R: " + reedSwitchB.get());
 
 		// TODO: Set state and turn off motor when done
 	}
