@@ -35,7 +35,7 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         
         Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(8*12+18, this.side*46), 20); //TEMPORARY
+        p1.addPoint(new Translation2D(8*12+18, this.side*46), 60); //TEMPORARY
         p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
         p1.addPoint(new Translation2D(212+12*4+12, this.side*(3*12+18+0)), 120);
         drive.setAutoPath(p1, false);

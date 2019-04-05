@@ -392,31 +392,32 @@ public class CollisionManager extends Threaded {
                         System.out.println("Retracted ball intake");
                     }
                     break;
-                }
-            } else if(abortBall) {
-                switch(abortBallStage) {
-                    case 0: 
-                        if(elevator.isFinished()) abortBallStage++;
-                        break;
-                    case 1:
-                        ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
-                        abortBallStage++;
-                        break;
-                    case 2:
-                        if(ballIntake.isFinished()) abortBallStage++;
-                        break;                
-                    case 3:
-                       
-                        combinedIntake.setManipulatorState(ManipulatorState.BALL);
-                        combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
-                        //turret.setDesired(0, true);
-                        //turret.restoreSetpoint();
-                        extendingBallIntake = false;
-                        abortBall = false;
-                        System.out.println("extended ball intake");
-                        break;
-                }
-            } 
+            }
+        }
+        else if(abortBall) {
+            switch(abortBallStage) {
+                case 0: 
+                    if(elevator.isFinished()) abortBallStage++;
+                    break;
+                case 1:
+                    ballIntake.setDeployState(BallIntake.DeployState.DEPLOY);
+                    abortBallStage++;
+                    break;
+                case 2:
+                    if(ballIntake.isFinished()) abortBallStage++;
+                    break;                
+                case 3:
+                    
+                    combinedIntake.setManipulatorState(ManipulatorState.BALL);
+                    combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+                    //turret.setDesired(0, true);
+                    //turret.restoreSetpoint();
+                    extendingBallIntake = false;
+                    abortBall = false;
+                    System.out.println("extended ball intake");
+                    break;
+            }
+        } 
         
         
         if(isBallIntakeOut() && extendingBallIntake != true) {

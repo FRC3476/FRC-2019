@@ -38,6 +38,18 @@ public class Manipulator extends Threaded {
 	private Manipulator() {
 		leftTalon = new LazyTalonSRX(Constants.ManipulatorMotor1Id);
 		rightTalon = new LazyTalonSRX(Constants.ManipulatorMotor2Id);
+
+		leftTalon.configPeakCurrentLimit(0);
+		leftTalon.configPeakCurrentDuration(0);
+		leftTalon.configContinuousCurrentLimit(20);
+		leftTalon.enableCurrentLimit(true);
+
+		rightTalon.configPeakCurrentLimit(0);
+		rightTalon.configPeakCurrentDuration(0);
+		rightTalon.configContinuousCurrentLimit(20);
+		rightTalon.enableCurrentLimit(true);
+		
+
 		manipulatorSolenoid = new Solenoid(Constants.ManipulatorSolenoidId);
 
 		setPeriod(Duration.ofMillis(50));
