@@ -77,6 +77,7 @@ public class Robot extends IterativeRobot {
   public void robotInit() {
     drive.calibrateGyro();
     m_chooser.addOption("Lv1 Cargo Hatch", "Lv1 Cargo Hatch");
+    m_chooser.addOption("Lv1 Cargo Blue", "Lv1 Cargo Blue");
     m_chooser.addOption("Lv2 Cargo Hatch", "Lv2 Cargo Hatch");
     m_chooser.addOption("Lv2 Rocket", "Lv2 Rocket");
     m_chooser.setDefaultOption("Lv1 Rocket", "Lv1 Rocket");
@@ -146,6 +147,7 @@ public class Robot extends IterativeRobot {
     else autoDir = 1;
 
     if(m_chooser.getSelected().equals("Lv1 Cargo Hatch")) option = new Lvl1Ship1(autoDir);
+    else if(m_chooser.getSelected().equals("Lv1 Cargo Blue")) option = new Lvl1ShipBlue(autoDir);
     else if(m_chooser.getSelected().equals("Lv2 Rocket")) option = new Lvl2Rocket(autoDir);
     else if(m_chooser.getSelected().equals("Lv2 Cargo Hatch")) option = new Lvl2Ship1(autoDir);
     else option = new Lvl1Rocket(autoDir);

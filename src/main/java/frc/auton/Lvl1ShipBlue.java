@@ -12,9 +12,9 @@ import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class Lvl1Ship1 extends TemplateAuto implements Runnable {
+public class Lvl1ShipBlue extends TemplateAuto implements Runnable {
 
-    public Lvl1Ship1(int side) { 
+    public Lvl1ShipBlue(int side) { 
         //Start position
         super(new Translation2D(48+18, side*46), side);
     }
@@ -37,7 +37,7 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
         Path p1 = new Path(here());
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60); //TEMPORARY
         p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
-        p1.addPoint(new Translation2D(212+12*4+12, this.side*(3*12+18+0)), 120);
+        p1.addPoint(new Translation2D(212+12*4+12-5, this.side*(3*12+18+0)), 120);
         drive.setAutoPath(p1, false);
         turret.setDesired(this.side*-100, true);
         elevator.setHeight(Constants.HatchElevLow);
@@ -93,7 +93,7 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
 
         Path p3 = new Path(here());
         p3.addPoint(new Translation2D(168+12*3, this.side*(3*12+18+0)), 120);
-        p3.addPoint(new Translation2D(212+12*4+12+24, this.side*(3*12+18-2)), 120); //-0
+        p3.addPoint(new Translation2D(212+12*4+12+24-5, this.side*(3*12+18-2)), 120); //-0
         drive.setAutoPath(p3, false);
 
         turret.setState(TurretState.SETPOINT);
