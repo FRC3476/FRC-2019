@@ -270,7 +270,7 @@ public class Robot extends IterativeRobot {
       climber.setPower(climberPower);
     */
       
-        if(stick.getRawButton(5) && stick.getRawAxis(3) < 0 /*&& !climberDisable*/) climberPower = 0.75;
+        if(stick.getRawButton(5) && stick.getRawAxis(3) < 0 /*&& !climberDisable*/) climberPower = 0.9;
         else if(stick.getRawButton(5) /*&& !climberDisable*/) climberPower = -0.15;
         if(stick.getRawButton(6)) {
            //climberDisable = true;
@@ -287,11 +287,11 @@ public class Robot extends IterativeRobot {
         //xbox.setRumble(RumbleType.kLeftRumble, 0);
         xbox.setRumble(RumbleType.kRightRumble, 0);
       }
-     //System.out.println(manipulator.getCurrent());
+     // System.out.println("manipulator current: " + manipulator.getCurrent());
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
 
-      if(xbox.getRawButton(4)) drive.setShiftState(true);
+      if(xbox.getRawButton(4) || xbox.getRawButton(6)) drive.setShiftState(true);
       else drive.setShiftState(false);
 
       if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
@@ -299,7 +299,7 @@ public class Robot extends IterativeRobot {
       //teleopStarttime = Timer.getFPGATimestamp();
       //hatch
       
-
+      /*
       if(xbox.getRisingEdge(1)) {
         ballMode = false;
         
@@ -309,7 +309,7 @@ public class Robot extends IterativeRobot {
         }
         else collisionManager.groundHatchIntake(); 
         //hatchIn = !
-      } 
+      } */ //temprary disabled
 
       //ball
       if(xbox.getRisingEdge(2)) {
@@ -344,10 +344,13 @@ public class Robot extends IterativeRobot {
 
       //teleopStarttime = Timer.getFPGATimestamp();
       if(collisionManager.isBallIntakeOut() && !collisionManager.isWorking()) {
-        if(xbox.getRawAxis(3) > 0.5) {
+        if(xbox.getRawAxis(3) > 0.5) { //>0.5
           ballIntake.setIntakeState(BallIntake.IntakeState.INTAKE);
-        } else if(xbox.getRawAxis(2) > 0.5) {
+          //ballIntake.setSpeed((-xbox.getRawAxis(3)*0.75));
+        } else if(xbox.getRawAxis(2) > 0.5) { //>0.5
           ballIntake.setIntakeState(BallIntake.IntakeState.EJECT);
+          //ballIntake.setSpeed((xbox.getRawAxis(2) * 0.75));
+
         } else {
           ballIntake.setIntakeState(BallIntake.IntakeState.OFF);
         }

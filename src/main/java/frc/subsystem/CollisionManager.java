@@ -422,7 +422,7 @@ public class CollisionManager extends Threaded {
         
         if(isBallIntakeOut() && extendingBallIntake != true) {
         
-            if(combinedIntake.getCurrent() > 30) {
+            if(combinedIntake.getCurrent() > 20) {
                 combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.BALL_HOLD);    
                 combinedIntake.setManipulatorState(ManipulatorState.HATCH);
                 manipulatorStall = true;

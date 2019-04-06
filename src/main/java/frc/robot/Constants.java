@@ -127,7 +127,7 @@ public final class Constants {
 	// Superstructure
 
 	// Ground Ball Intake	
-	public static final double IntakeMotorPowerIntake = 0.5;
+	public static final double IntakeMotorPowerIntake = 0.5; //0.5
 	public static final double IntakeMotorPowerEject = 0.275;
 	public static final double IntakeMediumRPM = 700; // Random number for now
 	public static final double IntakeFastRPM = 700; // Random number for now

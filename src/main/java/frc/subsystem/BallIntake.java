@@ -40,6 +40,11 @@ public class BallIntake extends Threaded {
 		deploySolenoid = new Solenoid(Constants.BallIntakeSolenoidId);
 		intakeMotor = new LazyTalonSRX(Constants.BallIntakeMasterId);
 		intakeMotor.setInverted(true);
+
+		intakeMotor.configPeakCurrentLimit(0);
+		intakeMotor.configPeakCurrentDuration(0);
+		intakeMotor.configContinuousCurrentLimit(25);
+		intakeMotor.enableCurrentLimit(true);
 	}
 
 	public DeployState getDeployState() {
