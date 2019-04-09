@@ -62,10 +62,11 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
         while(!turret.isFinished() || !turret.isInRange()) {
           
         }
-        turret.setState(TurretState.SETPOINT);
+        //turret.setState(TurretState.SETPOINT); temp
         //turret.restoreSetpoint();
         collisionManager.score();
         while(collisionManager.isScoring());
+        turret.setState(TurretState.SETPOINT);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(13*8, this.side*135), 120-6);

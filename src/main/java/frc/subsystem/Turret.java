@@ -59,6 +59,7 @@ public class Turret extends Threaded {
 	Drive drive = Drive.getInstance();
 
 	private RateLimiter limiter;
+	private boolean visionLimit = false;
 
 	private Turret() {
 		turretMotor = new LazyTalonSRX(Constants.TurretMotorId);
@@ -78,7 +79,7 @@ public class Turret extends Threaded {
 	}
 
 	public static enum TurretState{
-		HOMING, SETPOINT, VISION
+		HOMING, SETPOINT, VISION, VISION_LIMITED
 	}
 	
 	private void setAngle(double angle) {
@@ -148,6 +149,10 @@ public class Turret extends Threaded {
 	
 	public double getOutputCurrent() {
 		return turretMotor.getOutputCurrent();
+	}
+
+	public void setVisionLimited(boolean on) {
+		visionLimit = on;
 	}
 
 	synchronized public void homeTurret() {
@@ -346,7 +351,8 @@ public class Turret extends Threaded {
 			 		// desiredAngle = turret.getAngle() - f;
 					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 					//double setpoint = limiter.update(desiredAngle);
-					setAngle(desiredAngle);          
+					if(visionLimit && desiredAngle - getAngle() >= Constants.MaxVisionScoreAngle) break;
+					else setAngle(desiredAngle);          
 					lastX = selected.x;           
 				}
 			

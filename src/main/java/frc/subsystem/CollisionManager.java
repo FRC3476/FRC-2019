@@ -168,6 +168,7 @@ public class CollisionManager extends Threaded {
         scoreStage = 0;
         scoreTime = Timer.getFPGATimestamp();
         arm.setState(ArmState.EXTEND);
+        turret.setVisionLimited(true);
         
     }
 
@@ -237,7 +238,7 @@ public class CollisionManager extends Threaded {
             switch(scoreStage) {
                 case 0:
                     arm.setState(ArmState.EXTEND);
-                    if(Timer.getFPGATimestamp()-scoreTime > 1) {
+                    if(Timer.getFPGATimestamp()-scoreTime > 0.6) {
                         scoreTime = Timer.getFPGATimestamp();
                         scoreStage++;
                     }
@@ -246,7 +247,10 @@ public class CollisionManager extends Threaded {
                 case 1:
                     combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.EJECT);
                     arm.setState(ArmState.RETRACT);
-                    if(Timer.getFPGATimestamp()-scoreTime > 0.4) scoring = false;
+                    if(Timer.getFPGATimestamp()-scoreTime > 0.4) {
+                        turret.setVisionLimited(false);
+                        scoring = false;
+                    }
                     break;
                 
                 
@@ -262,7 +266,7 @@ public class CollisionManager extends Threaded {
                
                 case 0: //close
                     arm.setState(ArmState.RETRACT);
-                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.5) {
+                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.0) {
                         scoreTimeBall = Timer.getFPGATimestamp();
                         scoreStageBall+=2;
                     }
