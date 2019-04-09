@@ -68,7 +68,7 @@ public class Lvl1Rocket extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(144+48*2, this.side*(94+2)), 160);
-        p2.addPoint(new Translation2D(15 /* */, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
+        p2.addPoint(new Translation2D(17 /*15 */, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
                                                                 //X18, Y = 136
                                                                 //x15, 
         drive.setAutoPath(p2, true);
