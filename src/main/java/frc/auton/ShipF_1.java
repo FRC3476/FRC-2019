@@ -9,17 +9,15 @@ import frc.utility.control.*;
 import frc.utility.control.motion.Path;
 import frc.utility.math.*;
 import frc.utility.Threaded;
-import frc.subsystem.Arm.*;
 import frc.subsystem.Turret.*;
+import frc.subsystem.Arm.*;
 
-public class Lvl2Ship1 extends TemplateAuto implements Runnable {
-    public Lvl2Ship1(int side) { 
+public class ShipF_1 extends TemplateAuto implements Runnable {
+
+    public ShipF_1(int side, double startX) { 
+        //Start position
+        super(new Translation2D(startX, side*46), side);
         
-        super(new Translation2D(18+19, side*46), side);
-    }
-
-    public void moveToRocket(boolean raiseElevator, int dir) {
-
     }
 
     double turretFinishTime = 0;
@@ -34,11 +32,10 @@ public class Lvl2Ship1 extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         
         Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(8*12+18, this.side*46), 60); //TEMPORARY
-        p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
-        p1.addPoint(new Translation2D(212+12*4+12, this.side*(3*12+18+0)), 120);
+        p1.addPoint(new Translation2D(8*12 + 128 -18 -4 -2*12, this.side*11.5), 60); //TEMPORARY
+        p1.addPoint(new Translation2D(8*12 + 128 -18 -4, this.side*11.5), 120);
         drive.setAutoPath(p1, false);
-        turret.setDesired(this.side*-100, true);
+        turret.setDesired(0, true);
         elevator.setHeight(Constants.HatchElevLow);
         while(!drive.isFinished()) {
             switch(stage) {
@@ -61,10 +58,11 @@ public class Lvl2Ship1 extends TemplateAuto implements Runnable {
         while(!turret.isFinished() || !turret.isInRange()) {
           
         }
-        turret.setState(TurretState.SETPOINT);
+        //turret.setState(TurretState.SETPOINT); temp
         //turret.restoreSetpoint();
         collisionManager.score();
         while(collisionManager.isScoring());
+        turret.setState(TurretState.SETPOINT);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(13*8, this.side*135), 120-6);
@@ -91,12 +89,12 @@ public class Lvl2Ship1 extends TemplateAuto implements Runnable {
         while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5);
 
         Path p3 = new Path(here());
-        p3.addPoint(new Translation2D(168+12*3, this.side*(3*12+18+0)), 120);
-        p3.addPoint(new Translation2D(212+12*4+12+24, this.side*(3*12+18+0)), 120);
+        p3.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
+        p3.addPoint(new Translation2D(212+12*4+12-1.5+2 /*0*/, this.side*(3*12+18-2/*0 */-1)), 120);
         drive.setAutoPath(p3, false);
 
         turret.setState(TurretState.SETPOINT);
-        turret.setDesired(this.side*-115, true);
+        turret.setDesired(this.side*-90, true);
         while(!turret.isFinished());
         //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         //turret.setState(TurretState.SETPOINT);
@@ -111,6 +109,14 @@ public class Lvl2Ship1 extends TemplateAuto implements Runnable {
 
         collisionManager.score();
         while(collisionManager.isScoring());
+
+        Path p4 = new Path(here());
+        p4.addPoint(new Translation2D(212+12*4+12+24+4+8 + 21.5, this.side*(3*12+18-2-1)), 120);
+        p4.addPoint(new Translation2D(212+12*4+12+24+4+8 + 21.5, this.side*(3*12+18-2-1+24)), 120);
+        drive.setAutoPath(p4, false);
+        while(!drive.isFinished());
+        collisionManager.extendBallIntake();
+        while(!collisionManager.isBallIntakeOut());
         /*
         //Drive forward whilst moving elevator, non blocking
         Path p2 = new Path(here());
@@ -125,6 +131,7 @@ public class Lvl2Ship1 extends TemplateAuto implements Runnable {
         while(!elevator.isFinished()); 
         */
     }
+
     
 
 }

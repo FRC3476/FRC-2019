@@ -65,7 +65,7 @@ public final class Constants {
 	
 	// Autonomous Driving
 	public static final double TrackRadius = -12;
-	public static final double WheelDiameter = 6; //expiermental
+	public static final double WheelDiameter = 6.09; //expiermental
 	public static final double MinTurningRadius = 40;
 	public static final double MinPathSpeed = 20;
 	public static final double MaxPathSpeed = 120; //120
@@ -192,7 +192,7 @@ public final class Constants {
 	public static final double kElevatorI = 0.0;
 	public static final double kElevatorD = 0.3;
 	
-	public static final double ElevatorIntakeSafe = 9;
+	public static final double ElevatorIntakeSafe = 10.5;
 	public static final double ElevatorDeployingSafe = 0;
 	public static final double ElevatorSafetyError = 0;
 	public static final double ElevatorPositionDefault = 1 + (7 / 12);
@@ -237,7 +237,7 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 135;
+	public static final double ClimberMaxAngle = 135-1;
 	public static final double ClimberMinAngle = 4;
 	public static final double ClimberStartAngle = 2; //no
 	public static final int ClimberSolenoidID = 3;

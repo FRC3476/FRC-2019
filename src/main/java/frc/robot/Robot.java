@@ -68,6 +68,7 @@ public class Robot extends IterativeRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<String>();
   private final SendableChooser<String> dir_chooser = new SendableChooser<String>();
   private final SendableChooser<String> goodbad = new SendableChooser<String>();
+  private final SendableChooser<String> start_chooser = new SendableChooser<String>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -76,18 +77,22 @@ public class Robot extends IterativeRobot {
   @Override
   public void robotInit() {
     drive.calibrateGyro();
-    m_chooser.addOption("Lv1 Cargo Hatch", "Lv1 Cargo Hatch");
-    m_chooser.addOption("Lv1 Cargo Blue", "Lv1 Cargo Blue");
-    m_chooser.addOption("Lv2 Cargo Hatch", "Lv2 Cargo Hatch");
-    m_chooser.addOption("Lv2 Rocket", "Lv2 Rocket");
-    m_chooser.setDefaultOption("Lv1 Rocket", "Lv1 Rocket");
+    m_chooser.addOption("Cargo F_F", "Cargo F_F");
+    m_chooser.addOption("Cargo F_1", "Cargo F_1");
+    m_chooser.addOption("Cargo 1_2", "Cargo 1_2");
+    m_chooser.setDefaultOption("Rocket Mid", "Rocket Mid");
+    
     SmartDashboard.putData("Autonomous Mode", m_chooser);
 
     dir_chooser.setDefaultOption("Left", "Left");
     dir_chooser.addOption("Right", "Right");
     SmartDashboard.putData("Starting Side", dir_chooser);
 
-    goodbad.addDefault("good", "good");
+    start_chooser.setDefaultOption("Lvl1", "Lvl1");
+    start_chooser.addOption("Lvl2", "Lvl2");
+    SmartDashboard.putData("Starting Height", start_chooser);
+
+    goodbad.setDefaultOption("good", "good");
     goodbad.addOption("bad","bad");
     goodbad.addOption("mindBuisness", "mindBuisness");
     goodbad.addOption("mInDbUiSnEsS", "mInDbUiSnEsS");
@@ -141,17 +146,21 @@ public class Robot extends IterativeRobot {
     scheduler.resume();
 
     int autoDir = 1;
+    double startPos = 48+18;
     TemplateAuto option;
 
     if(dir_chooser.getSelected().equals("Right")) autoDir = -1;
     else autoDir = 1;
 
-    if(m_chooser.getSelected().equals("Lv1 Cargo Hatch")) option = new Lvl1Ship1(autoDir);
-    else if(m_chooser.getSelected().equals("Lv1 Cargo Blue")) option = new Lvl1ShipBlue(autoDir);
-    else if(m_chooser.getSelected().equals("Lv2 Rocket")) option = new Lvl2Rocket(autoDir);
-    else if(m_chooser.getSelected().equals("Lv2 Cargo Hatch")) option = new Lvl2Ship1(autoDir);
-    else option = new Lvl1Rocket(autoDir);
+    if(start_chooser.getSelected().equals("Lvl2")) startPos = 18+19-8;
+    else startPos = 48+18;
 
+    if(m_chooser.getSelected().equals("Cargo 1_2")) option = new Ship1_2(autoDir, startPos);
+    else if(m_chooser.getSelected().equals("Cargo F_1")) option = new ShipF_1(autoDir, startPos);
+    else if(m_chooser.getSelected().equals("Cargo F_F")) option = new ShipF_F(autoDir, startPos);
+    else option = new RocketMid(autoDir, startPos);
+    
+    //option = new DriveForward();
     Thread auto = new Thread(option);
     auto.start();
     
@@ -270,7 +279,7 @@ public class Robot extends IterativeRobot {
       else if(stick.getRawAxis(3) > 0) climberPower = -0.15;
       else climberPower = 0.75;
       climber.setPower(climberPower);
-    */
+      */
       
         if(stick.getRawButton(5) && stick.getRawAxis(3) < 0 /*&& !climberDisable*/) climberPower = 0.9;
         else if(stick.getRawButton(5) /*&& !climberDisable*/) climberPower = -0.15;
@@ -372,9 +381,9 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       //System.out.println("range: " + turret.isInBallRange());
-      if(xbox.getRisingEdge(8)) drive.startHold();
-      if(xbox.getFallingEdge(8)) drive.endHold();
-      if(!xbox.getRawButton(8)) drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
+      if(xbox.getRisingEdge(5)) drive.startHold();
+      if(xbox.getFallingEdge(5)) drive.endHold();
+      if(!xbox.getRawButton(5)) drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
 
       
       if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;

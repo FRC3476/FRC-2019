@@ -266,7 +266,7 @@ public class CollisionManager extends Threaded {
                
                 case 0: //close
                     arm.setState(ArmState.RETRACT);
-                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.0) {
+                    if(Timer.getFPGATimestamp()-scoreTimeBall > 0.0 && !(!elevator.isFinished() && cargoShipAutoScore)) {
                         scoreTimeBall = Timer.getFPGATimestamp();
                         scoreStageBall+=2;
                     }

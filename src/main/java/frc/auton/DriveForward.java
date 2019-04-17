@@ -21,10 +21,11 @@ public class DriveForward extends TemplateAuto implements Runnable {
     public void run() {
         
         //Drive forward, blocking
-        Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(60, 0), 40);
-        p1.addPoint(new Translation2D(60, 60), 40);
-        drive.setAutoPath(p1, false);
+        //Path p1 = new Path(here());
+        //p1.addPoint(new Translation2D(60, 0), 40);
+        //p1.addPoint(new Translation2D(60, 60), 40);
+        //drive.setAutoPath(p1, false);
+        drive.setRotation(Rotation2D.fromDegrees(180));
         while(!drive.isFinished()) {
            // System.out.println(robotTracker.getOdometry().translationMat.getX() + " , " +robotTracker.getOdometry().translationMat.getY());
         }; 

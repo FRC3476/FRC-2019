@@ -12,11 +12,12 @@ import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class Lvl1Ship1 extends TemplateAuto implements Runnable {
+public class Ship1_2 extends TemplateAuto implements Runnable {
 
-    public Lvl1Ship1(int side) { 
+    public Ship1_2(int side, double startX) { 
         //Start position
-        super(new Translation2D(48+18, side*46), side);
+        super(new Translation2D(startX, side*46), side);
+        
     }
 
     public void moveToRocket(boolean raiseElevator, int dir) {
@@ -37,7 +38,7 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
         Path p1 = new Path(here());
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60); //TEMPORARY
         p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
-        p1.addPoint(new Translation2D(212+12*4+12-1.5 /*0*/, this.side*(3*12+18-2/*0 */)), 120);
+        p1.addPoint(new Translation2D(212+12*4+12-1.5+2 /*0*/, this.side*(3*12+18-2/*0 */-1)), 120);
         drive.setAutoPath(p1, false);
         turret.setDesired(this.side*-100, true);
         elevator.setHeight(Constants.HatchElevLow);
@@ -94,11 +95,11 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
 
         Path p3 = new Path(here());
         p3.addPoint(new Translation2D(168+12*3, this.side*(3*12+18+0)), 120);
-        p3.addPoint(new Translation2D(212+12*4+12+24, this.side*(3*12+18-2)), 120); //-0
+        p3.addPoint(new Translation2D(212+12*4+12+24+4+8, this.side*(3*12+18-2-1 - 3)), 120); //-0
         drive.setAutoPath(p3, false);
 
         turret.setState(TurretState.SETPOINT);
-        turret.setDesired(this.side*-115, true);
+        turret.setDesired(this.side*-90, true);
         while(!turret.isFinished());
         //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         //turret.setState(TurretState.SETPOINT);
@@ -113,6 +114,14 @@ public class Lvl1Ship1 extends TemplateAuto implements Runnable {
 
         collisionManager.score();
         while(collisionManager.isScoring());
+
+        Path p4 = new Path(here());
+        p4.addPoint(new Translation2D(212+12*4+12+24+4+8 + 21.5, this.side*(3*12+18-2-1)), 120);
+        p4.addPoint(new Translation2D(212+12*4+12+24+4+8 + 21.5, this.side*(3*12+18-2-1+24)), 120);
+        drive.setAutoPath(p4, false);
+        while(!drive.isFinished());
+        collisionManager.extendBallIntake();
+        while(!collisionManager.isBallIntakeOut());
         /*
         //Drive forward whilst moving elevator, non blocking
         Path p2 = new Path(here());

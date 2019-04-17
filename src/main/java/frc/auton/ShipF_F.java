@@ -12,13 +12,13 @@ import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class Lvl1Rocket extends TemplateAuto implements Runnable {
+public class ShipF_F extends TemplateAuto implements Runnable {
 
-    public Lvl1Rocket(int side) { 
+    public ShipF_F(int side, double startX) { 
         //Start position
-        super(new Translation2D(48+18, side*46), side);
+        super(new Translation2D(startX, side*46), side);
+        
     }
-
 
     double turretFinishTime = 0;
     int stage = 0;
@@ -32,14 +32,12 @@ public class Lvl1Rocket extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         
         Path p1 = new Path(here());
-        p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
-        p1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
-        //rmeove -1 on x
-        p1.addPoint(new Translation2D(169+48*2+5-1, this.side*(113+26+2-2)), 160);//-2
+        p1.addPoint(new Translation2D(8*12 + 128 -18 -4 -2*12, this.side*11.5), 60); //TEMPORARY
+        p1.addPoint(new Translation2D(8*12 + 128 -18 -4, this.side*11.5), 120);
         drive.setAutoPath(p1, false);
-        turret.setDesired(this.side*160, true);
+        turret.setDesired(0, true);
+        elevator.setHeight(Constants.HatchElevLow);
         while(!drive.isFinished()) {
-            if(p1.getPercentage() > 0.3) elevator.setHeight(Constants.HatchElevMid);
             switch(stage) {
                 case 0:
                     if(turret.isFinished()) {
@@ -60,18 +58,19 @@ public class Lvl1Rocket extends TemplateAuto implements Runnable {
         while(!turret.isFinished() || !turret.isInRange()) {
           
         }
-
+        //turret.setState(TurretState.SETPOINT); temp
+        //turret.restoreSetpoint();
         collisionManager.score();
         while(collisionManager.isScoring());
         turret.setState(TurretState.SETPOINT);
-        turret.setDesired(180, true);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
-        p2.addPoint(new Translation2D(144+48*2, this.side*(94+2)), 160);
-        p2.addPoint(new Translation2D(17 /*15 */, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
-                                                                //X18, Y = 136
-                                                                //x15, 
+        p2.addPoint(new Translation2D(13*8, this.side*135), 120-6);
+        p2.addPoint(new Translation2D(25, this.side*136), 160-6); //X=27, Y=135
         drive.setAutoPath(p2, true);
+
+        turret.setState(TurretState.SETPOINT);
+        turret.setDesired(180, true);
         elevator.setHeight(Constants.HatchElevLow);
         while(!drive.isFinished());
         
@@ -88,28 +87,46 @@ public class Lvl1Rocket extends TemplateAuto implements Runnable {
         collisionManager.retrieveHatch();
         //elevator.setHeight(Constants.HatchElevLow);
         while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5);
-        //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
-        //112-18 + 48*2, 161-18
-        turret.setState(TurretState.SETPOINT);
-        turret.setDesired(20*this.side, true);
-        Path p3 = new Path(here());
-        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2, this.side*(161-20)), 160); //112-18 + 48*2+10
-        drive.setAutoPath(p3, false);
-        while(collisionManager.isRetrieving()); //test
-        elevator.setHeight(Constants.HatchElevMid);
-        while(!drive.isFinished()) {};
 
-        turret.setState(TurretState.VISION);
+        Path p3 = new Path(here());
+        //p3.addPoint(new Translation2D(7*12, this.side*(4*12+19)), 120); //TEMPORARY
+        p3.addPoint(new Translation2D(8*12 + 128 -18 -4 -2*12, this.side*-11.5), 120); //TEMPORARY
+        p3.addPoint(new Translation2D(8*12 + 128 -18 -4, this.side*-11.5), 120);
+        drive.setAutoPath(p3, false);
+
+        turret.setState(TurretState.SETPOINT);
+        turret.setDesired(this.side*0, true);
+        while(!turret.isFinished());
+        //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
+        //turret.setState(TurretState.SETPOINT);
         
+        while(!drive.isFinished());
+        turret.setState(TurretState.VISION);
+
+
         while(!turret.isFinished() || !turret.isInRange()) {
           
         }
 
         collisionManager.score();
-        
-    }
+        while(collisionManager.isScoring());
+
       
-    
+        /*
+        //Drive forward whilst moving elevator, non blocking
+        Path p2 = new Path(here());
+        p2.addPoint(new Translation2D(50, 0), 40);
+        drive.setAutoPath(p2, false);
+        while(!drive.isFinished()) {
+            if(p2.getPercentage() > 0.5) elevator.setHeight(400); 
+        }; 
+
+        //Move elevator, blocking
+        elevator.setHeight(200);
+        while(!elevator.isFinished()); 
+        */
+    }
+
     
 
 }
