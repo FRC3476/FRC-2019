@@ -38,7 +38,7 @@ public class Climber extends Threaded {
 	private CANEncoder climberEncoder;
 	private Solenoid deploySolenoid;
 	private ClimberState state = ClimberState.OFF;
-	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 360, /*-125 grey climber*/ -125+81.78017321 );
+	private AnalogPotentiometer pot = new AnalogPotentiometer(0, 360, -125 /* -125+81.78017321 */);
 	private DigitalInput reedSwitchF = new DigitalInput(1);
 	private DigitalInput reedSwitchB = new DigitalInput(2);
 	//private boolean 
@@ -89,10 +89,10 @@ public class Climber extends Threaded {
 	@Override
 	public void update() {
 
-		System.out.println("Potentiometer: " + pot.get());
+	//	System.out.println("Potentiometer: " + pot.get());
 
-		System.out.println("reed switch L: " + reedSwitchF.get());
-		System.out.println("reed switch R: " + reedSwitchB.get());
+	//	System.out.println("reed switch L: " + reedSwitchF.get());
+	//	System.out.println("reed switch R: " + reedSwitchB.get());
 
 		// TODO: Set state and turn off motor when done
 	}

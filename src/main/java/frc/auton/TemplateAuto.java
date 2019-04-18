@@ -19,6 +19,8 @@ public class TemplateAuto implements Runnable {
     Turret turret = Turret.getInstance();
     int side = 1;
 
+    boolean killSwitch = false;
+
     public TemplateAuto(Translation2D start) {
         RobotTracker.getInstance().setInitialTranslation(start);
     }
@@ -30,6 +32,10 @@ public class TemplateAuto implements Runnable {
 
     public Translation2D here() {
         return RobotTracker.getInstance().getOdometry().translationMat;
+    }
+
+    synchronized public void killSwitch() {
+        killSwitch = true;
     }
 
     @Override

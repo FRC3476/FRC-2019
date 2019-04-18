@@ -178,8 +178,8 @@ public final class Constants {
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	//public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);//orange string, no screw
-	//public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
-	public static final double ElevatorTicksPerInch = 57378/(64.25-4.375); //practice bot
+	public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
+	//public static final double ElevatorTicksPerInch = 57378/(64.25-4.375); //practice bot
 	public static final int ElevatorSensorPidIdx = 0;
 	public static final double ElevatorTargetError = 2;
 	
@@ -207,22 +207,22 @@ public final class Constants {
 
 
 	//setpoints comp
-	/*
+	
 	public static final double BallElevHigh = 60.8-1.0; //60.8
 	public static final double BallElevMid = 33.6-0.5;
 	public static final double BallElevLow = 5.8-0.5;
 	public static final double BallElevCargo = 27;
 	public static final double BallElevCargoGroundIntake = 0;
 	public static final double BallHP = 20.85;
-*/
-	
+
+	/*
 	public static final double BallElevHigh = 62.13; //60.8
 	public static final double BallElevMid = 36.1;
 	public static final double BallElevLow = 5.8-0.5;
 	public static final double BallElevCargo = 27;
 	public static final double BallElevCargoGroundIntake = 0;	
 	public static final double BallHP = 20.85;
-
+	*/
 	public static final double HatchElevHigh = 56.8; //56.8
 	public static final double HatchElevMid = 29.7;
 	public static final double HatchElevLow = 1.5;//2.2;
@@ -245,12 +245,12 @@ public final class Constants {
 	
 	// Camera
 	//PRAC
-	public static final double cameraYOffset = 5.310 + 1.25;//5.310 + 1.25;
-	public static final double cameraXOffset = -4.815 + 1.6 - 1.0 - 1; //-4.815 + 1.6 - 1.0
+	//public static final double cameraYOffset = 5.310 + 1.25;//5.310 + 1.25;
+	//public static final double cameraXOffset = -4.815 + 1.6 - 1.0 - 1; //-4.815 + 1.6 - 1.0
 
 	//COMP
-	//public static final double cameraYOffset = 5.310 + 1.25;//5.310 + 1.25;
-	//public static final double cameraXOffset = -4.815 + 1.6 - 1.0;
+	public static final double cameraYOffset = 5.310 + 1.25;//5.310 + 1.25;
+	public static final double cameraXOffset = -4.815 + 1.6 - 1.0;
 
 	private Constants() {
 	}

@@ -12,9 +12,9 @@ import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class Ship1_2 extends TemplateAuto implements Runnable {
+public class Ship1_2Blue extends TemplateAuto implements Runnable {
 
-    public Ship1_2(int side, double startX) { 
+    public Ship1_2Blue(int side, double startX) { 
         //Start position
         super(new Translation2D(startX, side*46), side);
         

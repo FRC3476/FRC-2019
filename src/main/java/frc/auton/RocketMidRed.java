@@ -1,4 +1,4 @@
-package frc.auton;
+package frc.auton; //blue
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
@@ -12,9 +12,9 @@ import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class RocketMid extends TemplateAuto implements Runnable {
+public class RocketMidRed extends TemplateAuto implements Runnable {
 
-    public RocketMid(int side, double startX) { 
+    public RocketMidRed(int side, double startX) { 
         //Start position
         super(new Translation2D(startX, side*46), side);
     }
@@ -27,7 +27,7 @@ public class RocketMid extends TemplateAuto implements Runnable {
     public void run() {
         
         //Drive forward, blocking
-        
+        System.out.println("rocket mid red");        
         manipulator.setManipulatorState(ManipulatorState.HATCH);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         
@@ -35,10 +35,10 @@ public class RocketMid extends TemplateAuto implements Runnable {
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
         p1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
         //rmeove -1 on x
-        p1.addPoint(new Translation2D(169+48*2+5-1, this.side*(113+26+2-2)), 160);//-2
+        p1.addPoint(new Translation2D(169+48*2+5-1-9, this.side*(113+26+2-2)), 160);//-2
         drive.setAutoPath(p1, false);
         turret.setDesired(this.side*160, true);
-        while(!drive.isFinished()) {
+        while(!drive.isFinished() && !killSwitch) {
             if(p1.getPercentage() > 0.3) elevator.setHeight(Constants.HatchElevMid);
             switch(stage) {
                 case 0:
@@ -68,7 +68,7 @@ public class RocketMid extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(144+48*2, this.side*(94+2)), 160);
-        p2.addPoint(new Translation2D(20 /*15 */, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
+        p2.addPoint(new Translation2D(20 + 5 /*15 */, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
                                                                 //X18, Y = 136
                                                                 //x15, 
         drive.setAutoPath(p2, true);
@@ -93,7 +93,7 @@ public class RocketMid extends TemplateAuto implements Runnable {
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(20*this.side, true);
         Path p3 = new Path(here());
-        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2, this.side*(161-20)), 160); //112-18 + 48*2+10
+        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2 + 12, this.side*(161-20)), 160); //112-18 + 48*2+10
         drive.setAutoPath(p3, false);
         while(collisionManager.isRetrieving()); //test
         elevator.setHeight(Constants.HatchElevMid);

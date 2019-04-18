@@ -59,6 +59,7 @@ public class Robot extends IterativeRobot {
   ExecutorService executor = Executors.newFixedThreadPool(4);
   ThreadScheduler scheduler = new ThreadScheduler();
   Thread auto;
+  TemplateAuto option;
 
   boolean firstTeleopRun = true;
 
@@ -69,6 +70,7 @@ public class Robot extends IterativeRobot {
   private final SendableChooser<String> dir_chooser = new SendableChooser<String>();
   private final SendableChooser<String> goodbad = new SendableChooser<String>();
   private final SendableChooser<String> start_chooser = new SendableChooser<String>();
+  private final SendableChooser<String> red_blue = new SendableChooser<String>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -91,6 +93,10 @@ public class Robot extends IterativeRobot {
     start_chooser.setDefaultOption("Lvl1", "Lvl1");
     start_chooser.addOption("Lvl2", "Lvl2");
     SmartDashboard.putData("Starting Height", start_chooser);
+
+    red_blue.setDefaultOption("Red", "Red");
+    red_blue.addOption("Blue", "Blue");
+    SmartDashboard.putData("Red and Blue", red_blue);
 
     goodbad.setDefaultOption("good", "good");
     goodbad.addOption("bad","bad");
@@ -147,21 +153,22 @@ public class Robot extends IterativeRobot {
 
     int autoDir = 1;
     double startPos = 48+18;
-    TemplateAuto option;
 
     if(dir_chooser.getSelected().equals("Right")) autoDir = -1;
     else autoDir = 1;
 
-    if(start_chooser.getSelected().equals("Lvl2")) startPos = 18+19-8;
+    if(start_chooser.getSelected().equals("Lvl2")) startPos = 18+19-3;//-8;
     else startPos = 48+18;
 
-    if(m_chooser.getSelected().equals("Cargo 1_2")) option = new Ship1_2(autoDir, startPos);
+    if(m_chooser.getSelected().equals("Cargo 1_2")&& red_blue.getSelected().equals("Red")) option = new Ship1_2Red(autoDir, startPos);
+    else if(m_chooser.getSelected().equals("Cargo 1_2")&& red_blue.getSelected().equals("Blue")) option = new Ship1_2Blue(autoDir, startPos);
     else if(m_chooser.getSelected().equals("Cargo F_1")) option = new ShipF_1(autoDir, startPos);
     else if(m_chooser.getSelected().equals("Cargo F_F")) option = new ShipF_F(autoDir, startPos);
-    else option = new RocketMid(autoDir, startPos);
+    else if(m_chooser.getSelected().equals("Rocket Mid") && red_blue.getSelected().equals("Red")) option = new RocketMidRed(autoDir, startPos);
+    else option = new RocketMidBlue(autoDir, startPos);
     
     //option = new DriveForward();
-    Thread auto = new Thread(option);
+    auto = new Thread(option);
     auto.start();
     
   }
@@ -195,6 +202,9 @@ public class Robot extends IterativeRobot {
       auto.interrupt();
       drive.stopMovement();
       drive.setTeleop();
+    }
+    if(option != null) {
+      option.killSwitch();
     }
   }
 

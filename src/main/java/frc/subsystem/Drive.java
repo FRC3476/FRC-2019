@@ -668,7 +668,7 @@ public class Drive extends Threaded {
 	}
 
 	synchronized public boolean isFinished() {
-		return driveState == DriveState.DONE;
+		return driveState == DriveState.DONE || driveState == DriveState.TELEOP;
 	}
 
 	public void clearStickyFaults() {
