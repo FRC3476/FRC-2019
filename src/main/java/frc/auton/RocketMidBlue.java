@@ -35,7 +35,7 @@ public class RocketMidBlue extends TemplateAuto implements Runnable {
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
         p1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
         //rmeove -1 on x
-        p1.addPoint(new Translation2D(169+48*2+5-1 -5, this.side*(113+26+2-2)), 160);//-2
+        p1.addPoint(new Translation2D(169+48*2+5-1 -5 /*expiermental*/ -2, this.side*(113+26+2-2)), 160);//-2
 
         
         /*
@@ -93,7 +93,7 @@ public class RocketMidBlue extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(144+48*2, this.side*(94+2)), 160);
-        p2.addPoint(new Translation2D(17 -2/*20 + 5*/, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
+        p2.addPoint(new Translation2D(17 -2/*20 + 5*/  -2 /*expiermental*/, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
                                                                 //X18, Y = 136
                                                                 //x15, 
         drive.setAutoPath(p2, true);
@@ -118,7 +118,7 @@ public class RocketMidBlue extends TemplateAuto implements Runnable {
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(20*this.side, true);
         Path p3 = new Path(here());
-        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2 - 10/* + 12*/, this.side*(161-20)), 160); //112-18 + 48*2+10
+        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2 - 10 + 9 /*expiermental*/, this.side*(161-20)), 160); //112-18 + 48*2+10
         drive.setAutoPath(p3, false);
         while(collisionManager.isRetrieving());//test
         elevator.setHeight(Constants.HatchElevMid);

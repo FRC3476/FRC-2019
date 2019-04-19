@@ -27,7 +27,7 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
     public void run() {
         
         //Drive forward, blocking
-        System.out.println("rocket mid red");        
+        System.out.println("rocket mid red");  
         manipulator.setManipulatorState(ManipulatorState.HATCH);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         
@@ -35,7 +35,32 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
         p1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
         //rmeove -1 on x
-        p1.addPoint(new Translation2D(169+48*2+5-1-9, this.side*(113+26+2-2)), 160);//-2
+        p1.addPoint(new Translation2D(169+48*2+5-1 -5 /*expiermental*/ -2, this.side*(113+26+2-2)), 160);//-2
+
+        
+        /*
+            if(startX < 50) {
+                Path dropOff = new Path(here());
+                dropOff.addPoint(new Translation2D(8*12+18, this.side*46), 60);
+                drive.setAutoPath(dropOff);
+                while(!drive.isFinished() && !killSwitch);
+
+                double reverseTime = Timer.getFPGATimestamp();
+                Path reverse = new Path(here));
+                reverse.addPoint(new Translation2D(0, this.side*46), 60);
+                drive.setAutoPath(reverse);
+                while(Timer.getFPGATimestamp() - reverseTime < 0.5);
+
+                Path rocket1 = new Path(here));
+                rocket1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
+                rocket1.addPoint(new Translation2D(169+48*2+5-1 -5, this.side*(113+26+2-2)), 160);//-2
+                drive.setAutoPath(rocket1);
+                
+
+            } 
+            else drive.setAutoPath(p1, false);
+        */
+
         drive.setAutoPath(p1, false);
         turret.setDesired(this.side*160, true);
         while(!drive.isFinished() && !killSwitch) {
@@ -68,7 +93,7 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(144+48*2, this.side*(94+2)), 160);
-        p2.addPoint(new Translation2D(20 + 5 /*15 */, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
+        p2.addPoint(new Translation2D(17 -2/*20 + 5*/  -2 /*expiermental*/, this.side*(136 + 2+ 5 + 2)), 160); //X=27, Y=135
                                                                 //X18, Y = 136
                                                                 //x15, 
         drive.setAutoPath(p2, true);
@@ -81,7 +106,7 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         arm.setState(ArmState.EXTEND);
-        elevator.setHeight(Constants.HatchHP);
+        elevator.setHeight(Constants.HatchHP); 
         double intakeAttemptTime = Timer.getFPGATimestamp();
         while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75);
         //arm.setState(ArmState.RETRACT);
@@ -93,9 +118,9 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(20*this.side, true);
         Path p3 = new Path(here());
-        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2 + 12, this.side*(161-20)), 160); //112-18 + 48*2+10
+        p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2 - 10/* + 12*/, this.side*(161-20)), 160); //112-18 + 48*2+10
         drive.setAutoPath(p3, false);
-        while(collisionManager.isRetrieving()); //test
+        while(collisionManager.isRetrieving());//test
         elevator.setHeight(Constants.HatchElevMid);
         while(!drive.isFinished()) {};
 
