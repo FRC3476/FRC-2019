@@ -454,7 +454,7 @@ public class Drive extends Threaded {
 		return leftTalon.getSelectedSensorPosition(0) / Constants.EncoderTicksPerRotation * Constants.WheelDiameter
 				* Math.PI * 22d / 62d / 3d;
 		*/
-		return -leftSparkEncoder.getPosition() * Constants.WheelDiameter
+		return leftSparkEncoder.getPosition() * Constants.WheelDiameter
 		* Math.PI * 22d / 62d / 3d;
 	}
 
@@ -473,7 +473,7 @@ public class Drive extends Threaded {
 	}
 
 	public double getLeftSpeed() {
-		return -leftSparkEncoder.getVelocity()  * 2 * Math.PI/60d * Constants.WheelDiameter/2d
+		return leftSparkEncoder.getVelocity()  * 2 * Math.PI/60d * Constants.WheelDiameter/2d
 		* 22d / 62d / 3d;
 	}
 

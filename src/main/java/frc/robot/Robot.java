@@ -273,6 +273,7 @@ public class Robot extends IterativeRobot {
   @Override
   public void teleopPeriodic() {
       //System.out.println("turret " + turret.getAngle());
+      //System.out.println(drive.getLeftSpeed() + " right: " + drive.getRightSpeed());
       xbox.update();
       stick.update();
       buttonPanel.update();
