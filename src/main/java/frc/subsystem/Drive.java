@@ -304,7 +304,7 @@ public class Drive extends Threaded {
 			if (moveValue < 0.2) {
 				quickStopAccumulator = 0.9 * quickStopAccumulator + 0.1 * rotateValue * 2;
 			}
-			angularPower = rotateValue * 0.2;
+			angularPower = rotateValue * 0.4; //0.2
 		} else {
 			overPower = 0;
 			angularPower = Math.abs(moveValue) * rotateValue - quickStopAccumulator;

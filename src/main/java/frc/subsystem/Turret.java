@@ -75,7 +75,7 @@ public class Turret extends Threaded {
 		this.fieldRelative = true;
 		limiter = new RateLimiter(5000, 800);
 		resetDistance();
-		setPeriod(Duration.ofMillis(20));
+		setPeriod(Duration.ofMillis(7));
 	}
 
 	public static enum TurretState{
@@ -213,14 +213,16 @@ public class Turret extends Threaded {
 		targetDistance = Constants.AutoScoreDistanceBallFar + 10;
 	}
 
-	private static VisionTarget getNearestTarget(VisionTarget[] t) {
+	private VisionTarget getNearestTarget(VisionTarget[] t) {
 		
 		int nearIndex = 0;
 		double minValue = Double.POSITIVE_INFINITY;
 		for(int i = 0; i < t.length; i++) {
-			double f = Math.toRadians((t[i].x/640.0 - 0.5) * 136/2);  
-			double y = Math.cos(f) * t[i].distance + Constants.cameraYOffset;
-			double x = Math.sin(f) * t[i].distance + Constants.cameraXOffset;
+			double delta_phi = Math.toRadians((2*t[i].x/640.0 - 1) * 92/2) * -1;
+			double phi = delta_phi + Math.toRadians(getAngle());  
+			double y = Math.sin(phi) * t[i].distance + Constants.cameraYOffset;
+			double x = Math.cos(phi) * t[i].distance + Constants.cameraXOffset;
+			//System.out.println("delta: " + delta_phi + " phi: " + phi + " tur delta " + (Math.toDegrees(Math.atan2(y, x))-getAngle()));
 			t[i].setLoc(x, y);
 			t[i].setTurretRelativeDistance( Math.sqrt(x * x + y * y) );
 
@@ -291,7 +293,9 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
-
+			VisionTarget[] ftargets = jetsonUDP.getTargets();
+				if(ftargets == null || ftargets.length <= 0);
+				else getNearestTarget(ftargets);
 				if(this.fieldRelative) {
 					//double setpoint = limiter.update(desired + drive.getAngle());    
 					setAngle(desired + drive.getAngle());
@@ -339,10 +343,10 @@ public class Turret extends Threaded {
 					//System.out.println("angtotarget: " + angtotarget + "f: " + f);
 					//double y = Math.cos(f) * d + Constants.cameraYOffset;
 					//double x = Math.sin(f) * d + Constants.cameraXOffset;
-			  		double corrected = Math.atan2(selected.loc_y, selected.loc_x);
-					corrected = 90 - Math.toDegrees(corrected);  
+			  		double corrected = Math.atan2(selected.loc_y, selected.loc_x);// + Math.toRadians(getAngle());
+					//corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 
-					desiredAngle = getAngle() - corrected;
+					desiredAngle = Math.toDegrees(corrected);
 					synchronized(this) {
 						targetDistance = selected.getTurretDistance();
 					}

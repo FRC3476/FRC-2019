@@ -394,7 +394,7 @@ public class Robot extends IterativeRobot {
       //System.out.println("range: " + turret.isInBallRange());
       if(xbox.getRisingEdge(5)) drive.startHold();
       if(xbox.getFallingEdge(5)) drive.endHold();
-      if(!xbox.getRawButton(5)) drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
+      if(!xbox.getRawButton(5)) drive.cheesyDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4), true);//drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
 
       
       if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;
