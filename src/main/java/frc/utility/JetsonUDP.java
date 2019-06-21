@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 
 import java.nio.ByteBuffer;
@@ -14,10 +15,11 @@ import java.nio.ByteOrder;
 import java.time.Duration;
 
 public class JetsonUDP extends Threaded {
+  private double prevUpdateTime = Timer.getFPGATimestamp();
 
 	private static final JetsonUDP instance = new JetsonUDP();
 
-  private DatagramSocket socket;
+  private DatagramSocket socket, socket2;
   private InetAddress address;
 
   private final int packetSize = 16;
@@ -32,12 +34,48 @@ public class JetsonUDP extends Threaded {
     //super("bleh");
     try {
       socket = new DatagramSocket(Constants.JetsonPort);
+      //socket2 = new DatagramSocket(Constants.JetsonPort);
       address = InetAddress.getByName(Constants.JetsonIPv4);
+      
+      //socket.setSoTimeout(101);
+      new Thread(new Runnable() {
+        
+        public void run() {
+
+          while(true) {
+              prevUpdateTime = Timer.getFPGATimestamp();
+              try {
+                byte[] b = ("0"+InetAddress.getLocalHost().getHostAddress()).getBytes();
+                DatagramPacket packet = new DatagramPacket(b, b.length, address, Constants.JetsonPort);
+                System.out.println("sending stuff");
+                socket.send(packet);
+                Thread.sleep(1000);
+              } catch(Exception e) {
+
+                System.out.println(e);
+              };  
+          }
+        }
+      }).start();
+
     } catch(Exception e) {
       System.out.println("Failed to intialize UDP socket with Jetson");
     }
     //start();
     setPeriod(Duration.ofMillis(10));
+  }
+
+  synchronized public void changeExp(boolean high) {
+    try {
+      String state = "l";
+      if(high) state = "h";
+      byte[] b = ("1"+state).getBytes();
+      DatagramPacket packet = new DatagramPacket(b, b.length, address, Constants.JetsonPort);
+      System.out.println("sending stuff");
+      socket.send(packet);
+    } catch(Exception e) {
+      System.out.println(e);
+    };  
   }
 
   synchronized public VisionTarget[] getTargets() {
@@ -85,6 +123,7 @@ public class JetsonUDP extends Threaded {
 	public void update() {
 
       recieve();  
+
       
 
   }

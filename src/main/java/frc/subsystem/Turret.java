@@ -175,6 +175,8 @@ public class Turret extends Threaded {
 	}
 
 	synchronized public void setState(TurretState state) {
+		if(state == TurretState.VISION) JetsonUDP.getInstance().changeExp(false);
+		else JetsonUDP.getInstance().changeExp(true);
 		if(this.turretState != TurretState.HOMING)
 		{
 			this.turretState = state;

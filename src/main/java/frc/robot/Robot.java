@@ -210,6 +210,8 @@ public class Robot extends IterativeRobot {
 
   @Override 
   public void teleopInit() {
+    jetsonUDP.changeExp(true);
+    
     climber.setDeploySolenoid(false);
     killAuto();
     System.out.println("teleop init!");
@@ -282,7 +284,8 @@ public class Robot extends IterativeRobot {
         climber.setDeploySolenoid(true);
         climberPower = 0.75;
       }
-
+      if(stick.getRisingEdge(11)) jetsonUDP.changeExp(true);
+      else if(stick.getRisingEdge(12)) jetsonUDP.changeExp(false);
       
       //System.out.println("climber power: " + climberPower);
       /*
