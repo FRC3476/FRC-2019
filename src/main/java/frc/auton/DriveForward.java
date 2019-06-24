@@ -27,6 +27,7 @@ public class DriveForward extends TemplateAuto implements Runnable {
         //drive.setAutoPath(p1, false);
         drive.setRotation(Rotation2D.fromDegrees(180));
         while(!drive.isFinished()) {
+            if(isDead()) return;
            // System.out.println(robotTracker.getOdometry().translationMat.getX() + " , " +robotTracker.getOdometry().translationMat.getY());
         }; 
         

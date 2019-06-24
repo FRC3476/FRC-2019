@@ -61,6 +61,8 @@ public class Turret extends Threaded {
 	private RateLimiter limiter;
 	private boolean visionLimit = false;
 
+	VisionTarget selected;
+
 	private Turret() {
 		turretMotor = new LazyTalonSRX(Constants.TurretMotorId);
 		turretMotor.setSensorPhase(false);
@@ -219,11 +221,16 @@ public class Turret extends Threaded {
 		
 		int nearIndex = 0;
 		double minValue = Double.POSITIVE_INFINITY;
-		for(int i = 0; i < t.length; i++) {
+		for(int i = 0; i < t.length; i++) { //106
 			double delta_phi = Math.toRadians((2*t[i].x/640.0 - 1) * 92/2) * -1;
-			double phi = delta_phi + Math.toRadians(getAngle());  
-			double y = Math.sin(phi) * t[i].distance + Constants.cameraYOffset;
-			double x = Math.cos(phi) * t[i].distance + Constants.cameraXOffset;
+			double theta = Math.toRadians(getAngle());
+			double phi = delta_phi + theta;
+			
+			double xOff = Constants.cameraXOffset*Math.cos(theta) - Constants.cameraYOffset*Math.sin(theta);
+			double yOff = Constants.cameraXOffset*Math.sin(theta) + Constants.cameraYOffset*Math.cos(theta);
+
+			double y = Math.sin(phi) * t[i].distance + yOff;
+			double x = Math.cos(phi) * t[i].distance + xOff;
 			//System.out.println("delta: " + delta_phi + " phi: " + phi + " tur delta " + (Math.toDegrees(Math.atan2(y, x))-getAngle()));
 			t[i].setLoc(x, y);
 			t[i].setTurretRelativeDistance( Math.sqrt(x * x + y * y) );
@@ -239,6 +246,10 @@ public class Turret extends Threaded {
 
 	public double getVelocity() {
 		return this.velocity;
+	}
+
+	public synchronized VisionTarget getSelected() {
+		return selected;
 	}
 
 
@@ -297,7 +308,11 @@ public class Turret extends Threaded {
 			case SETPOINT:
 			VisionTarget[] ftargets = jetsonUDP.getTargets();
 				if(ftargets == null || ftargets.length <= 0);
-				else getNearestTarget(ftargets);
+				else {
+					synchronized(this) {
+					getNearestTarget(ftargets);
+					}
+				}
 				if(this.fieldRelative) {
 					//double setpoint = limiter.update(desired + drive.getAngle());    
 					setAngle(desired + drive.getAngle());
@@ -329,7 +344,7 @@ public class Turret extends Threaded {
 				else {
 					//lastTargetGyro = drive.getAngle();
 					//System.out.println("turret");
-					VisionTarget selected = getNearestTarget(targets);
+					selected = getNearestTarget(targets);
 					reacquire = false;
 					lastDeltaX = lastX - selected.x; 
 					double d = targets[0].distance;
@@ -345,7 +360,7 @@ public class Turret extends Threaded {
 					//System.out.println("angtotarget: " + angtotarget + "f: " + f);
 					//double y = Math.cos(f) * d + Constants.cameraYOffset;
 					//double x = Math.sin(f) * d + Constants.cameraXOffset;
-			  		double corrected = Math.atan2(selected.loc_y, selected.loc_x);// + Math.toRadians(getAngle());
+			  		double corrected = Math.atan2(selected.loc_y, selected.loc_x);//+ Math.toRadians(getAngle());
 					//corrected = 90 - Math.toDegrees(corrected);  
 					//double corrected = Math.toDegrees(f); 
 					desiredAngle = Math.toDegrees(corrected);

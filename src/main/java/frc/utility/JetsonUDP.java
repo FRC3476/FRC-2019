@@ -47,7 +47,7 @@ public class JetsonUDP extends Threaded {
               try {
                 byte[] b = ("0"+InetAddress.getLocalHost().getHostAddress()).getBytes();
                 DatagramPacket packet = new DatagramPacket(b, b.length, address, Constants.JetsonPort);
-                System.out.println("sending stuff");
+       //         System.out.println("sending stuff");
                 socket.send(packet);
                 Thread.sleep(1000);
               } catch(Exception e) {
@@ -71,7 +71,7 @@ public class JetsonUDP extends Threaded {
       if(high) state = "h";
       byte[] b = ("1"+state).getBytes();
       DatagramPacket packet = new DatagramPacket(b, b.length, address, Constants.JetsonPort);
-      System.out.println("sending stuff");
+     // System.out.println("sending stuff");
       socket.send(packet);
     } catch(Exception e) {
       System.out.println(e);

@@ -45,13 +45,13 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
                 Path dropOff = new Path(here());
                 dropOff.addPoint(new Translation2D(8*12+18, this.side*46), 60);
                 drive.setAutoPath(dropOff, false);
-                while(!drive.isFinished() && !killSwitch);
+                while(!drive.isFinished() && !killSwitch)if(isDead()) return;
 
                 double reverseTime = Timer.getFPGATimestamp();
                 Path reverse = new Path(here());
                 reverse.addPoint(new Translation2D(0, this.side*46), 60);
                 drive.setAutoPath(reverse, true);
-                while(Timer.getFPGATimestamp() - reverseTime < 0.5);
+                while(Timer.getFPGATimestamp() - reverseTime < 0.5)if(isDead()) return;
 
                 Path rocket1 = new Path(here());
                 rocket1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
@@ -65,6 +65,7 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
         turret.setDesired(this.side*-100, true);
         elevator.setHeight(Constants.HatchElevLow);
         while(!drive.isFinished()) {
+            if(isDead()) return;
             switch(stage) {
                 case 0:
                     if(turret.isFinished()) {
@@ -83,12 +84,12 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
         turret.setState(TurretState.VISION);
         
         while(!turret.isFinished() || !turret.isInRange()) {
-          
+            if(isDead()) return;
         }
         //turret.setState(TurretState.SETPOINT); temp
         //turret.restoreSetpoint();
         collisionManager.score();
-        while(collisionManager.isScoring());
+        while(collisionManager.isScoring())if(isDead()) return;
         turret.setState(TurretState.SETPOINT);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
@@ -99,21 +100,21 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(180, true);
         elevator.setHeight(Constants.HatchElevLow);
-        while(!drive.isFinished());
+        while(!drive.isFinished())if(isDead()) return;
         
         turret.setState(TurretState.VISION);
         
-        while(!turret.isFinished() || !turret.isInRange());
+        while(!turret.isFinished() || !turret.isInRange())if(isDead()) return;
         
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         arm.setState(ArmState.EXTEND);
         elevator.setHeight(Constants.HatchHP);
         double intakeAttemptTime = Timer.getFPGATimestamp();
-        while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75);
+        while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75)if(isDead()) return;
         //arm.setState(ArmState.RETRACT);
         collisionManager.retrieveHatch();
         //elevator.setHeight(Constants.HatchElevLow);
-        while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5);
+        while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5)if(isDead()) return;
 
         Path p3 = new Path(here());
         p3.addPoint(new Translation2D(168+12*3, this.side*(3*12+18+0)), 120);
@@ -122,20 +123,20 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
 
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(this.side*-100, true);
-        while(!turret.isFinished());
+        while(!turret.isFinished())if(isDead()) return;
         //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         //turret.setState(TurretState.SETPOINT);
         
-        while(!drive.isFinished());
+        while(!drive.isFinished())if(isDead()) return;
         turret.setState(TurretState.VISION);
 
 
         while(!turret.isFinished() || !turret.isInRange()) {
-          
+            if(isDead()) return;
         }
 
         collisionManager.score();
-        while(collisionManager.isScoring());
+        while(collisionManager.isScoring())if(isDead()) return;
         /*
         Path p4 = new Path(here());
         p4.addPoint(new Translation2D(212+12*4+12+24+4+8 + 21.5, this.side*(3*12+18-2-1)), 120);

@@ -64,6 +64,7 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         drive.setAutoPath(p1, false);
         turret.setDesired(this.side*160, true);
         while(!drive.isFinished() && !killSwitch) {
+            if(isDead()) return;
             if(p1.getPercentage() > 0.3) elevator.setHeight(Constants.HatchElevMid);
             switch(stage) {
                 case 0:
@@ -83,11 +84,11 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         turret.setState(TurretState.VISION);
         
         while(!turret.isFinished() || !turret.isInRange()) {
-          
+            if(isDead()) return;
         }
 
         collisionManager.score();
-        while(collisionManager.isScoring());
+        while(collisionManager.isScoring())if(isDead()) return;
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(180, true);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
@@ -98,21 +99,21 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
                                                                 //x15, 
         drive.setAutoPath(p2, true);
         elevator.setHeight(Constants.HatchElevLow);
-        while(!drive.isFinished());
+        while(!drive.isFinished())if(isDead()) return;
         
         turret.setState(TurretState.VISION);
         
-        while(!turret.isFinished() || !turret.isInRange());
+        while(!turret.isFinished() || !turret.isInRange())if(isDead()) return;
         
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         arm.setState(ArmState.EXTEND);
         elevator.setHeight(Constants.HatchHP); 
         double intakeAttemptTime = Timer.getFPGATimestamp();
-        while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75);
+        while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75)if(isDead()) return;
         //arm.setState(ArmState.RETRACT);
         collisionManager.retrieveHatch();
         //elevator.setHeight(Constants.HatchElevLow);
-        while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5);
+        while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5)if(isDead()) return;
         //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         //112-18 + 48*2, 161-18
         turret.setState(TurretState.SETPOINT);
@@ -120,14 +121,14 @@ public class RocketMidRed extends TemplateAuto implements Runnable {
         Path p3 = new Path(here());
         p3.addPoint(new Translation2D(112-18 + 48*2+10 - 2 - 10/* + 12*/, this.side*(161-20)), 160); //112-18 + 48*2+10
         drive.setAutoPath(p3, false);
-        while(collisionManager.isRetrieving());//test
+        while(collisionManager.isRetrieving())if(isDead()) return;//test
         elevator.setHeight(Constants.HatchElevMid);
-        while(!drive.isFinished()) {};
+        while(!drive.isFinished()) {if(isDead()) return;};
 
         turret.setState(TurretState.VISION);
         
         while(!turret.isFinished() || !turret.isInRange()) {
-          
+            if(isDead()) return;
         }
 
         collisionManager.score();

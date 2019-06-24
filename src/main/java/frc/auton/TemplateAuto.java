@@ -38,6 +38,10 @@ public class TemplateAuto implements Runnable {
         killSwitch = true;
     }
 
+    synchronized public boolean isDead() {
+        return killSwitch;
+    }
+
     @Override
     public void run() {
 

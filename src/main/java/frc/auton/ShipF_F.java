@@ -38,6 +38,7 @@ public class ShipF_F extends TemplateAuto implements Runnable {
         turret.setDesired(0, true);
         elevator.setHeight(Constants.HatchElevLow);
         while(!drive.isFinished()) {
+            if(isDead()) return;
             switch(stage) {
                 case 0:
                     if(turret.isFinished()) {
@@ -56,12 +57,12 @@ public class ShipF_F extends TemplateAuto implements Runnable {
         turret.setState(TurretState.VISION);
         
         while(!turret.isFinished() || !turret.isInRange()) {
-          
+            if(isDead()) return;
         }
         //turret.setState(TurretState.SETPOINT); temp
         //turret.restoreSetpoint();
         collisionManager.score();
-        while(collisionManager.isScoring());
+        while(collisionManager.isScoring())if(isDead()) return;
         turret.setState(TurretState.SETPOINT);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
@@ -72,21 +73,21 @@ public class ShipF_F extends TemplateAuto implements Runnable {
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(180, true);
         elevator.setHeight(Constants.HatchElevLow);
-        while(!drive.isFinished());
+        while(!drive.isFinished())if(isDead()) return;
         
         turret.setState(TurretState.VISION);
         
-        while(!turret.isFinished() || !turret.isInRange());
+        while(!turret.isFinished() || !turret.isInRange())if(isDead()) return;
         
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
         arm.setState(ArmState.EXTEND);
         elevator.setHeight(Constants.HatchHP);
         double intakeAttemptTime = Timer.getFPGATimestamp();
-        while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75);
+        while(Timer.getFPGATimestamp()-intakeAttemptTime < 0.75)if(isDead()) return;
         //arm.setState(ArmState.RETRACT);
         collisionManager.retrieveHatch();
         //elevator.setHeight(Constants.HatchElevLow);
-        while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5);
+        while(Timer.getFPGATimestamp()-intakeAttemptTime < 1.5)if(isDead()) return;
 
         Path p3 = new Path(here());
         //p3.addPoint(new Translation2D(7*12, this.side*(4*12+19)), 120); //TEMPORARY
@@ -96,20 +97,20 @@ public class ShipF_F extends TemplateAuto implements Runnable {
 
         turret.setState(TurretState.SETPOINT);
         turret.setDesired(this.side*0, true);
-        while(!turret.isFinished());
+        while(!turret.isFinished())if(isDead()) return;
         //manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         //turret.setState(TurretState.SETPOINT);
         
-        while(!drive.isFinished());
+        while(!drive.isFinished())if(isDead()) return;
         turret.setState(TurretState.VISION);
 
 
         while(!turret.isFinished() || !turret.isInRange()) {
-          
+            if(isDead()) return;
         }
 
         collisionManager.score();
-        while(collisionManager.isScoring());
+        while(collisionManager.isScoring())if(isDead()) return;
 
       
         /*

@@ -150,4 +150,22 @@ public class Translation2D implements Interpolable<Translation2D> {
 		Translation2D delta = new Translation2D(this.getX() - other.getX(), this.getY() - other.getY());
 		return new Translation2D(this.getX() + delta.getX() * percentage, this.getY() + delta.getY() * percentage);
 	}
+	
+	public double getMagnitude() {
+		return Math.sqrt(this.getX() * this.getX() + this.getY() * this.getY());
+	}
+
+	public Translation2D getUnitVector() {
+		return new Translation2D(this.getX()/getMagnitude(), this.getY()/getMagnitude());
+	}
+
+	public Translation2D scale(double d) {
+		return new Translation2D(this.getX()*d, this.getY()*d);
+	}
+
+	@Override
+	public String toString() {
+		return ("<"+this.getX() + ", " + this.getY()+">");
+	}
+
 }

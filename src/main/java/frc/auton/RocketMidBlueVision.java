@@ -8,13 +8,14 @@ import frc.subsystem.Manipulator.ManipulatorState;
 import frc.utility.control.*;
 import frc.utility.control.motion.Path;
 import frc.utility.math.*;
+import frc.utility.OrangeUtility;
 import frc.utility.Threaded;
 import frc.subsystem.Turret.*;
 import frc.subsystem.Arm.*;
 
-public class RocketMidBlue extends TemplateAuto implements Runnable {
+public class RocketMidBlueVision extends TemplateAuto implements Runnable {
 
-    public RocketMidBlue(int side, double startX) { 
+    public RocketMidBlueVision(int side, double startX) { 
         //Start position
         super(new Translation2D(startX, side*46), side);
     }
@@ -33,9 +34,16 @@ public class RocketMidBlue extends TemplateAuto implements Runnable {
         
         Path p1 = new Path(here());
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
-        p1.addPoint(new Translation2D(144+48*2+5, this.side*(94+2)), 160);
+        p1.addPoint(new Translation2D(144+48*2+5+15, this.side*(94+2)), 160);
+        p1.addPoint(new Translation2D(169+48*2+5-1 -5 +15/*expiermental*/ -2, this.side*(113+26+2-2-8)), 160);//-2
+        /*
+        p1.addPoint(new Translation2D(8*12+18, this.side*46), 60);
+        p1.addPoint(new Translation2D(144+48*2+5+20+10, this.side*(94+2)), 160);
+        p1.addPoint(new Translation2D(144+48*2+5+20+10+20, this.side*(94+2+15)), 160);
+        */
+
         //rmeove -1 on x
-        p1.addPoint(new Translation2D(169+48*2+5-1 -5 /*expiermental*/ -2, this.side*(113+26+2-2)), 160);//-2
+        //p1.addPoint(new Translation2D(169+48*2+5-1 -5 /*expiermental*/ -2 + 20, this.side*(113+26+2-2)), 160);//-2
 
         
         /*
@@ -62,7 +70,7 @@ public class RocketMidBlue extends TemplateAuto implements Runnable {
         */
 
         drive.setAutoPath(p1, false);
-        turret.setDesired(this.side*160, true);
+        turret.setDesired(this.side*140, true);
         while(!drive.isFinished() && !killSwitch) {
             if(isDead()) return;
 
@@ -84,6 +92,25 @@ public class RocketMidBlue extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         turret.setState(TurretState.VISION);
         
+        OrangeUtility.sleep(1000);
+
+        double xT = turret.getSelected().loc_x + robotTracker.getOdometry().translationMat.getX();
+        double yT = turret.getSelected().loc_y + robotTracker.getOdometry().translationMat.getY();
+        
+        Translation2D target = new Translation2D(turret.getSelected().loc_x, turret.getSelected().loc_y);
+        Translation2D targetprobot = new Translation2D(xT, yT);
+    
+        Translation2D mod = target.getUnitVector().inverse().scale(25) ;//.translateBy(targetprobot);
+        Translation2D loc = mod.translateBy(targetprobot);
+        //Translation2D target.translateBy(robotTracker.getOdometry().translationMat.inverse());
+        System.out.println("mod: " + mod + " loc: " + loc + " targetprobot " + targetprobot);
+        drive.setRotation(targetprobot.getAngle(loc));
+        OrangeUtility.sleep(1000);
+        Path pV = new Path(here());
+        pV.addPoint(loc, 60);
+        drive.setAutoPath(pV, true);
+        while(!drive.isFinished())if(isDead()) return;;
+
         while(!turret.isFinished() || !turret.isInRange()) {
             if(isDead()) return;
         }

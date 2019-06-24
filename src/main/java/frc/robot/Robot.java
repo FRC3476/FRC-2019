@@ -82,6 +82,8 @@ public class Robot extends IterativeRobot {
     m_chooser.addOption("Cargo F_F", "Cargo F_F");
     m_chooser.addOption("Cargo F_1", "Cargo F_1");
     m_chooser.addOption("Cargo 1_2", "Cargo 1_2");
+    m_chooser.addOption("Rocket Mid Adaptive", "Rocket Mid Adaptive");
+
     m_chooser.setDefaultOption("Rocket Mid", "Rocket Mid");
     
     SmartDashboard.putData("Autonomous Mode", m_chooser);
@@ -165,6 +167,7 @@ public class Robot extends IterativeRobot {
     else if(m_chooser.getSelected().equals("Cargo F_1")) option = new ShipF_1(autoDir, startPos);
     else if(m_chooser.getSelected().equals("Cargo F_F")) option = new ShipF_F(autoDir, startPos);
     else if(m_chooser.getSelected().equals("Rocket Mid") && red_blue.getSelected().equals("Red")) option = new RocketMidRed(autoDir, startPos);
+    else if(m_chooser.getSelected().equals("Rocket Mid Adaptive")) option = new RocketMidBlueVision(autoDir, startPos);
     else option = new RocketMidBlue(autoDir, startPos);
     
     //option = new DriveForward();
@@ -194,18 +197,23 @@ public class Robot extends IterativeRobot {
   
   } 
 
-  public void killAuto() {
-    if(auto != null) {
-      turret.setDesired(0, true);
-      turret.restoreSetpoint();
-      elevator.setHeight(Math.max(elevator.getHeight(), Constants.HatchElevLow));
-      auto.interrupt();
-      drive.stopMovement();
-      drive.setTeleop();
-    }
+  public synchronized void killAuto() {
     if(option != null) {
       option.killSwitch();
     }
+
+    //new Thread().
+    if(auto != null) {
+      //auto.interrupt();
+      //while(!auto.isInterrupted());
+      while(auto.getState() != Thread.State.TERMINATED);
+      turret.setDesired(0, true);
+      turret.restoreSetpoint();
+      elevator.setHeight(Math.max(elevator.getHeight(), Constants.HatchElevLow));
+      drive.stopMovement();
+      drive.setTeleop();
+    }
+    
   }
 
   @Override 
