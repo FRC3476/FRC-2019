@@ -131,4 +131,12 @@ public class Rotation2D implements Interpolable<Rotation2D> {
 	public double sin() {
 		return sin;
 	}
+
+	public Translation2D getUnitVector() {
+		return new Translation2D(cos, sin).getUnitVector();
+	}
+
+	public String toString() {
+		return ""+ getDegrees();
+	}
 }

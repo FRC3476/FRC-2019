@@ -18,6 +18,16 @@ public class VisionTarget {
         
     }
 
+    public VisionTarget(VisionTarget v) {
+        this.x = v.x;
+        this.y = v.y;
+        this.connectorMag = v.connectorMag;
+        this.distance = v.distance;
+        this.turretRelativeDistance = v.turretRelativeDistance;
+        this.loc_x = v.loc_x;
+        this.loc_y = v.loc_y;
+    }
+
     public float getX() {
         return this.x;
     }

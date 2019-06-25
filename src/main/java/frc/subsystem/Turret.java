@@ -55,6 +55,8 @@ public class Turret extends Threaded {
 
 	private TurretState prevState = TurretState.SETPOINT;
 
+	private boolean gotFrame = false;
+
 	JetsonUDP jetsonUDP = JetsonUDP.getInstance();
 	Drive drive = Drive.getInstance();
 
@@ -177,7 +179,11 @@ public class Turret extends Threaded {
 	}
 
 	synchronized public void setState(TurretState state) {
-		if(state == TurretState.VISION) JetsonUDP.getInstance().changeExp(false);
+		
+		if(state == TurretState.VISION) {
+			JetsonUDP.getInstance().changeExp(false);
+			gotFrame = false;
+		}
 		else JetsonUDP.getInstance().changeExp(true);
 		if(this.turretState != TurretState.HOMING)
 		{
@@ -193,6 +199,7 @@ public class Turret extends Threaded {
 	synchronized public boolean isFinished() {
 		if(turretState != prevState) return false;
 		if(turretState == TurretState.HOMING) return false;
+		if(turretState == TurretState.VISION && !gotFrame) return false;
 		if(Math.abs(getAngle() - requested) < Constants.TurretTargetError) return true;
 		else return false;
 	}
@@ -249,6 +256,7 @@ public class Turret extends Threaded {
 	}
 
 	public synchronized VisionTarget getSelected() {
+		//System.out.println(selected.loc_x+", " + selected.loc_y);
 		return selected;
 	}
 
@@ -306,13 +314,13 @@ public class Turret extends Threaded {
 
 			//if it is setpoint mode
 			case SETPOINT:
-			VisionTarget[] ftargets = jetsonUDP.getTargets();
+			/*VisionTarget[] ftargets = jetsonUDP.getTargets();
 				if(ftargets == null || ftargets.length <= 0);
 				else {
 					synchronized(this) {
 					getNearestTarget(ftargets);
 					}
-				}
+				}*/
 				if(this.fieldRelative) {
 					//double setpoint = limiter.update(desired + drive.getAngle());    
 					setAngle(desired + drive.getAngle());
@@ -328,7 +336,7 @@ public class Turret extends Threaded {
 				restoreSetpoint();
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
-
+				
 				//System.out.println("amunt of targets" + targets.length);
 				if(targets == null || targets.length <= 0) {
 					//System.out.println("null");
@@ -344,7 +352,14 @@ public class Turret extends Threaded {
 				else {
 					//lastTargetGyro = drive.getAngle();
 					//System.out.println("turret");
-					selected = getNearestTarget(targets);
+					
+					synchronized(this) {
+						selected = new VisionTarget(getNearestTarget(targets));
+						System.out.println("target " + selected.loc_x + ", " + selected.loc_y);
+						gotFrame = true;
+
+					}
+					//System.out.println("target " + selected.loc_x + ", " + selected.loc_y);
 					reacquire = false;
 					lastDeltaX = lastX - selected.x; 
 					double d = targets[0].distance;
@@ -380,9 +395,9 @@ public class Turret extends Threaded {
 			break;
 			
 		}
-		
-		prevState = turretState;
-		
+		synchronized(this) {
+			prevState = turretState;
+		}
 		/*telemetryServer.sendData(
 			"trtL", 
 			getTargetAngle(), 

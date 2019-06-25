@@ -33,6 +33,10 @@ public class TemplateAuto implements Runnable {
     public Translation2D here() {
         return RobotTracker.getInstance().getOdometry().translationMat;
     }
+    
+    public Rotation2D dir() {
+        return RobotTracker.getInstance().getOdometry().rotationMat;
+    }
 
     synchronized public void killSwitch() {
         killSwitch = true;
