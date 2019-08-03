@@ -227,8 +227,8 @@ public class Drive extends Threaded {
 		synchronized(this) {
 			driveState = DriveState.TELEOP;
 		}
-		moveValue = scaleJoystickValues(moveValue);
-		rotateValue = scaleJoystickValues(rotateValue);
+		moveValue = scaleJoystickValues(moveValue, 0);
+		rotateValue = scaleJoystickValues(rotateValue, Constants.steeringWheel ? 1 : 0);
 		//double t = Timer.getFPGATimestamp() - time;
 		//if(teleopstart) toPrint += (t) + " 12\n";
 
@@ -290,8 +290,8 @@ public class Drive extends Threaded {
 		synchronized (this) {
 			driveState = DriveState.TELEOP;
 		}
-		moveValue = scaleJoystickValues(moveValue);
-		rotateValue = scaleJoystickValues(rotateValue);
+		moveValue = scaleJoystickValues(moveValue, 0);
+		rotateValue = scaleJoystickValues(rotateValue, Constants.steeringWheel ? 1 : 0);
 
 		double leftMotorSpeed;
 		double rightMotorSpeed;
@@ -335,6 +335,10 @@ public class Drive extends Threaded {
 			leftMotorSpeed += overPower * (-1.0 - rightMotorSpeed);
 			rightMotorSpeed = -1.0;
 		}
+
+		leftMotorSpeed = OrangeUtility.coerce(leftMotorSpeed, 1, -1);
+		rightMotorSpeed = OrangeUtility.coerce(rightMotorSpeed, 1, -1);	
+
 		if (drivePercentVbus) {
 			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
 		} else {
@@ -360,8 +364,8 @@ public class Drive extends Threaded {
 		synchronized (this) {
 			driveState = DriveState.TELEOP;
 		}
-		moveValue = scaleJoystickValues(moveValue);
-		rotateValue = scaleJoystickValues(rotateValue);
+		moveValue = scaleJoystickValues(moveValue, 0);
+		rotateValue = scaleJoystickValues(rotateValue, Constants.steeringWheel ? 1 : 0);
 		// 50 is min turn radius
 		double radius = (1 / rotateValue) + Math.copySign(24, rotateValue);
 		double deltaSpeed = (Constants.TrackRadius * ((moveValue * driveMultiplier) / radius));
@@ -482,8 +486,8 @@ public class Drive extends Threaded {
 		* 22d / 62d / 3d;
 	}
 
-	public double scaleJoystickValues(double rawValue) {
-		return Math.copySign(OrangeUtility.coercedNormalize(Math.abs(rawValue), Constants.MinControllerInput,
+	public double scaleJoystickValues(double rawValue, int profile) {
+		return Math.copySign(OrangeUtility.coercedNormalize(Math.abs(rawValue), Constants.MinControllerInput[profile],
 				Constants.MaxControllerInput, Constants.MinControllerOutput, Constants.MaxControllerOutput),
 				rawValue);
 	}

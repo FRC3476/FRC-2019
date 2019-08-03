@@ -182,7 +182,11 @@ public class Turret extends Threaded {
 		
 		if(state == TurretState.VISION) {
 			JetsonUDP.getInstance().changeExp(false);
-			gotFrame = false;
+			if(prevState != TurretState.VISION) 
+			{
+				JetsonUDP.getInstance().popTargets();
+				gotFrame = false;
+			}
 		}
 		else JetsonUDP.getInstance().changeExp(true);
 		if(this.turretState != TurretState.HOMING)
@@ -205,7 +209,7 @@ public class Turret extends Threaded {
 	}
 
 	synchronized public boolean isInRange() {
-		return lastDistance < Constants.AutoScoreDistance;
+		return targetDistance < Constants.AutoScoreDistance;
 	}
 
 	synchronized public int isInBallRange() {
@@ -355,14 +359,18 @@ public class Turret extends Threaded {
 					
 					synchronized(this) {
 						selected = new VisionTarget(getNearestTarget(targets));
-						System.out.println("target " + selected.loc_x + ", " + selected.loc_y);
-						gotFrame = true;
+						//System.out.println("target " + selected.distance);
 
 					}
+
+					// if(!gotFrame)
+					// {
+					// 	System.out.println("(" + selected.loc_x + ", " + selected.loc_y + ") vl: " + visionLimit);
+					// }
 					//System.out.println("target " + selected.loc_x + ", " + selected.loc_y);
 					reacquire = false;
 					lastDeltaX = lastX - selected.x; 
-					double d = targets[0].distance;
+					double d = selected.distance;//targets[0].distance;
 
 					synchronized(this) {
 						lastDistance = d;
@@ -388,8 +396,13 @@ public class Turret extends Threaded {
 					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 					//double setpoint = limiter.update(desiredAngle);
 					if(visionLimit && desiredAngle - getAngle() >= Constants.MaxVisionScoreAngle) break;
-					else setAngle(desiredAngle);          
-					lastX = selected.x;           
+					else setAngle(desiredAngle);
+					
+					synchronized(this) {
+						gotFrame = true;
+
+					}
+					lastX = selected.x;          
 				}
 			
 			break;

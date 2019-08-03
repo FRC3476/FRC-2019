@@ -3,6 +3,8 @@
 package frc.robot;
 
 public final class Constants {
+
+	public static final boolean steeringWheel = true;
 	// Networking
 	public static final int TelemetryPort = 5810;
 	public static final String DriverStationIPv4 = "10.34.76.5"; // Temporary
@@ -41,7 +43,8 @@ public final class Constants {
 	public static final int TurretLimitId = 0;
 	
 	// Controller
-	public static final double MinControllerInput = 0.15;
+
+	public static final double[] MinControllerInput = {0.15, 0.08};
 	public static final double MaxControllerInput = 1;
 	public static final double MinControllerOutput = 0;
 	public static final double MaxControllerOutput = 1;
@@ -156,9 +159,9 @@ public final class Constants {
 	public static final int TurretMotorId = 7;
 //	public static final double kTurretP = 0.25;
 	public static final double TurretTargetError = 3;
-	public static final double AutoScoreDistance = 36;
-	public static final double AutoScoreDistanceBallClose = 34.5;
-	public static final double AutoScoreDistanceBallFar = 45;
+	public static final double AutoScoreDistance = 36 - 5.25;
+	public static final double AutoScoreDistanceBallClose = 34.5 - 6;
+	public static final double AutoScoreDistanceBallFar = 45 - 6;
 	public static final double MaxVisionScoreAngle = 10;
 
 

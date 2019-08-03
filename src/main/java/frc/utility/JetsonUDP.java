@@ -88,6 +88,10 @@ public class JetsonUDP extends Threaded {
     target = null;
   }
 
+  synchronized public boolean hasTargets() {
+    return target != null;
+  }
+
   private void recieve() {
     byte[] b = new byte[256];
     DatagramPacket packet = new DatagramPacket(b, b.length);

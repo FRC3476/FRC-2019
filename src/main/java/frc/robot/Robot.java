@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import java.util.concurrent.*;
+
+
 import frc.utility.ThreadScheduler;
 import frc.utility.Controller;
 import frc.utility.JetsonUDP;
@@ -40,10 +42,11 @@ import frc.utility.VisionTarget;
 public class Robot extends IterativeRobot {
   Drive drive = Drive.getInstance();
   CollisionManager collisionManager = CollisionManager.getInstance();
-  public static Controller xbox = new Controller(0);
+  public Controller xbox = new Controller(0);
+  public Controller wheel = new Controller(3);
   //public static Joystick xbox = new Joystick(0);
-  public static Controller stick = new Controller(1);
-  public static Controller buttonPanel = new Controller(2);
+  public Controller stick = new Controller(1);
+  public Controller buttonPanel = new Controller(2);
   TelemetryServer telemetryServer = TelemetryServer.getInstance();
   Turret turret = Turret.getInstance();
   Elevator elevator = Elevator.getInstance();
@@ -287,13 +290,13 @@ public class Robot extends IterativeRobot {
       xbox.update();
       stick.update();
       buttonPanel.update();
+      wheel.update();
 
       if(stick.getRawButton(9) && stick.getRawButton(10)) {
         climber.setDeploySolenoid(true);
         climberPower = 0.75;
       }
-      if(stick.getRisingEdge(11)) jetsonUDP.changeExp(true);
-      else if(stick.getRisingEdge(12)) jetsonUDP.changeExp(false);
+      if(stick.getRawButton(11)) System.out.println("bad");
       
       //System.out.println("climber power: " + climberPower);
       /*
@@ -345,7 +348,7 @@ public class Robot extends IterativeRobot {
       } */ //temprary disabled
 
       //ball
-      if(xbox.getRisingEdge(2)) {
+      if(Constants.steeringWheel ? wheel.getRisingEdge(3) : xbox.getRisingEdge(2)) {
         ballMode = true;
         if(collisionManager.isBallIntakeOut()) collisionManager.retractBallIntake();
         else collisionManager.extendBallIntake();
@@ -405,7 +408,8 @@ public class Robot extends IterativeRobot {
       //System.out.println("range: " + turret.isInBallRange());
       if(xbox.getRisingEdge(5)) drive.startHold();
       if(xbox.getFallingEdge(5)) drive.endHold();
-      if(!xbox.getRawButton(5)) drive.cheesyDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4), true);//drive.arcadeDrive(-xbox.getRawAxis(1), xbox.getRawAxis(4));
+      if(!xbox.getRawButton(5)) drive.cheesyDrive(-xbox.getRawAxis(1), Constants.steeringWheel ? wheel.getRawAxis(0):xbox.getRawAxis(4),
+        Math.abs(xbox.getRawAxis(1)) < Constants.MinControllerInput[0]);//drive.arcadeDrive(-xbox.getRawAxis(1),Constants.steeringWheel ? wheel.getRawAxis(0):xbox.getRawAxis(4));
 
       
       if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;
@@ -415,6 +419,8 @@ public class Robot extends IterativeRobot {
         if(buttonPanel.getRawButton(4)) turret.setState(TurretState.VISION);
         else if(buttonPanel.getRawButton(1)) {
           turret.setState(TurretState.VISION);
+
+          
 
           if(turret.isFinished()) {
             if(elevator.getRequested() == Constants.BallElevCargo) cargoMode = true;
@@ -431,6 +437,7 @@ public class Robot extends IterativeRobot {
             else if((!ballMode && turret.isInRange()) && (autoScoreAllow && turret.getVelocity() < 3)) {
               collisionManager.score();
               autoScoreAllow = false;
+              //System.out.println("fin " + turret.isFinished() + " blm " + ballMode + " tir " + turret.isInRange());
             }
           }
         } 
@@ -451,7 +458,7 @@ public class Robot extends IterativeRobot {
         } else if(Math.abs(stick.getZ()) >= 0.3) {
           turret.addDesired(-stick.getZ()*Constants.kTurretManual);
         } else if(stick.getPOV() != -1) {
-          turret.setDesired(stick.getPOV(), false);
+          turret.setDesired(-stick.getPOV(), false);
         }
         //Ball vs Turret Mode
         if(stick.getRawButton(3)) ballMode = true;
