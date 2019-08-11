@@ -221,6 +221,60 @@ public class Drive extends Threaded {
 		driveState = DriveState.TELEOP;
 	}
 
+    
+    
+    public void skidLimitingDrive(double moveValue, double rotateValue) {
+		synchronized(this) {
+			driveState = DriveState.TELEOP;
+		}
+		moveValue = scaleJoystickValues(moveValue, 0);
+		rotateValue = scaleJoystickValues(rotateValue, 0);
+        
+		double leftMotorSpeed;
+		double rightMotorSpeed;
+		// Square values but keep sign
+		moveValue = Math.copySign(Math.pow(moveValue, 2), moveValue);
+		rotateValue = Math.copySign(Math.pow(rotateValue, 2), rotateValue);
+        
+        //Linear
+        /*
+        double slope = -1.25;
+        double maxRotate = slope * Math.abs(moveValue) + 1;
+        */
+        //Nonlinear       
+        double curvature = 5;
+        double curveCenter - 0.5;
+       
+        
+        //Concave up
+        //y = (0.5 / (5 * x)) - (0.5 / 5)
+        //double maxRotate = curveCenter / (curvature * Math.abs(moveValue)) - (curveCenter / curvature);
+        
+        //Concave down
+        //y = -2^(5 * (x - 1)) + 1
+        double maxRotate = -Math.pow((1 / curveCenter), curvature * (Math.abs(moveValue) - 1)) + 1;
+        */
+        
+        rotateValue = OrangeUtility.coerce(rotateValue, maxRotate, -maxRotate);
+        
+		double maxValue = Math.abs(moveValue) + Math.abs(rotateValue);
+		if (maxValue > 1) {
+			moveValue -= Math.copySign(maxValue - 1, moveValue);
+		}
+
+		leftMotorSpeed = moveValue + rotateValue;
+		rightMotorSpeed = moveValue - rotateValue;
+		if (drivePercentVbus) {
+			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
+		} else {
+			leftMotorSpeed = moveValue + rotateValue;
+			rightMotorSpeed = moveValue - rotateValue;
+			leftMotorSpeed *= Constants.DriveHighSpeed;
+			rightMotorSpeed *= Constants.DriveHighSpeed;
+			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
+		}
+    }
+
 	public void arcadeDrive(double moveValue, double rotateValue) {
 		//String toPrint="";
 		//double time = Timer.getFPGATimestamp();
