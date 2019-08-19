@@ -40,6 +40,7 @@ public class Turret extends Threaded {
 	private double lastDeltaX = 0;
 	private double lastX = 0 ;
 	private boolean reacquire = false;
+	private boolean skipSetAngle = false;
 	private double lastDistance = Constants.AutoScoreDistance+10;
 
 	private double desired;
@@ -85,9 +86,16 @@ public class Turret extends Threaded {
 	public static enum TurretState{
 		HOMING, SETPOINT, VISION, VISION_LIMITED
 	}
-	
+	/**
+	 * The setAngle method is called by the {@link #update Update} method.
+	 * If the state is not at homing, then it calculates the angle, which always calculates to 0. This is a problem because
+	 * it always sets the setpoint value at 0 which makes the setpoint always be less than the current angle. This may be the cause 
+	 * of the turret always running
+	 * past the limit switch, which is why the turret causes internal damage on the robot.
+	 * @param angle
+	 */
 	private void setAngle(double angle) {
-		if(turretState==TurretState.HOMING) return;
+		if(turretState == TurretState.HOMING) return;
 
 		//normalize requested angle on [-180,180]
 		angle -= 360.0*Math.round(angle/360.0);
@@ -102,6 +110,7 @@ public class Turret extends Threaded {
 		if (setpoint > current) {	//setpoint is ahead of current
 			dCCW = Math.abs(setpoint - current);
 			dCW = Math.abs((360 - setpoint) + current);
+			//case where the turret can go past the limit
 			if(dCW < dCCW && Math.abs(Math.abs(setpoint)-180) <= Constants.maxTurretOverTravel) { //twist further case
 				setpoint = setpoint - 360;
 			}
@@ -184,6 +193,7 @@ public class Turret extends Threaded {
 			JetsonUDP.getInstance().changeExp(false);
 			if(prevState != TurretState.VISION) 
 			{
+				skipSetAngle = false;
 				JetsonUDP.getInstance().popTargets();
 				gotFrame = false;
 			}
@@ -340,7 +350,13 @@ public class Turret extends Threaded {
 				restoreSetpoint();
 				//System.out.println("in vision mode ");
 				VisionTarget[] targets = jetsonUDP.getTargets();
-				
+				double delta = getAngle() - requested;
+				/**
+				 * Whenever called, sets skipSetAngle to false as needed
+				 */
+				if(Math.abs(delta) <= 10d){
+					skipSetAngle = false;
+				}
 				//System.out.println("amunt of targets" + targets.length);
 				if(targets == null || targets.length <= 0) {
 					//System.out.println("null");
@@ -395,8 +411,18 @@ public class Turret extends Threaded {
 			 		// desiredAngle = turret.getAngle() - f;
 					//System.out.println("theta start: " + Math.toDegrees(f) + " d: " + d + " correction: " + corrected);
 					//double setpoint = limiter.update(desiredAngle);
-					if(visionLimit && desiredAngle - getAngle() >= Constants.MaxVisionScoreAngle) break;
-					else setAngle(desiredAngle);
+					if(visionLimit && desiredAngle - getAngle() >= Constants.MaxVisionScoreAngle) {
+						break;
+					} else {
+						/**
+						 * if the skipSetAngle is false, we then actually setAngle,
+						 * otherwise we start the longSpin
+						 */
+						if(!skipSetAngle) {
+							setAngle(desiredAngle);
+						}
+						skipSetAngle = isLongSpin();
+					}
 					
 					synchronized(this) {
 						gotFrame = true;
@@ -420,5 +446,14 @@ public class Turret extends Threaded {
 		//System.out.println(angle);
 	//	turretMotor.set(ControlMode.PercentOutput, 0.3);
 		*/
+	}
+
+	/**
+	* 
+	* absolute value of the difference between getAngle and requested, check if the distance is greater than 180 then set the
+	* desired angle, otherwise don't set the desired angle.
+	*/
+	private boolean isLongSpin() {
+		return Math.abs(getAngle() - requested) >= 180d;
 	}
 }
