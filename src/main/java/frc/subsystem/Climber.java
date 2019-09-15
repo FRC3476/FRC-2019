@@ -88,9 +88,9 @@ public class Climber extends Threaded {
 
 	@Override
 	public void update() {
-		/*
-		System.out.println("Potentiometer: " + pot.get());
-
+		
+		//System.out.println("Potentiometer: " + pot.get());
+/*
 		System.out.println("reed switch L: " + reedSwitchF.get());
 		System.out.println("reed switch R: " + reedSwitchB.get());
 		*/

@@ -19,6 +19,7 @@ public class LazyCANSparkMax extends CANSparkMax {
 		super(deviceNumber, type);
 		//enableVoltageCompensation(true);
 		//configVoltageCompSaturation(12, 10);
+	
 	}
 
 	@Override

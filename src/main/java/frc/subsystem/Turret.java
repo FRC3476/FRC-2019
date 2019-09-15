@@ -12,6 +12,7 @@ import frc.utility.telemetry.TelemetryServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 
+import java.lang.reflect.Method;
 import java.time.Duration;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
