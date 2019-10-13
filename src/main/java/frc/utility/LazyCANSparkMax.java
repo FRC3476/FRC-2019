@@ -29,6 +29,7 @@ public class LazyCANSparkMax extends CANSparkMax {
 		if (outputValue != prevValue) {
 			super.set(outputValue);
 			prevValue = outputValue;
+			
 		}
 	
 	}

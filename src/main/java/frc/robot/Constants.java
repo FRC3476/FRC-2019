@@ -241,8 +241,8 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 207; //135 -1
-	public static final double ClimberMinAngle = 82;//82; //4
+	public static final double ClimberMaxAngle = 90; //207
+	public static final double ClimberMinAngle = -40; //82;//82; //4
 	public static final double ClimberStartAngle = 2; //no
 	public static final int ClimberSolenoidID = 3;
 	

@@ -38,7 +38,7 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
         Path p1 = new Path(here());
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60); //TEMPORARY
         p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
-        p1.addPoint(new Translation2D(212+12*4+12-1.5+2 /*0*/ + 5 -18, this.side*(3*12+18-2/*0 */-1 -2)), 120);
+        p1.addPoint(new Translation2D(212+12*4+12-1.5+2 /*0*/ + 5 -18 + 5, this.side*(3*12+18-2/*0 */-1 -2)), 120);
 
         
         if(startX < 50) {
@@ -118,7 +118,7 @@ public class Ship1_2Red extends TemplateAuto implements Runnable {
 
         Path p3 = new Path(here());
         p3.addPoint(new Translation2D(168+12*3, this.side*(3*12+18+0)), 120);
-        p3.addPoint(new Translation2D(212+12*4+12+24+4/*+4+8*/ -18, this.side*(3*12+18-2-1 - 3)), 120); //-0
+        p3.addPoint(new Translation2D(212+12*4+12+24+4/*+4+8*/ -18 + 5 /*test*/, this.side*(3*12+18-2-1 - 3)), 120); //-0
         drive.setAutoPath(p3, false);
 
         turret.setState(TurretState.SETPOINT);

@@ -332,7 +332,7 @@ public class Turret extends Threaded {
 				}
 				else {
 					//double setpoint = limiter.update(desired);
-					setAngle(desired);      
+					setAngle(desired);
 				}
 			break;
 

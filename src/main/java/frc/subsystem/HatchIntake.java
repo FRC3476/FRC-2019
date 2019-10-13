@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import java.time.Duration;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.revrobotics.CANSparkMaxFrames.SetpointOut;
+//import com.revrobotics.CANSparkMaxFrames.SetpointOut;
 
 public class HatchIntake extends Threaded {
 

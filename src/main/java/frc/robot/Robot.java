@@ -84,6 +84,7 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void robotInit() {
+    Thread.currentThread().setPriority(5);
     drive.calibrateGyro();
     m_chooser.addOption("Cargo F_F", "Cargo F_F");
     m_chooser.addOption("Cargo F_1", "Cargo F_1");
@@ -125,7 +126,8 @@ public class Robot extends IterativeRobot {
     turret.homeTurret();
     elevator.elevHome();
     drive.setSimpleDrive(false);
-    
+
+    Thread.currentThread().setPriority(7);
   }
 
   /**
@@ -295,9 +297,11 @@ public class Robot extends IterativeRobot {
 
   double climberPower = 0;
 
-  double durationMaxArray[] = new double[100];
+  int numTimes = 20;
 
-  double durationAvgArray[] = new double[100];
+  double durationMaxArray[] = new double[numTimes];
+
+  double durationAvgArray[] = new double[numTimes];
 
   int durationNum;
 
@@ -322,7 +326,7 @@ public class Robot extends IterativeRobot {
 
       if(stick.getRawButton(9) && stick.getRawButton(10)) {
         climber.setDeploySolenoid(true);
-        climberPower = 0.75;
+        climberPower = 0.75; //0.75
       }
       if(stick.getRawButton(11)) System.out.println("bad");
       
@@ -445,6 +449,12 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       //System.out.println("range: " + turret.isInBallRange());
+
+      if(xbox.getRawButton(7) && xbox.getRawButton(8)) drive.setSimpleDrive(true);
+      if(xbox.getRawButton(9) && xbox.getRawButton(10)) drive.setSimpleDrive(false);
+      
+
+
       if(xbox.getRisingEdge(5)) drive.startHold();
       if(xbox.getFallingEdge(5)) drive.endHold();
       if(!xbox.getRawButton(5)) drive.cheesyDrive(-xbox.getRawAxis(1), Constants.steeringWheel ? wheel.getRawAxis(0):xbox.getRawAxis(4),
