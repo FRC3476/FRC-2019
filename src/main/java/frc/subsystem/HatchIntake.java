@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import java.time.Duration;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.revrobotics.CANSparkMaxFrames.SetpointOut;
+//import com.revrobotics.CANSparkMaxFrames.SetpointOut;
 
 public class HatchIntake extends Threaded {
 
@@ -46,7 +46,7 @@ public class HatchIntake extends Threaded {
 		deployMotor.config_kI(0, Constants.kHatchI, Constants.TimeoutMs);
 		deployMotor.config_kD(0, Constants.kHatchD, Constants.TimeoutMs);
 		intakeMotor.setInverted(true);
-		//deployMotor.configClosedLoopPeakOutput(slotIdx, percentOut)
+		//deployMotor.configClosedLoopPeakOutput(slotIdx, percentOut) 
 		setPeriod(Duration.ofMillis(20));
 	}
 

@@ -4,7 +4,7 @@ package frc.robot;
 
 public final class Constants {
 
-	public static final boolean steeringWheel = true;
+	public static final boolean steeringWheel = false;
 	// Networking
 	public static final int TelemetryPort = 5810;
 	public static final String DriverStationIPv4 = "10.34.76.5"; // Temporary
@@ -140,7 +140,7 @@ public final class Constants {
 	public static final double BallIntakeDeployTime = 0.4;
 
 	// Hatch Intake
-	public static final double HatchIntakeMotorPower = 0.75;//Just a random percent for now
+	public static final double HatchIntakeMotorPower = 1.0;//Just a random percent for now
 	public static final double HatchHandoffAngle = 48;
 	public static final double HatchStowAngle = 0;
 	public static final double HatchIntakeAngle = 178;
@@ -160,8 +160,8 @@ public final class Constants {
 //	public static final double kTurretP = 0.25;
 	public static final double TurretTargetError = 3;
 	public static final double AutoScoreDistance = 36 - 5.25;
-	public static final double AutoScoreDistanceBallClose = 34.5 - 6;
-	public static final double AutoScoreDistanceBallFar = 45 - 6;
+	public static final double AutoScoreDistanceBallClose = 34.5 - 8;
+	public static final double AutoScoreDistanceBallFar = 45 - 8;
 	public static final double MaxVisionScoreAngle = 10;
 
 
@@ -181,7 +181,8 @@ public final class Constants {
 	public static final double ElevatorHomeSpeed = -0.1;
 	public static final double ElevatorInchesPerMotorRotation = 8;
 	//public static final double ElevatorTicksPerInch = 4096.0/(1.5*3.141592);//orange string, no screw
-	public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
+	//public static final double ElevatorTicksPerInch = 52481/(64.25-4.375);//black string, screw spool
+	public static final double ElevatorTicksPerInch = (51056-1105)/(67.125-5.5);//2.3mm string, screw spool
 	//public static final double ElevatorTicksPerInch = 57378/(64.25-4.375); //practice bot
 	public static final int ElevatorSensorPidIdx = 0;
 	public static final double ElevatorTargetError = 2;
@@ -240,8 +241,8 @@ public final class Constants {
 	public static final double HandoffHoldTime = 0;
 	
 	// Climber
-	public static final double ClimberMaxAngle = 135-1;
-	public static final double ClimberMinAngle = 4;
+	public static final double ClimberMaxAngle = 90; //207
+	public static final double ClimberMinAngle = -40; //82;//82; //4
 	public static final double ClimberStartAngle = 2; //no
 	public static final int ClimberSolenoidID = 3;
 	

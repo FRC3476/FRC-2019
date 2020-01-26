@@ -148,8 +148,14 @@ public class Controller extends Joystick {
 
 	@Override
 	public double getRawAxis(int axis) {
-		if (axis <= axisCount && axis >= 0) {
-			return currentAxis[axis];
+		try {
+			if (axis <= axisCount && axis >= 0) {
+				return currentAxis[axis];
+			}
+		}
+		catch(ArrayIndexOutOfBoundsException e)
+		{
+		//	System.out.println("Axis out of bounds " + axis + "/" + axisCount);
 		}
 		return 0;
 	}
@@ -158,6 +164,24 @@ public class Controller extends Joystick {
 	public int getPOV(int pov) {
 		if (pov < povCount && pov >= 0) {
 			return currentPOV[pov];
+		}
+		return -1;
+	}
+
+	public int getAxesAsPOV(int x, int y, boolean xinv, boolean yinv) {
+		try {
+			if (x <= axisCount && x >= 0 && y <= axisCount && y >= 0) {
+				int xval = (int)Math.round(currentAxis[x]) * (xinv ? -1 : 1),
+					yval = (int)Math.round(currentAxis[y]) * (yinv ? -1 : 1);
+				if(xval == 0 && yval == 0) return -1;
+				int val = (int)(Math.atan2(yval, xval) * 180.0 / Math.PI);
+				if(val < 0) val += 360;
+				return val;
+			}
+		}
+		catch(ArrayIndexOutOfBoundsException e)
+		{
+			System.out.println("Axes out of bounds " + x + " " + y + "/" + axisCount);
 		}
 		return -1;
 	}

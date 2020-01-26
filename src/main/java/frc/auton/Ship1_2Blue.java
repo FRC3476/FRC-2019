@@ -38,14 +38,14 @@ public class Ship1_2Blue extends TemplateAuto implements Runnable {
         Path p1 = new Path(here());
         p1.addPoint(new Translation2D(8*12+18, this.side*46), 60); //TEMPORARY
         p1.addPoint(new Translation2D(168+12*4, this.side*(3*12+18+0)), 120);
-        p1.addPoint(new Translation2D(212+12*4+12-1.5+2 /*0*/ + 5 , this.side*(3*12+18-2/*0 */-1 -2)), 120);
+        p1.addPoint(new Translation2D(212+12*4+12-1.5+2 /*0*/ + 5 -18 + 5+6, this.side*(3*12+18-2/*0 */-1 -2)), 120);
 
         
         if(startX < 50) {
                 Path dropOff = new Path(here());
                 dropOff.addPoint(new Translation2D(8*12+18, this.side*46), 60);
                 drive.setAutoPath(dropOff, false);
-                while(!drive.isFinished())if(isDead()) return;
+                while(!drive.isFinished() && !killSwitch)if(isDead()) return;
 
                 double reverseTime = Timer.getFPGATimestamp();
                 Path reverse = new Path(here());
@@ -94,7 +94,7 @@ public class Ship1_2Blue extends TemplateAuto implements Runnable {
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(13*8, this.side*135), 120-6);
-        p2.addPoint(new Translation2D(25-4, this.side*136), 160-6); //X=27, Y=135
+        p2.addPoint(new Translation2D(25-6-3+/*temp*/7.5, this.side*136), 160-6); //X=27, Y=135
         drive.setAutoPath(p2, true);
 
         turret.setState(TurretState.SETPOINT);
@@ -118,7 +118,7 @@ public class Ship1_2Blue extends TemplateAuto implements Runnable {
 
         Path p3 = new Path(here());
         p3.addPoint(new Translation2D(168+12*3, this.side*(3*12+18+0)), 120);
-        p3.addPoint(new Translation2D(212+12*4+12+24+4/*+4+8*/ , this.side*(3*12+18-2-1 - 3)), 120); //-0
+        p3.addPoint(new Translation2D(212+12*4+12+24+4/*+4+8*/ -18 + 5 /*test*/ + 12 /*temp*/+ 3.5, this.side*(3*12+18-2-1 - 3)), 120); //-0
         drive.setAutoPath(p3, false);
 
         turret.setState(TurretState.SETPOINT);

@@ -84,6 +84,9 @@ public class Drive extends Threaded {
 	private Rotation2D wantedHeading;
 	private volatile double driveMultiplier;
 
+	private boolean lastSticky, clearSticky;
+	private double lastFaultTime;
+
 	double prevPositionL = 0;
 	double prevPositionR = 0;
 
@@ -124,6 +127,8 @@ public class Drive extends Threaded {
 		//rightSparkSlave2.follow(rightSpark);
 
 
+
+
 		shifter = new Solenoid(Constants.DriveShifterSolenoidId);
 		//leftTalon = new LazyTalonSRX(Constants.DriveLeftMasterId);
 		//rightTalon = new LazyTalonSRX(Constants.DriveRightMasterId);
@@ -146,6 +151,9 @@ public class Drive extends Threaded {
 
 		moveProfiler = new RateLimiter(Constants.DriveTeleopAccLimit);
 		turnProfiler = new RateLimiter(100);
+
+		lastSticky = false;
+		lastFaultTime = Timer.getFPGATimestamp();
 
 		//configHigh();
 		configAuto();
@@ -361,7 +369,7 @@ public class Drive extends Threaded {
 			angularPower = rotateValue * 0.4; //0.2
 		} else {
 			overPower = 0;
-			angularPower = Math.abs(moveValue) * rotateValue - quickStopAccumulator;
+			angularPower = 1.1 * Math.abs(moveValue) * rotateValue - quickStopAccumulator;
 			if (quickStopAccumulator > 1) {
 				quickStopAccumulator -= 1;
 			} else if (quickStopAccumulator < -1) {
@@ -454,6 +462,60 @@ public class Drive extends Threaded {
 		}
 	}
 
+	
+    public void skidLimitingDrive(double moveValue, double rotateValue) {
+		synchronized(this) {
+			driveState = DriveState.TELEOP;
+		}
+		moveValue = scaleJoystickValues(moveValue, 0);
+		rotateValue = scaleJoystickValues(rotateValue, 0);
+        
+		double leftMotorSpeed;
+		double rightMotorSpeed;
+		// Square values but keep sign
+		moveValue = Math.copySign(Math.pow(moveValue, 2), moveValue);
+		rotateValue = Math.copySign(Math.pow(rotateValue, 2), rotateValue);
+        
+        //Linear
+        /*
+        double slope = -1.25;
+        double maxRotate = slope * Math.abs(moveValue) + 1;
+        */
+        //Nonlinear       
+        double curvature = 4;
+        double curveCenter = 0.5;
+       
+        
+        //Concave up
+        //y = (0.5 / (5 * x)) - (0.5 / 5)
+        //double maxRotate = curveCenter / (curvature * Math.abs(moveValue)) - (curveCenter / curvature);
+        
+        //Concave down
+        //y = -2^(5 * (x - 1)) + 1
+        double maxRotate = -Math.pow((1 / curveCenter), curvature * (Math.abs(moveValue) - 1)) + 0.8;
+		
+	
+        
+        rotateValue = OrangeUtility.coerce(rotateValue, maxRotate, -maxRotate);
+        
+		double maxValue = Math.abs(moveValue) + Math.abs(rotateValue);
+		if (maxValue > 1) {
+			moveValue -= Math.copySign(maxValue - 1, moveValue);
+		}
+
+		leftMotorSpeed = moveValue + rotateValue;
+		rightMotorSpeed = moveValue - rotateValue;
+		if (drivePercentVbus) {
+			setWheelPower(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
+		} else {
+			leftMotorSpeed = moveValue + rotateValue;
+			rightMotorSpeed = moveValue - rotateValue;
+			leftMotorSpeed *= Constants.DriveHighSpeed;
+			rightMotorSpeed *= Constants.DriveHighSpeed;
+			setWheelVelocity(new DriveSignal(leftMotorSpeed, rightMotorSpeed));
+		}
+	}
+	
 	private void configMotors() {
 		leftSparkSlave.follow(leftSpark);
 		rightSparkSlave.follow(rightSpark);
@@ -574,11 +636,16 @@ public class Drive extends Threaded {
 	private void setWheelPower(DriveSignal setVelocity) {
 		//leftTalon.set(ControlMode.PercentOutput, setVelocity.rightVelocity);
 		//rightTalon.set(ControlMode.PercentOutput, setVelocity.leftVelocity);
+		//System.out.println(leftSpark.getLastError());
 		
 		leftSpark.set(setVelocity.leftVelocity);
+		leftSparkSlave.set(setVelocity.leftVelocity); //tmp
+
 		//leftSparkSlave.set(setVelocity.leftVelocity);
 		//rightSparkSlave.set(setVelocity.rightVelocity);
 		rightSpark.set(setVelocity.rightVelocity);
+		rightSparkSlave.set(setVelocity.rightVelocity); //tmp
+
 	/*	System.out.println(
 			"Left Spark: " + leftSpark.getOutputCurrent() + "\n" +
 			"Left Slave: " + leftSparkSlave.getOutputCurrent() + "\n" +
@@ -589,6 +656,21 @@ public class Drive extends Threaded {
 
 		//leftSparkPID.setReference(setVelocity.leftVelocity, ControlType.kDutyCycle);
 		//rightSparkPID.setReference(setVelocity.rightVelocity, ControlType.kDutyCycle);
+	}
+
+	public boolean hasStickyFaults()
+	{
+		short kCANRXmask = (short)(1 << CANSparkMax.FaultID.kCANRX.ordinal());
+		short kCANTXmask = (short)(1 << CANSparkMax.FaultID.kCANTX.ordinal());
+		short kHasResetmask = (short)(1 << CANSparkMax.FaultID.kHasReset.ordinal());
+		short leftFaults = leftSpark.getStickyFaults();
+		short rightFaults = rightSpark.getStickyFaults();
+		//System.out.println("left: " + leftFaults + " right: " + rightFaults);
+
+
+		boolean leftSticky = (leftFaults & kCANRXmask) != 0 || (leftFaults & kCANTXmask) != 0 || (leftFaults & kHasResetmask) != 0;
+		boolean rightSticky = (rightFaults & kCANRXmask) != 0 || (rightFaults & kCANTXmask) != 0 || (rightFaults & kHasResetmask) != 0;
+		return leftSticky || rightSticky;
 	}
 
 	private void setWheelVelocity(DriveSignal setVelocity) {
@@ -611,10 +693,55 @@ public class Drive extends Threaded {
 		rightSparkPID.setReference(rightSetpoint, ControlType.kVelocity);
 		//System.out.println("desired left rpm: " +setVelocity.leftVelocity + "desired right rpm: " + setVelocity.rightVelocity);
 		//System.out.println("actual left rpm: " + getLeftSpeed() + " actual right rpm: " + getRightSpeed());
+		//System.out.println((leftSpark.getStickyFaults() + " " + rightSpark.getStickyFaults()) );
+
+
+		// boolean thisSticky = hasStickyFaults();
+		// if(Timer.getFPGATimestamp() - lastFaultTime > 1.0 && clearSticky)// & (1 << CANSparkMax.FaultID.kCANRX.ordinal()) != 0 || rightSpark.getStickyFault(CANSparkMax.FaultID.kCANRX)) {
+		// {
+
+		// 	System.out.println("DELTA STICKY FAULT!");
+				
+		// 	leftSpark = new LazyCANSparkMax(Constants.DriveLeftMasterId, MotorType.kBrushless);
+		// 	leftSparkSlave = new LazyCANSparkMax(Constants.DriveLeftSlave1Id, MotorType.kBrushless);
+		// 	rightSpark = new LazyCANSparkMax(Constants.DriveRightMasterId, MotorType.kBrushless);
+		// 	rightSparkSlave = new LazyCANSparkMax(Constants.DriveRightSlave1Id, MotorType.kBrushless);
+
+		// 	leftSpark.setInverted(true);
+		// 	rightSpark.setInverted(false);
+		// 	leftSparkSlave.setInverted(true);
+		// 	rightSparkSlave.setInverted(false);			
+		// 	leftSparkPID = leftSpark.getPIDController();
+		// 	rightSparkPID = rightSpark.getPIDController();
+		// 	leftSparkEncoder = leftSpark.getEncoder();
+		// 	rightSparkEncoder = rightSpark.getEncoder();
+
+		// 	configMotors();
+
+		// 	clearSticky = false;
+		// 	System.out.println("RESTARTING SPARK PIDS");
+		// };
+
+		// if(thisSticky)
+		// {
+		// 	System.out.println("STICKY FAULT!");
+		// 	lastFaultTime = Timer.getFPGATimestamp();
+		// 	leftSpark.clearFaults();	
+		// 	rightSpark.clearFaults();
+		// 	clearSticky = true;
+		// }
+
+		// lastSticky = thisSticky;
+
 	}
 
 	public synchronized void setSimpleDrive(boolean setting) {
+		if(drivePercentVbus != setting) System.out.println("Simple drive: " + setting);
 		drivePercentVbus = setting;
+	}
+
+	public synchronized boolean getSimpleDrive() {
+		return drivePercentVbus;
 	}
 
 	@Override
@@ -628,6 +755,9 @@ public class Drive extends Threaded {
 		}
 		switch (snapDriveState) {
 			case TELEOP:
+			//System.out.println(leftSpark.getStickyFaults() + " slave faults " + leftSparkSlave.getStickyFaults());
+		//CANSparkMax.FaultID.kCANTX
+				
 				break;
 			case PUREPURSUIT:
 				//System.out.println("bad!");

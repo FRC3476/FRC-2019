@@ -326,7 +326,7 @@ public class CollisionManager extends Threaded {
                 case 2:
                     if(Timer.getFPGATimestamp() - holdingTime >= 1.2) {
                     // holdingTime = 0;
-                    
+                        
                         combinedIntake.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
                     }
                     if(Timer.getFPGATimestamp() - holdingTime >= 1.2 && elevator.isFinished()) {

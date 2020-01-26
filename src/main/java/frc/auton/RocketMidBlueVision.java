@@ -43,7 +43,7 @@ public class RocketMidBlueVision extends TemplateAuto implements Runnable {
         //drive.setRotation(targetprobot.getAngle(loc));
         Path pV = new Path(here());
         //pV.addPoint(robotpheading, 20);
-        pV.addPoint(loc, 20);
+        pV.addPoint(loc, 60);
        // pV.addPoint(loc)
        return pV;
     }
@@ -134,7 +134,7 @@ public class RocketMidBlueVision extends TemplateAuto implements Runnable {
         collisionManager.score();
         while(collisionManager.isScoring()) if(isDead()) return;
         turret.setState(TurretState.SETPOINT);
-        turret.setDesired(180, true);
+        turret.setDesired(-135*this.side, false);
         manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
         Path p2 = new Path(here());
         p2.addPoint(new Translation2D(144+48*2, this.side*(94+2)), 160);
@@ -143,7 +143,10 @@ public class RocketMidBlueVision extends TemplateAuto implements Runnable {
                                                                 //x15, 
         drive.setAutoPath(p2, true);
         elevator.setHeight(Constants.HatchElevLow);
+        while(!turret.isFinished()) if(isDead()) return;
+        turret.setDesired(-180*this.side, true);
         while(!drive.isFinished())  if(isDead()) return;
+        while(!turret.isFinished()) if(isDead()) return;
         
         turret.setState(TurretState.VISION);
         

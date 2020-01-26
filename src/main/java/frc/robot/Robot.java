@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import java.util.concurrent.*;
 
+import java.util.*;
 
 import frc.utility.ThreadScheduler;
 import frc.utility.Controller;
@@ -40,6 +41,8 @@ import frc.utility.VisionTarget;
  * project.
  */
 public class Robot extends IterativeRobot {
+  public static final boolean profileTeleop = true;
+
   Drive drive = Drive.getInstance();
   CollisionManager collisionManager = CollisionManager.getInstance();
   public Controller xbox = new Controller(0);
@@ -81,6 +84,7 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void robotInit() {
+    Thread.currentThread().setPriority(5);
     drive.calibrateGyro();
     m_chooser.addOption("Cargo F_F", "Cargo F_F");
     m_chooser.addOption("Cargo F_1", "Cargo F_1");
@@ -122,7 +126,8 @@ public class Robot extends IterativeRobot {
     turret.homeTurret();
     elevator.elevHome();
     drive.setSimpleDrive(false);
-    
+
+    Thread.currentThread().setPriority(7);
   }
 
   /**
@@ -221,6 +226,17 @@ public class Robot extends IterativeRobot {
 
   @Override 
   public void teleopInit() {
+
+    if(profileTeleop)
+    {
+      durationNum = 0;
+      for(int i = 0; i < durationAvgArray.length; i++)
+      {
+        durationAvgArray[i] = 0;
+        durationMaxArray[i] = 0;
+      }
+    }
+
     jetsonUDP.changeExp(true);
     
     climber.setDeploySolenoid(false);
@@ -280,11 +296,25 @@ public class Robot extends IterativeRobot {
   boolean climberDisable = false;
 
   double climberPower = 0;
+
+  int numTimes = 20;
+
+  double durationMaxArray[] = new double[numTimes];
+
+  double durationAvgArray[] = new double[numTimes];
+
+  int durationNum;
+
   /**
    * This function is called periodically during operator control.
    */
   @Override
   public void teleopPeriodic() {
+
+      ArrayList<Double> times = new ArrayList<Double>();
+      
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
       //System.out.println("turret " + turret.getAngle());
       //System.out.println(drive.getLeftSpeed() + " right: " + drive.getRightSpeed());
       xbox.update();
@@ -292,11 +322,16 @@ public class Robot extends IterativeRobot {
       buttonPanel.update();
       wheel.update();
 
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
       if(stick.getRawButton(9) && stick.getRawButton(10)) {
         climber.setDeploySolenoid(true);
-        climberPower = 0.75;
+        climberPower = 0.75; //0.75
       }
       if(stick.getRawButton(11)) System.out.println("bad");
+      
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
       
       //System.out.println("climber power: " + climberPower);
       /*
@@ -306,7 +341,10 @@ public class Robot extends IterativeRobot {
       climber.setPower(climberPower);
       */
       
-        if(stick.getRawButton(5) && stick.getRawAxis(3) < 0 /*&& !climberDisable*/) climberPower = 0.9;
+        if(stick.getRawButton(5) && stick.getRawAxis(3) < 0 /*&& !climberDisable*/) {
+          //System.out.println("Running climber");
+          climberPower = 0.2;
+        }
         else if(stick.getRawButton(5) /*&& !climberDisable*/) climberPower = -0.15;
         if(stick.getRawButton(6)) {
            //climberDisable = true;
@@ -314,24 +352,26 @@ public class Robot extends IterativeRobot {
         }
         climber.setPower(climberPower);
         
-      
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
 
+        /*
       if(hatchIntake.getCurrent() > 3 || manipulator.getCurrent() > 50 || collisionManager.isManipulatorStalled()) {
         //xbox.setRumble(RumbleType.kLeftRumble, 1.0);
         xbox.setRumble(RumbleType.kRightRumble, 1.0);
       } else {
         //xbox.setRumble(RumbleType.kLeftRumble, 0);
         xbox.setRumble(RumbleType.kRightRumble, 0);
-      }
+      }*/
      // System.out.println("manipulator current: " + manipulator.getCurrent());
       //System.out.println("Desired angle: " + desiredAngle + " actual angle " + turret.getAngle());
       //ground hatch W
 
-      if(xbox.getRawButton(4) || xbox.getRawButton(6)) drive.setShiftState(true);
+      if(xbox.getRawButton(4) || xbox.getRawButton(6) || wheel.getRawButton(12)) drive.setShiftState(true);
       else drive.setShiftState(false);
 
       if(stick.getRisingEdge(7)) collisionManager.abortGroundHatch();
-    
+      
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
       //teleopStarttime = Timer.getFPGATimestamp();
       //hatch
       
@@ -359,6 +399,7 @@ public class Robot extends IterativeRobot {
 
       }
 
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
       //ballIntake.setSpeed(xbox.getRawAxis(3) - xbox.getRawAxis(2));
       //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 2\n";
 
@@ -380,7 +421,7 @@ public class Robot extends IterativeRobot {
 
       //teleopStarttime = Timer.getFPGATimestamp();
       if(collisionManager.isBallIntakeOut() && !collisionManager.isWorking()) {
-        if(xbox.getRawAxis(3) > 0.5) { //>0.5
+        if(Constants.steeringWheel ? wheel.getRawButton(6) : xbox.getRawAxis(3) > 0.5) { //>0.5
           ballIntake.setIntakeState(BallIntake.IntakeState.INTAKE);
           //ballIntake.setSpeed((-xbox.getRawAxis(3)*0.75));
         } else if(xbox.getRawAxis(2) > 0.5) { //>0.5
@@ -395,6 +436,8 @@ public class Robot extends IterativeRobot {
         ballIntake.setIntakeState(BallIntake.IntakeState.OFF);
       }
       
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
       //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 4\n";
 
 
@@ -406,12 +449,22 @@ public class Robot extends IterativeRobot {
      // System.out.println(elevator.getHeight());
       //Drive control
       //System.out.println("range: " + turret.isInBallRange());
+
+      if(xbox.getRawButton(7) && xbox.getRawButton(8)) drive.setSimpleDrive(true);
+      if(xbox.getRawButton(9) && xbox.getRawButton(10)) drive.setSimpleDrive(false);
+      
+
+
       if(xbox.getRisingEdge(5)) drive.startHold();
       if(xbox.getFallingEdge(5)) drive.endHold();
       if(!xbox.getRawButton(5)) drive.cheesyDrive(-xbox.getRawAxis(1), Constants.steeringWheel ? wheel.getRawAxis(0):xbox.getRawAxis(4),
         Math.abs(xbox.getRawAxis(1)) < Constants.MinControllerInput[0]);//drive.arcadeDrive(-xbox.getRawAxis(1),Constants.steeringWheel ? wheel.getRawAxis(0):xbox.getRawAxis(4));
-
+      //if(!xbox.getRawButton(5)) drive.orangeDrive(-xbox.getRawAxis(1), Constants.steeringWheel ? wheel.getRawAxis(0): -xbox.getRawAxis(4),
+     // Math.abs(xbox.getRawAxis(1)) < Constants.MinControllerInput[0]);
+     //drive.skidLimitingDrive(-xbox.getRawAxis(1),Constants.steeringWheel ? wheel.getRawAxis(0):xbox.getRawAxis(4));
       
+     if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
       if(buttonPanel.getFallingEdge(1)) turret.resetDistance();;
      // System.out.println(!collisionManager.isInControl());
       if(!collisionManager.isInControl()) {
@@ -419,9 +472,6 @@ public class Robot extends IterativeRobot {
         if(buttonPanel.getRawButton(4)) turret.setState(TurretState.VISION);
         else if(buttonPanel.getRawButton(1)) {
           turret.setState(TurretState.VISION);
-
-          
-
           if(turret.isFinished()) {
             if(elevator.getRequested() == Constants.BallElevCargo) cargoMode = true;
             else cargoMode = false;
@@ -440,12 +490,12 @@ public class Robot extends IterativeRobot {
               //System.out.println("fin " + turret.isFinished() + " blm " + ballMode + " tir " + turret.isInRange());
             }
           }
-        } 
-        
-        else {
+        } else {
           turret.setState(TurretState.SETPOINT);
           //turret.restoreSetpoint();
         }
+
+        if(profileTeleop) times.add(Timer.getFPGATimestamp());
 
         if(!buttonPanel.getRawButton(1)) autoScoreAllow = true;
 
@@ -465,6 +515,9 @@ public class Robot extends IterativeRobot {
         else if(stick.getRawButton(4)) ballMode = false;
         //if(firstTeleopRun) toPrint += (Timer.getFPGATimestamp() - teleopStarttime) + " 1\n";
 
+
+        if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
         //teleopStarttime = Timer.getFPGATimestamp();
         //Arm manual override
         //if(buttonPanel.getRawButton(1)) arm.setState(ArmState.EXTEND);
@@ -482,22 +535,29 @@ public class Robot extends IterativeRobot {
       
 
         //teleopStarttime = Timer.getFPGATimestamp();
-        if(buttonPanel.getPOV() != -1) {
+        int buttonpov = buttonPanel.getAxesAsPOV(1, 0, false, true);
+        if(buttonpov != -1) {
           elevatorManual = true;
-          if(buttonPanel.getPOV() == 0)
+          if(buttonpov == 0) {
             elevator.setHeight(elevator.getHeight()+Constants.kElevatorManual);
+            System.out.println(elevator.getHeight());
             //elevator.manualControl(0.2);
-          else if (buttonPanel.getPOV() == 180) 
+          }
+          else if (buttonpov == 180) 
             elevator.setHeight(elevator.getHeight()-Constants.kElevatorManual);
             //elevator.manualControl(-0.2);
           //Elevator.setWonkavator()
         }
       
-        if(elevatorManual == true && buttonPanel.getPOV() == -1) {
+        if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
+        if(elevatorManual == true && buttonpov == -1) {
           elevatorManual = false;
           //elevator.setHeight(elevator.getHeight());
         }
         
+        if(profileTeleop) times.add(Timer.getFPGATimestamp());
+
         //ball mode
         if(ballMode) { 
           //wheeled intake
@@ -592,8 +652,13 @@ public class Robot extends IterativeRobot {
               
               collisionManager.retrieveHatch();
             }
-            if(collisionManager.isRetrieving());
-            else if(intakeAttempted == true) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+            if(collisionManager.isRetrieving()) {
+              //
+            }
+            else if(intakeAttempted == true) { 
+              //if(hatchIntake.getCurrent() >= 5.0) xbox.setRumble(RumbleType.kLeftRumble, 1.0); //temp
+              manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
+            }
             else if(buttonPanel.getRawButton(3)) manipulator.setManipulatorIntakeState(ManipulatorIntakeState.INTAKE);
             else  manipulator.setManipulatorIntakeState(ManipulatorIntakeState.HATCH_HOLD);
             if(!collisionManager.isRetrieving()) arm.setState(ArmState.RETRACT);
@@ -601,6 +666,7 @@ public class Robot extends IterativeRobot {
               intakeAttempted = false;
             }
           }
+          
           //elev setpoints
           if(collisionManager.isWorking() || collisionManager.isBallIntakeOut() || elevatorManual)
           {}//don't do anything because collision manager is doing things
@@ -610,12 +676,27 @@ public class Robot extends IterativeRobot {
           else if(buttonPanel.getRawButton(5)) elevator.setHeight(Constants.HatchElevLow);
         }
       }
+
+      if(profileTeleop) times.add(Timer.getFPGATimestamp());
       
       
       //btn2Edge = xbox.getRawButton(2);
       //btn1Edge = xbox.getRawButton(1);
       if(stick.getFallingEdge(2)) hatchOutake = false;
       firstTeleopRun = false;
+
+      if(profileTeleop)
+      {
+        durationNum++;
+
+        for(int i = 0; i < times.size() - 1; i++)
+        {
+          double diff = times.get(i+1) - times.get(i);
+          if(diff > durationMaxArray[i]) durationMaxArray[i] = diff;
+          
+          durationAvgArray[i] = durationAvgArray[i] + (diff - durationAvgArray[i])/durationNum;
+        }
+      }
   }
 
   @Override
@@ -643,7 +724,16 @@ public class Robot extends IterativeRobot {
         System.out.println("Turret: cw");
         break;
     }
-    
+
+
+    if(profileTeleop)
+    {
+      for(int i = 0; i < durationAvgArray.length; i++)
+      {
+        System.out.println(i + " Max: " + durationMaxArray[i] + " Avg: " + durationAvgArray[i]);
+      }
+    }
+
     scheduler.pause();
   }
   
